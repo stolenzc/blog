@@ -161,6 +161,105 @@
       </tags>
   </entry>
   <entry>
+    <title>浏览器跨域技术细节</title>
+    <url>/2025/cors/</url>
+    <content><![CDATA[<h2 id="跨域简介"><a href="#跨域简介" class="headerlink" title="跨域简介"></a>跨域简介</h2><p>跨域问题（Cross-Origin）是Web开发中因浏览器的同源策略（Same-Origin Policy） 引发的安全限制，当网页尝试访问与自身源（协议、域名、端口）不同的资源时会被浏览器拦截。</p>
+<p>关键点</p>
+<ul>
+<li>跨域为浏览器引入，仅在浏览器中存在</li>
+<li>同源：一个完整的url组成如下 <code>协议://域名:端口/路由</code> 。 协议、域名、端口均相同为同源</li>
+</ul>
+<h2 id="浏览器对不同请求方式跨域限制"><a href="#浏览器对不同请求方式跨域限制" class="headerlink" title="浏览器对不同请求方式跨域限制"></a>浏览器对不同请求方式跨域限制</h2><ul>
+<li><code>AJAX</code> 完整的跨域限制</li>
+<li><code>img/audio/video</code> 标签，允许跨域加载资源并进行展示，但如果出现跨域且响应资源不允许跨域。则无法在自身站点逻辑中读取到具体的内容。</li>
+<li><code>script</code> 能跨域下载并执行脚本，但不能读取内容</li>
+<li><code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> 能跨域获取并渲染样式，但是无法读取样式内容</li>
+<li><code>iframe</code> 发生跨域则无法与内部网页进行交互</li>
+</ul>
+<h2 id="如何检测是否允许跨域"><a href="#如何检测是否允许跨域" class="headerlink" title="如何检测是否允许跨域"></a>如何检测是否允许跨域</h2><p>检测跨域分为两种方式</p>
+<ol>
+<li>简单请求，直接请求数据，根据响应的响应头来决定是否允许跨域并读取响应内容</li>
+<li>预检请求（Preflight Request）：对于非简单请求，会触发使用 <code>OPTIONS</code> 进行预检，满足跨域条件时才会进行真实请求。</li>
+</ol>
+<h2 id="什么是简单请求"><a href="#什么是简单请求" class="headerlink" title="什么是简单请求"></a>什么是简单请求</h2><p>根据W3C规范，满足以下全部条件的请求为简单请求，不需要进行 <code>OPTIONS</code> 预检</p>
+<ol>
+<li>请求方式必须是以下三种之一<ol>
+<li><code>GET</code></li>
+<li><code>POST</code></li>
+<li><code>HEAD</code></li>
+</ol>
+</li>
+<li>请求头中只能携带以下内容<ol>
+<li><code>Accept</code></li>
+<li><code>Accept-Language</code></li>
+<li><code>Content-Language</code></li>
+<li><code>Content-Type</code> ，且值必须为以下内容<ol>
+<li><code>application/x-www-form-urlencoded</code> </li>
+<li><code>multipart/form-data</code></li>
+<li><code>text/plain</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>不能使用任何自定义的头（例如： <code>token</code> 、 <code>Authorization</code> 等）</li>
+</ol>
+<h2 id="相关的请求头、响应头含义"><a href="#相关的请求头、响应头含义" class="headerlink" title="相关的请求头、响应头含义"></a>相关的请求头、响应头含义</h2><p>请求头</p>
+<ul>
+<li><code>Origin</code> - 请求发起的来源，所有的请求均需携带。示例值： <code>www.baidu.com</code></li>
+<li><code>Access-Control-Request-Method</code> - 预检请求中使用，表示接下来要发起请求的请求方式。示例值： <code>PUT</code></li>
+<li><code>Access-Control-Request-Headers</code> - 预检请求中使用，表示实际请求中将会携带的自定义请求头。示例值： <code>TOKEN</code> &#x2F; <code>SIGN</code></li>
+</ul>
+<p>响应头</p>
+<ul>
+<li><code>Access-Control-Allow-Origin</code> - 表示允许访问资源的外域，*表示允许所有外域访问。示例值： <code>*</code> &#x2F; <code>www.baidu.com</code></li>
+<li><code>Access-Control-Allow-Methods</code> - 表示允许外域访问资源的请求方式，在 <code>OPTIONS</code>  请求时，如果允许跨域，将会返回请求时携带的 <code>Access-Control-Request-Method</code> 。示例值： <code>PUT</code></li>
+<li><code>Access-Control-Allow-Headers</code> - 表示允许外域访问资源携带的自定义请求头，在 <code>OPTIONS</code>  请求时，如果允许跨域，将会返回请求时携带的 <code>Access-Control-Request-Headers</code> 。示例值： <code>TOKEN</code> &#x2F; <code>SIGN</code></li>
+<li><code>Access-Control-Allow-Credentials</code> - 是否允许携带cookie。示例值： <code>true</code></li>
+<li><code>Access-Control-Expose-Headers</code> - 哪些响应头允许被浏览器的JS读取。示例值： <code>Content-Length,Date,Server</code></li>
+<li><code>Access-Control-Max-Age</code> - 预检请求的缓存时间（秒）。示例值： <code>86400</code></li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>无论是普通请求，还是预检请求，都需要在响应头中包含 <code>Access-Control-Allow-Origin</code> 。否则就会认为跨域请求。（部分时候前端和后端接口不在同一个域名下时，前端请求后端一个不存在的接口，会优先报CORS错误）</li>
+<li>普通的GET接口，在HEADER中携带上token后，也需要进行预检</li>
+</ol>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><ul>
+<li>GET请求，未设置自定义headers，不会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;)</code></li>
+</ul>
+</li>
+<li>GET请求，设置了允许的headers，不会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;, &#123;&quot;headers&quot;: &#123;&quot;Accept-Language&quot;: &quot;abab&quot;&#125;&#125;)</code></li>
+</ul>
+</li>
+<li>GET请求，设置了不允许的headers，会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;, &#123;&quot;headers&quot;: &#123;&quot;token&quot;: &quot;abc&quot;&#125;&#125;)</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="其他跨域解决方式"><a href="#其他跨域解决方式" class="headerlink" title="其他跨域解决方式"></a>其他跨域解决方式</h2><h3 id="JSONP（JSON-with-Padding）"><a href="#JSONP（JSON-with-Padding）" class="headerlink" title="JSONP（JSON with Padding）"></a>JSONP（JSON with Padding）</h3><p>非标准，早期使用，利用浏览器对 <code>&lt;script&gt;</code> 标签的限制放宽来实现。服务器响应内容为一个javascript的函数调用</p>
+<p>浏览器调用方式： <code>&lt;script src=&quot;https://api.example.com/data.js&quot;&gt;&lt;/script&gt;</code></p>
+<p>服务器响应内容： <code>callback(&#123; name: &quot;Alice&quot;, age: 20 &#125;)</code></p>
+<p>确保页面上提前定义了这个 <code>callback</code> 函数，就能获取数据！</p>
+<p>限制：</p>
+<ul>
+<li>只能发送GET请求</li>
+<li>无法携带自定义请求头</li>
+</ul>
+<h3 id="PROXY"><a href="#PROXY" class="headerlink" title="PROXY"></a>PROXY</h3><p>因为跨域的同源策略限制只会在浏览器中发生。故可以将跨域调用通过同源的服务器中转调用。从而实现跨域的解决</p>
+<p>如 a.com 想要访问 b.com&#x2F;api 的内容，并且 b 网站不支持跨域。则可以创造一个 a.com&#x2F;api 的服务器。a.com 直接访问 a.com&#x2F;api ，a.com&#x2F;api 在服务器上调用 b.com&#x2F;api。对于 a.com 来说，就不存在跨域了</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://www.w3.org/TR/cors/">https://www.w3.org/TR/cors/</a></li>
+<li><a href="https://httpbin.org/">https://httpbin.org/</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Frontend</category>
+      </categories>
+      <tags>
+        <tag>技术原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Curl 使用手册</title>
     <url>/2023/curl/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CURL (Client URL)是一个命令行工具，用于在命令行下发送 HTTP 请求。对于热爱命令行的人来说，这个是必备的工具。</p>
@@ -446,6 +545,68 @@
       </tags>
   </entry>
   <entry>
+    <title>Edge上手</title>
+    <url>/2020/edge/</url>
+    <content><![CDATA[<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><h3 id="iGG谷歌访问助手"><a href="#iGG谷歌访问助手" class="headerlink" title="iGG谷歌访问助手"></a>iGG谷歌访问助手</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/mchibleoefileemjfghfejaggonplmmg?hl=zh-CN">iGG谷歌访问助手</a></p>
+<p>该插件可以通过Edge商店安装，安装该助手可以访问到google旗下的一些网站，例如谷歌搜索、谷歌play、Gmail，最重要的是可以访问Chrome插件商店，那么Chrome商店中所有的插件都可以安装了。</p>
+<h3 id="PDF-Viewer"><a href="#PDF-Viewer" class="headerlink" title="PDF Viewer"></a>PDF Viewer</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/pdf-viewer/oemmndcbldboiebfnladdacbdfmadadm">PDF Viewer</a></p>
+<p>Edge目前有一个较大的功能缺失就是PDF阅读，使用该插件可以有效的弥补该功能的缺陷，该插件在Edge插件商店没有上架，只能科学上网访问Chrome插件商店安装。</p>
+<p><strong>注意</strong>：</p>
+<blockquote>
+<ol>
+<li>Edge 86以上的版本中阅读pdf已经带有目录</li>
+<li>使用该插件需要在插件的设置中勾选允许访问文件URL</li>
+</ol>
+</blockquote>
+<h3 id="IDM-Integration-Module"><a href="#IDM-Integration-Module" class="headerlink" title="IDM Integration Module"></a>IDM Integration Module</h3><p>这是一个IDM的补充插件，在安装IDM的时候会自动进入微软商店进行安装。安装好后可以进行网页嗅探，比如视频，歌曲等内容都能嗅探到下载链接。该插件没有安装地址，只需安装IDM即可。IDM相关信息详见：<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#IDM">IDM</a></p>
+<p><strong>注意</strong>：该插件只适用于Windows</p>
+<h3 id="Tampermonkey"><a href="#Tampermonkey" class="headerlink" title="Tampermonkey"></a>Tampermonkey</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=zh-CN">Tampermonkey</a></p>
+<p>油猴插件，浏览器最强大的扩展插件，通过安装脚本可以获得许多高级的功能，该插件在Edge插件商店和Chrome插件商店都有。</p>
+<p>脚本推荐：</p>
+<blockquote>
+<ol>
+<li>科学上网插件，详情参见<a href="/2020/gwf/">科学上网</a></li>
+<li>网盘助手插件， <a href="https://greasyfork.org/zh-CN/scripts/378301">网盘助手</a> 获取脚本，进入百度网盘，选中文件，点击生成链接，获得链接后使用IDM或者迅雷即可下载</li>
+<li>网页翻译插件，<a href="https://greasyfork.org/zh-CN/scripts/389784">翻译</a> 获取脚本，支持三种翻译引擎</li>
+<li>百度优化插件，<a href="https://greasyfork.org/zh-CN/scripts/14178">百度重定向插件</a> 获取脚本，支持去除百度链接的重定向，去除广告，自动翻页等功能</li>
+<li>倍速视频插件，<a href="https://greasyfork.org/zh-CN/scripts/372673">计时器掌控者</a> 自定义倍速视频，可以方便跳过广告</li>
+</ol>
+</blockquote>
+<h3 id="谷歌翻译"><a href="#谷歌翻译" class="headerlink" title="谷歌翻译"></a>谷歌翻译</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb">谷歌翻译</a></p>
+<p>便捷上国外网站使用，可以进行网页翻译，也可以使用划词查询。使用划词查询需要允许上传内容。</p>
+<p><strong>注意</strong>：该插件的所有翻译均是通过translate.google.com提供支持。需要使用科学上网才能进行正常的翻译使用。使用谷歌访问助手也可。</p>
+<h3 id="彩云小译"><a href="#彩云小译" class="headerlink" title="彩云小译"></a>彩云小译</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E5%BD%A9%E4%BA%91%E5%B0%8F%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6/abbgboelhkajgikdbjclaecchkneaoma">彩云小译</a></p>
+<p>一款支持划词翻译、整个网页翻译的插件，该插件不用使用科学上网即可使用，并且该插件进行整页翻译时会保留原来的网页内容。方便进行对照。在一定程度上比谷歌翻译更好用。</p>
+<h3 id="AdblockPlus"><a href="#AdblockPlus" class="headerlink" title="AdblockPlus"></a>AdblockPlus</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/adblock-plus-%E5%85%8D%E8%B4%B9%E7%9A%84%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8/gmgoamodcdcjnbaobigkjelfplakmdhh">AdblockPlus</a></p>
+<p>广告拦截器，该插件可以拦截大部分的弹窗广告，使用拦截元素还可以去除掉百度热搜之类的内容</p>
+<h3 id="Cookie-Editor"><a href="#Cookie-Editor" class="headerlink" title="Cookie Editor"></a>Cookie Editor</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/cookie-editor/ajfboaconbpkglpfanbmlfgojgndmhmc">Cookie Editor</a></p>
+<p>能够更方便的编辑网站的cookie内容，在浏览器控制台-应用程序-存储-Cookie中也可以进行相同的编辑</p>
+<h3 id="Dark-Reader"><a href="#Dark-Reader" class="headerlink" title="Dark Reader"></a>Dark Reader</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/dark-reader/ifoakfbpdcdoeenechcleahebpibofpc">DarkReader</a></p>
+<p>这个插件对长时间使用浏览器用户非常友好，可以自适应计算界面的颜色，使整个网页背景变为黑色，该插件在大部分的网页上的显示都非常完美。但是依然会有部分网页显示可能有问题。</p>
+<p><strong>注意:</strong> 最近才发现Edge浏览器自带这个功能，在设置外观中将主题改为黑色，然后进入<code>edge://flags</code>，将<code>Force Dark Mode for Web Contents</code> 改为Enable也能实现黑色效果</p>
+<h3 id="Listen1"><a href="#Listen1" class="headerlink" title="Listen1"></a>Listen1</h3><p>安装地址：<a href="https://github.com/listen1/listen1_chrome_extension/releases">github</a> ，<a href="https://microsoftedge.microsoft.com/addons/detail/listen-1/hneiglcmpeedblkmbndhfbeahcpjojjg?hl=zh-CN">微软插件商店</a></p>
+<p>浏览器听歌聚合平台。聚合了包括网易云音乐、虾米音乐、咪咕音乐、QQ音乐等平台的歌曲，可以同步歌单到Github Gist。</p>
+<h3 id="Undo-closed-tabs-button"><a href="#Undo-closed-tabs-button" class="headerlink" title="Undo closed tabs button"></a>Undo closed tabs button</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/undo-closed-tabs-button/hfigadnahbppkfoomjopnladdokbmnkc">Undo closed tabs button</a></p>
+<p>一个可以便捷恢复已经关闭的tabs页的插件。</p>
+<h3 id="百度药丸"><a href="#百度药丸" class="headerlink" title="百度药丸"></a>百度药丸</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E7%99%BE%E5%BA%A6%E8%8D%AF%E4%B8%B8-baidu-capsule/hmmpaaklbinfllncmnnbdhedmhafnjkj">百度药丸</a></p>
+<p>解决网页使用百度的许多痛点，比如去掉百度热搜（分散注意力的东西）、去除推广、阻止百度推广等。常用百度的人员必备插件。</p>
+<h3 id="有范全网通"><a href="#有范全网通" class="headerlink" title="有范全网通"></a>有范全网通</h3><p>安装地址：<a href="http://www.ufanw.com/">有范全网通</a></p>
+<p>可以看到视频网站上VIP的视频</p>
+<h2 id="高级输入"><a href="#高级输入" class="headerlink" title="高级输入"></a>高级输入</h2><p><code>thisisunsafe</code> - 遇到网页因为不安全而无法访问且没有跳过按钮的情况，不用定位光标到任何位置，活动窗口选择为Edge浏览器，直接输入即可</p>
+<p><code>edge://flags</code></p>
+<ul>
+<li><code>Parallel downloading</code> - 开启并行下载（使用多线程下载）</li>
+<li><code>Force Dark Mode for Web Contents</code> - 对网页内容强制启用黑夜模式</li>
+</ul>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DRF的Serializer</title>
     <url>/2020/drf_serializer/</url>
     <content><![CDATA[<h2 id="名词释义"><a href="#名词释义" class="headerlink" title="名词释义"></a>名词释义</h2><p>序列化：模型转换为json，即对象-字典-json</p>
@@ -564,68 +725,6 @@
 ]]></content>
       <categories>
         <category>Python</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Edge上手</title>
-    <url>/2020/edge/</url>
-    <content><![CDATA[<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><h3 id="iGG谷歌访问助手"><a href="#iGG谷歌访问助手" class="headerlink" title="iGG谷歌访问助手"></a>iGG谷歌访问助手</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/mchibleoefileemjfghfejaggonplmmg?hl=zh-CN">iGG谷歌访问助手</a></p>
-<p>该插件可以通过Edge商店安装，安装该助手可以访问到google旗下的一些网站，例如谷歌搜索、谷歌play、Gmail，最重要的是可以访问Chrome插件商店，那么Chrome商店中所有的插件都可以安装了。</p>
-<h3 id="PDF-Viewer"><a href="#PDF-Viewer" class="headerlink" title="PDF Viewer"></a>PDF Viewer</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/pdf-viewer/oemmndcbldboiebfnladdacbdfmadadm">PDF Viewer</a></p>
-<p>Edge目前有一个较大的功能缺失就是PDF阅读，使用该插件可以有效的弥补该功能的缺陷，该插件在Edge插件商店没有上架，只能科学上网访问Chrome插件商店安装。</p>
-<p><strong>注意</strong>：</p>
-<blockquote>
-<ol>
-<li>Edge 86以上的版本中阅读pdf已经带有目录</li>
-<li>使用该插件需要在插件的设置中勾选允许访问文件URL</li>
-</ol>
-</blockquote>
-<h3 id="IDM-Integration-Module"><a href="#IDM-Integration-Module" class="headerlink" title="IDM Integration Module"></a>IDM Integration Module</h3><p>这是一个IDM的补充插件，在安装IDM的时候会自动进入微软商店进行安装。安装好后可以进行网页嗅探，比如视频，歌曲等内容都能嗅探到下载链接。该插件没有安装地址，只需安装IDM即可。IDM相关信息详见：<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#IDM">IDM</a></p>
-<p><strong>注意</strong>：该插件只适用于Windows</p>
-<h3 id="Tampermonkey"><a href="#Tampermonkey" class="headerlink" title="Tampermonkey"></a>Tampermonkey</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=zh-CN">Tampermonkey</a></p>
-<p>油猴插件，浏览器最强大的扩展插件，通过安装脚本可以获得许多高级的功能，该插件在Edge插件商店和Chrome插件商店都有。</p>
-<p>脚本推荐：</p>
-<blockquote>
-<ol>
-<li>科学上网插件，详情参见<a href="/2020/gwf/">科学上网</a></li>
-<li>网盘助手插件， <a href="https://greasyfork.org/zh-CN/scripts/378301">网盘助手</a> 获取脚本，进入百度网盘，选中文件，点击生成链接，获得链接后使用IDM或者迅雷即可下载</li>
-<li>网页翻译插件，<a href="https://greasyfork.org/zh-CN/scripts/389784">翻译</a> 获取脚本，支持三种翻译引擎</li>
-<li>百度优化插件，<a href="https://greasyfork.org/zh-CN/scripts/14178">百度重定向插件</a> 获取脚本，支持去除百度链接的重定向，去除广告，自动翻页等功能</li>
-<li>倍速视频插件，<a href="https://greasyfork.org/zh-CN/scripts/372673">计时器掌控者</a> 自定义倍速视频，可以方便跳过广告</li>
-</ol>
-</blockquote>
-<h3 id="谷歌翻译"><a href="#谷歌翻译" class="headerlink" title="谷歌翻译"></a>谷歌翻译</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb">谷歌翻译</a></p>
-<p>便捷上国外网站使用，可以进行网页翻译，也可以使用划词查询。使用划词查询需要允许上传内容。</p>
-<p><strong>注意</strong>：该插件的所有翻译均是通过translate.google.com提供支持。需要使用科学上网才能进行正常的翻译使用。使用谷歌访问助手也可。</p>
-<h3 id="彩云小译"><a href="#彩云小译" class="headerlink" title="彩云小译"></a>彩云小译</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E5%BD%A9%E4%BA%91%E5%B0%8F%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6/abbgboelhkajgikdbjclaecchkneaoma">彩云小译</a></p>
-<p>一款支持划词翻译、整个网页翻译的插件，该插件不用使用科学上网即可使用，并且该插件进行整页翻译时会保留原来的网页内容。方便进行对照。在一定程度上比谷歌翻译更好用。</p>
-<h3 id="AdblockPlus"><a href="#AdblockPlus" class="headerlink" title="AdblockPlus"></a>AdblockPlus</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/adblock-plus-%E5%85%8D%E8%B4%B9%E7%9A%84%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8/gmgoamodcdcjnbaobigkjelfplakmdhh">AdblockPlus</a></p>
-<p>广告拦截器，该插件可以拦截大部分的弹窗广告，使用拦截元素还可以去除掉百度热搜之类的内容</p>
-<h3 id="Cookie-Editor"><a href="#Cookie-Editor" class="headerlink" title="Cookie Editor"></a>Cookie Editor</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/cookie-editor/ajfboaconbpkglpfanbmlfgojgndmhmc">Cookie Editor</a></p>
-<p>能够更方便的编辑网站的cookie内容，在浏览器控制台-应用程序-存储-Cookie中也可以进行相同的编辑</p>
-<h3 id="Dark-Reader"><a href="#Dark-Reader" class="headerlink" title="Dark Reader"></a>Dark Reader</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/dark-reader/ifoakfbpdcdoeenechcleahebpibofpc">DarkReader</a></p>
-<p>这个插件对长时间使用浏览器用户非常友好，可以自适应计算界面的颜色，使整个网页背景变为黑色，该插件在大部分的网页上的显示都非常完美。但是依然会有部分网页显示可能有问题。</p>
-<p><strong>注意:</strong> 最近才发现Edge浏览器自带这个功能，在设置外观中将主题改为黑色，然后进入<code>edge://flags</code>，将<code>Force Dark Mode for Web Contents</code> 改为Enable也能实现黑色效果</p>
-<h3 id="Listen1"><a href="#Listen1" class="headerlink" title="Listen1"></a>Listen1</h3><p>安装地址：<a href="https://github.com/listen1/listen1_chrome_extension/releases">github</a> ，<a href="https://microsoftedge.microsoft.com/addons/detail/listen-1/hneiglcmpeedblkmbndhfbeahcpjojjg?hl=zh-CN">微软插件商店</a></p>
-<p>浏览器听歌聚合平台。聚合了包括网易云音乐、虾米音乐、咪咕音乐、QQ音乐等平台的歌曲，可以同步歌单到Github Gist。</p>
-<h3 id="Undo-closed-tabs-button"><a href="#Undo-closed-tabs-button" class="headerlink" title="Undo closed tabs button"></a>Undo closed tabs button</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/undo-closed-tabs-button/hfigadnahbppkfoomjopnladdokbmnkc">Undo closed tabs button</a></p>
-<p>一个可以便捷恢复已经关闭的tabs页的插件。</p>
-<h3 id="百度药丸"><a href="#百度药丸" class="headerlink" title="百度药丸"></a>百度药丸</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E7%99%BE%E5%BA%A6%E8%8D%AF%E4%B8%B8-baidu-capsule/hmmpaaklbinfllncmnnbdhedmhafnjkj">百度药丸</a></p>
-<p>解决网页使用百度的许多痛点，比如去掉百度热搜（分散注意力的东西）、去除推广、阻止百度推广等。常用百度的人员必备插件。</p>
-<h3 id="有范全网通"><a href="#有范全网通" class="headerlink" title="有范全网通"></a>有范全网通</h3><p>安装地址：<a href="http://www.ufanw.com/">有范全网通</a></p>
-<p>可以看到视频网站上VIP的视频</p>
-<h2 id="高级输入"><a href="#高级输入" class="headerlink" title="高级输入"></a>高级输入</h2><p><code>thisisunsafe</code> - 遇到网页因为不安全而无法访问且没有跳过按钮的情况，不用定位光标到任何位置，活动窗口选择为Edge浏览器，直接输入即可</p>
-<p><code>edge://flags</code></p>
-<ul>
-<li><code>Parallel downloading</code> - 开启并行下载（使用多线程下载）</li>
-<li><code>Force Dark Mode for Web Contents</code> - 对网页内容强制启用黑夜模式</li>
-</ul>
-]]></content>
-      <categories>
-        <category>日常软件</category>
       </categories>
       <tags>
         <tag>操作使用</tag>
@@ -1427,63 +1526,6 @@
       </tags>
   </entry>
   <entry>
-    <title>HTTPS加密原理</title>
-    <url>/2022/https/</url>
-    <content><![CDATA[<h2 id="HTTPS传输的加密使用"><a href="#HTTPS传输的加密使用" class="headerlink" title="HTTPS传输的加密使用"></a>HTTPS传输的加密使用</h2><p>https在进行内容传输的时候使用的是对称加密</p>
-<p>https在进行证书验证阶段使用的是非对称加密</p>
-<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
-<li>默认端口，HTTP是80，HTTPS是443</li>
-<li>传输协议，http是超文本传输协议，属于明文传输；https是安全的超文本传输协议，是经过SSL加密后的传输协议</li>
-<li>安全性，https使用了TLS&#x2F;SSL，比http更安全</li>
-<li>证书，https需要申请ca证书</li>
-<li>HTTPS的加密是在传输层完成的，因为SSL是位于传输层的，TLS的前身是SSL。</li>
-</ul>
-<h2 id="HTTP的通信过程"><a href="#HTTP的通信过程" class="headerlink" title="HTTP的通信过程"></a>HTTP的通信过程</h2><p>作为标准的C&#x2F;S模型，http协议总是由客户端发起，服务器进行响应。</p>
-<ol>
-<li>DNS解析，域名系统DNS将域名解析成IP地址</li>
-<li>建立TCP连接，进行TCP的三次握手</li>
-<li>浏览器发送请求</li>
-<li>服务器响应浏览器，向浏览器发送数据</li>
-<li>通信完成，TCP连接关闭</li>
-</ol>
-<h2 id="HTTPS的通信过程"><a href="#HTTPS的通信过程" class="headerlink" title="HTTPS的通信过程"></a>HTTPS的通信过程</h2><p>https主要在http的2和3之间，建立了一个加密的连接，这个连接使用了TLS&#x2F;SSL协议，它是一个安全的传输协议，它的加密使用了对称加密，而不是非对称加密。</p>
-<p>通信过程如下 ：</p>
-<ol>
-<li>DNS解析，域名系统DNS将域名解析成IP地址</li>
-<li>客户端和服务器端通过TCP建立连接，并发送https请求。</li>
-<li>客户端发起TLS握手，向服务端发送<code>ClientHello</code>消息，<ul>
-<li>客户端支持的SSL&#x2F;TLS版本</li>
-<li>客户端支持的加密套件，比如RSA加密算法</li>
-<li>会话session id，（如果有的值的话，服务器端会复用对应的握手信息，避免短时间内重复握手）</li>
-<li>客户端随机数，用于生成随机密钥</li>
-</ul>
-</li>
-<li>服务器收到<code>ClientHello</code>消息，向客户端发送<code>ServerHello</code>消息<ul>
-<li>服务器所能支持的最高SSL&#x2F;TLS版本</li>
-<li>服务器选择的加密套件列表，比如RSA加密算法</li>
-<li>服务器随机数，用于生成随机密钥</li>
-<li>服务器的ca证书</li>
-</ul>
-</li>
-<li>客户端收到<code>ServerHello</code>后，会对收到的证书进行验证。包括验证证书机构、有效期等，验证证书的合法性验证</li>
-<li>验证成功后，Client生成随机数，用于密钥交换过程。客户端会从数字证书中取出服务器的公钥，然后使用它加密报文该随机数，发送到服务器</li>
-<li>服务器使用私钥解密。获取客户端发送的随机数</li>
-<li>客户端使用这三个随机数一起计算出对称加密密钥，同理服务端也可以计算出这个加密密钥。客户端和服务端都计算出加密密钥<code>master secret</code></li>
-<li>客户端用<code>master secret</code>加密了一条握手完成的消息发送给服务器</li>
-<li>服务器端也回发了一条用<code>master secret</code>加密的握手完成的消息</li>
-<li>服务器将发送的内容用<code>master secret</code>加密，然后发送给客户端</li>
-<li>客户端使用<code>master secret</code>解密收到的消息</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>技术原理</tag>
-        <tag>网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo+Next部署博客配置及注意事项</title>
     <url>/2020/hexo_next/</url>
     <content><![CDATA[<p><strong>注意</strong>：本文只介绍一些容易带坑的配置和个性化配置，常规配置或Hexo的博客搭建过程详见<a href="/hexo/">Hexo博客搭建</a></p>
@@ -1601,6 +1643,63 @@
       </categories>
       <tags>
         <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTTPS加密原理</title>
+    <url>/2022/https/</url>
+    <content><![CDATA[<h2 id="HTTPS传输的加密使用"><a href="#HTTPS传输的加密使用" class="headerlink" title="HTTPS传输的加密使用"></a>HTTPS传输的加密使用</h2><p>https在进行内容传输的时候使用的是对称加密</p>
+<p>https在进行证书验证阶段使用的是非对称加密</p>
+<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
+<li>默认端口，HTTP是80，HTTPS是443</li>
+<li>传输协议，http是超文本传输协议，属于明文传输；https是安全的超文本传输协议，是经过SSL加密后的传输协议</li>
+<li>安全性，https使用了TLS&#x2F;SSL，比http更安全</li>
+<li>证书，https需要申请ca证书</li>
+<li>HTTPS的加密是在传输层完成的，因为SSL是位于传输层的，TLS的前身是SSL。</li>
+</ul>
+<h2 id="HTTP的通信过程"><a href="#HTTP的通信过程" class="headerlink" title="HTTP的通信过程"></a>HTTP的通信过程</h2><p>作为标准的C&#x2F;S模型，http协议总是由客户端发起，服务器进行响应。</p>
+<ol>
+<li>DNS解析，域名系统DNS将域名解析成IP地址</li>
+<li>建立TCP连接，进行TCP的三次握手</li>
+<li>浏览器发送请求</li>
+<li>服务器响应浏览器，向浏览器发送数据</li>
+<li>通信完成，TCP连接关闭</li>
+</ol>
+<h2 id="HTTPS的通信过程"><a href="#HTTPS的通信过程" class="headerlink" title="HTTPS的通信过程"></a>HTTPS的通信过程</h2><p>https主要在http的2和3之间，建立了一个加密的连接，这个连接使用了TLS&#x2F;SSL协议，它是一个安全的传输协议，它的加密使用了对称加密，而不是非对称加密。</p>
+<p>通信过程如下 ：</p>
+<ol>
+<li>DNS解析，域名系统DNS将域名解析成IP地址</li>
+<li>客户端和服务器端通过TCP建立连接，并发送https请求。</li>
+<li>客户端发起TLS握手，向服务端发送<code>ClientHello</code>消息，<ul>
+<li>客户端支持的SSL&#x2F;TLS版本</li>
+<li>客户端支持的加密套件，比如RSA加密算法</li>
+<li>会话session id，（如果有的值的话，服务器端会复用对应的握手信息，避免短时间内重复握手）</li>
+<li>客户端随机数，用于生成随机密钥</li>
+</ul>
+</li>
+<li>服务器收到<code>ClientHello</code>消息，向客户端发送<code>ServerHello</code>消息<ul>
+<li>服务器所能支持的最高SSL&#x2F;TLS版本</li>
+<li>服务器选择的加密套件列表，比如RSA加密算法</li>
+<li>服务器随机数，用于生成随机密钥</li>
+<li>服务器的ca证书</li>
+</ul>
+</li>
+<li>客户端收到<code>ServerHello</code>后，会对收到的证书进行验证。包括验证证书机构、有效期等，验证证书的合法性验证</li>
+<li>验证成功后，Client生成随机数，用于密钥交换过程。客户端会从数字证书中取出服务器的公钥，然后使用它加密报文该随机数，发送到服务器</li>
+<li>服务器使用私钥解密。获取客户端发送的随机数</li>
+<li>客户端使用这三个随机数一起计算出对称加密密钥，同理服务端也可以计算出这个加密密钥。客户端和服务端都计算出加密密钥<code>master secret</code></li>
+<li>客户端用<code>master secret</code>加密了一条握手完成的消息发送给服务器</li>
+<li>服务器端也回发了一条用<code>master secret</code>加密的握手完成的消息</li>
+<li>服务器将发送的内容用<code>master secret</code>加密，然后发送给客户端</li>
+<li>客户端使用<code>master secret</code>解密收到的消息</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Backend</category>
+      </categories>
+      <tags>
+        <tag>技术原理</tag>
+        <tag>网络</tag>
       </tags>
   </entry>
   <entry>
@@ -2040,28 +2139,6 @@
       </tags>
   </entry>
   <entry>
-    <title>个人文件2020-11-10</title>
-    <url>/2020/myfile_2020-11-10/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="20f68acca89b55d321e75b7541b330d160b8eac3a33b5280371fc70830e44107">5b958215de3474a7467406f9b308a4eaf4ea35495365605b1653aadb1e17cc232032195f61d6e9933164ef055b962e7c954ef10be29ff0e410ce183974775a5e1cd3ff47c08ea841cf9d7be4c95b5cb901029550c293817bb4ad0a2937965930963f1f36be9801a66d8c4c22a84939ca2f5724ee4ab07a7213dfa8c44ef40672ede6e97967f3c199cd6a429043d17ce3c579a0aaeac51094b46f1e63bb581c0785b75b8b141285c8b632cb550263e6352e09d228d47b65393cf109252d414f92946ac9c1a3e7d6180c2798dc5789a3cedfa1df8dc0063a4ae38ad465fe5961aecf79a89cec5b6b21a3f6764a37bfc41e75e147d10b596556d6162cfac5472146d2a3cd94ef3fa6a37781d40e7467a4c6fc69aa1b5e85e3419afa862c66ccdef34d60f11b7a70be29790ba9714247d4d38298535c3c79afe1db32adea59525192bc1248194d5b6969ad1770edfc4bc2efdfb2dac48fdc313dc55dc5b3e38a94d61608d03457e6d716ae29c15881af930b19107baf8b1c5d53ce5fa0bfafb3626461dce4434077f1cd9a439effd82cb798d84b94f190c5e28da3f93c2c89b613e8b67f4241ab132e5969f2770369a9e046cf69eda80a54ab30feaf4a8c220a7bff487a331d750dbd276a2d72c759133cd5f2bbb89384f10375fb593162a388426b5a977f1a649ccf63859889451f4de56b46821913be1db6474c8231476d65c7a2e4dbce72514a75872f6b900f79219d1f6357602459d0fe501db2463db1ff86bd7418699a8bb1ad7682eff3e723928e9a059370c8928b774946d44b716a52dc4f9a7fa026ea7a4ae982da5731f230634554039da20d6455dfa7d1ed98f70bbb62e83b16554d0c873a2a5bb5c0b495ff6dd5062604c96515a06ea4c1d27640054d88021b75fb20bd45757bb03e453260d9fbfd15df99211207e63a8ed44e1e28175ac934004c78928674b4a8c69aebfe143cf6a5cc8b245dd1fadbf1d11a33e79d88ef1e43ce2120375d012ce2993a0449a388b05479647952e95639429cb0578ecbb0b610ef12238a6a6625eee2c19329e867d9a1efe92bd0809b0c2eefba6d95ce47873c8ac44906fab95857497f5e8320f44d3fe3803445fd259a70369acb456452ceed8adc7b78af2ac07919906431df15008767b27c11c22feaf5a620dd9e35b950c0ba7746d9811203fe05d777dc5660079fe3c874141ff79d4a0b72819d1d41ddb0f208fd02e22b66f3ad9c296ef5e0f27e0704a25f2a6deb824e2343bf07788820df307c287e21b90f6513e8168923f782fb4b7e882341630987e291e6e265b21c05950502db3f3efc994b81d2b673eb56d9b78295ec17166b699bd6451e4c8dbb0894bae2c49d8dc95980b06e3875fc8d4ab2cd29bc5fe054eedb61bb1186a5e67a6f9ee9bea5503d58113d66785f47cbc6f1b418d7ff6bac1f66ba7d66d4854353b1c1da8358fe7b8cf4b00f46dfbdae6001f4e66a22bfc34d8ba7469b2bf669b1e3cd6d1baccb1734a23fda812bb1664838724f7123a02e41bacbdf5dcfbdac3bbadca3e5886f1ed4ca3c86df1f2043919bf4a9ada2dddedd62a85266d18afaf3fcfc4ede634b5aaecc2442ec070493f9c65a2be790adae3a80ba1cb27b981243cc4a73165f5562d44e790223b084f98a6f2243856e39e72624d62fdf36f7938433825cbfeffdbf50f06295a5af0479da2cc25a8c0be773f3eba19fb47919d3a940198b16e8526f0c6931dd059c4d833e2c0b9ddf0fea04d57e2afd7832cec3d4c7d8cf1d16134a2a9d9f5b81018ff01135f79e63c61dd84ba50d2c01513253addf1cede1963fcd22790ee0ef2281a5ef3ae48d79547e8f0e28c02c458e203b9153347d3127faa51a8268743f46f3ae3452361fde9c415addeef8f4a8a13483f5309fc792a5f9e344086bd4abcebfc0aece3deba61e590b9f300486b5300a04f9a1d7771c6b963f32e73616642f37e2effe1bddca76e1e7c21bfab2b0c958d61da2e24a87e2d20e9415586f0910bf72ed94a94858cbca78ddf25bc503db9cf92b6e8c7f6ce4eff3eaff77f0cf4de3715b96bd615bafba52a5ed48b1153d574289740dd7ad39de384bbe9c01bc6460ee192c12dd60b4b1e50c23d9ba48db8e0d95ddb3b3316c53ca39342bc60a5d47849e63d1088fc43360f1ff7b80bd37fbae107c3bb9f1ec129325c72ecf0b00dbee709ce260bab87cd221f6b00073230f9554c764a86088b33c8bf39e6b2cd02985cfec91bd92dd2ecee607d73ab200b7fd7d71d6b0161ec5bde7572da47b02d3e79ae31a58eccd100d689c038798c1b5baa0e38f96eb8f4be85b45917aa5d00a752ed7c0628c95f480cd61254e11e42adc0704609d5f1fd3600dddd9058997a6448326811efdb077c86a7a29f97330770dadc167e44e2509dd73fc3a1c4d9e9591c9175e5c6fe7dea06f269af0ca9e29467de95c5ca6a75d89962dcdc25a50bb1eb43164a64d2e9a875e97a5f147377d4c1b7370f461c24dc360451ab707b4bf642b21e954a0240a2f19f19e21facba2440f98e087e5dc25f145edebb738c985c02d15a1957317fee6caa324e3015a8929ef26aff02dc390313b586e441488b9341a6475e680e300f75f3c150e009cadcb3973e67be15829403c820701271a1061220518a6bd67a2e2ebf9f7d16ee90c7cbe9dd0ed85e67c500324e3d55f9248d2a86caf201be14cf7f9ffb692069f698a6fd51d4d4da47dc65dff48f4953f892a99b659c383fa1d10ce72081fc4f3dc3d87ea93fe2caf74389c0f435e8d225602215ebf2b889a4a2938ede75642469c849757de4b7f0150fb32ff22b7acf202695e65ab69fffca25822804430368b0f6a178a916d5f6f736d9e2075ff2f300c9656b6e4f9c9c2bf791eb9e568af45c5e5db772cd686611b693dfbcaed757b14813e7f850cbbb76a3f383b11714e6b32b2cb709b83a7bf3d6cbfe5ecc5a77a9a6d7e2f328a1db8c56dd611e0f8e04dc163763d1fe7e3399627d653c5e835a7a99ac887393935aabcd53438322d7c3044588225c6c3383b333495752c98991999f754a62babef17ca864158072f707a283abd42c6934126f311596ebf154eb44af632b93507234bcb7a4453dbb9c259c5f7a9b3db19a810d03744cce141378276db49f8b752a7d416d47dc786be1b1066c84249241edf92aa251dcc190e492e23621cce591c87e17f0bc601e8613eed30ac451e41f24c5b437117172ef04ddd4576fe2eacf25ee1425e75965d38d1224249ede0ec58a0d364dc1ce6040ebfe2c0a94b6ab4d46210e8a9986a39e2f0a2d5e4c62ee3c830a478c42b9d8e2f0b4d5410f7bfcfa136221abf4bd502b2dcda788cb77c005443c6109b5182cfc33ecf3631de9fbeb20f4a0f40cba1f6fd470200426c900211f4bd727890d747e2f2690053ce5fd3bd79a3f7d11cb628fd6f1e9c624d75defaada6a648e4d37a1f9a0ace4998cc5bab65aaaa42de928ea490536815c256d6765f488c97f018d29d251070807e5b4b38e71d36e5d36ec67889832210280256aca23af8bd5e4205d2db98d9be2787d7ded0ba4ef5d85d78711337b2f64818ff8b3cb8ee1221ce830cf36c963ee334bccd0708a66782039a893de38a843e51da61ced20d12e3b58bd6afabd9363ca7571099fcd1700cd1c02c43bb6057249a513f2eac59010680c7548d8f4f34499f74fd79c2b178824d4a8e25227303230e101b3be07fb25b27defab04a4956667d2118167a14d9d184e2094b1b10e4d4a075b24ab75590456b9fddc54463368688664d384bdb64a3b68717a9a784ee628d7db48f0e3779f1226d5cdbd9ea67902b7ec52563915161cfbe9a4ed4b14b54d92983aa1e42b274e81a4926cecfe2038e40786409eaac1a180664cdb481141f1423ef3d9a9b668105ee2614af55981ad7b501d34aa1bf4238166bae9ace3b562cfef1beaeda47109e0752dbe7932152fee33879ea47ad7d1da5171e0954a2676f8ad7d50215fe32f3ede7be90d08341464b49079d53bced83163ef0992dd8b071939f00bf15f8ff70bb000a4580025d3037ae43a9011e489452b0d74dffd2bdc3a112be039e0c86280e012ef8366a30fc7f74fbbf5828cf147e1636f1f76086a0c4ab1f903ce9e5af7f612f000e2020493eb0dc7ba4007fbaa04d4fe85fbf5932d102640e37b7fc7cf91159a9172911214281d27121e45a473b0468d6ce6549bebc43e98b075cdb764b2be857919e9bfb4e47dbce882d511b72a8b927e41bdd3c05878a7919358efdf4ee8c6eebfb15d06b2cb5534f03a60c1b53272f749a76c37e57975eb54a7aed14f5c7550e8750d4f6331f413aa163c60627f15e52dd63a003adcb4e92925cd3c745a9f6fd1cbb8d7985f892770c869ae751b77a1ba4eb4fc0391c7a78d0f32b3f8d4695bc77153f76040274d79f09e5e3dd6a4a8fd33725f8074a828825d7b3e95e35a9bfb59b923c711484f1f3f713729dc3ebc0e7eb7397a767683eab550465f26f87d59392abb17ae729550bfad3744e099206abfcaa4714a59fbdb11ed2fc0996d6ddf61c0c3958ec04416e91cc397b2df5135a3fc5c86c1c0c9ac74d457dd06412e3101d8e7dfed34b9ba299c0912f4971cd0087dcb87d601224f63920c4df45320a45afa7ab634063827202846ddefcf373bd8cff3daac3c56011b3dd84eb0e660ad4c5a7384f39f02bd86902db3c0056ea3e1b9247941b18b7ef02fb08c20e1e1d766dd3202e7cc2fef3b5645cae4274bdb8cf6f8c39b507a076eeafb6d1205006ae972aa54e3a4854c318caedc9aed74d08fbe7452b6bf378b82f705cd0a99b90d8aa0fb8041b47ba758dd2e9dfc9405acbef88524d6ff7d3aea92743ceb559ec1c8516554c289adc5e934b93d1b613b86eed50fed25d73e1357d7bee0ffcee8f0a675e1759e2ab75e4fb3cd66e001aaa2c8b7b8709276b0d3403a46cc98a9131e58dc78f47ed7a9289a17cad0aa0820094199a7155d127ac4c6ad0cfcab48973e1e2abfd682df80824cbd68ba4f18b0551d64876dbd48af5b522e0aac1a848b258450bca3bccd925a2a70ce26b9da73691747f2e3ec4ab0c839bd0445d59b761afea5db5e93d94d24d46c009defaaafb1a25e9b7387d3b7aa12fb6b84955bf4771ac23891674dc45debcb14c7e6bf190fe405d8989334a93ba214d7423ed5141f5bda9bdfc483c5a265129cb7ed25197d07d796ffa737ebcf18fa7306f126fdc23a9fde0e5db7421b00199879058ac47afcd662479ea847c0e84cf888d6a347368ea09fbb92aaa136c520d00d21522b4b7063493f16b2db7cbe9a75c4cee251737f369ec5fbd9f92aacdd560e23a3df42aabb654c07081742f46e8eb03c3ae5a5d64e3794d132963af474973a9bfc073e5b616fd9fbe4ace6a76708b1fecdca3942dfb2c66fcc998d66c5069948df8268f4217a1e747e66c0621dd37928c6653348cdf2183850427648f3c7ffd67ebfeba361f993c5f921591c03e9476486e845edcb2ef3196a0d2a6c66a2d53069e01a86c4d153b377056bf00f27d8173559783a305936b8289e429c0f1266e949592fc461ebaa5177736ec52549b1b9b8facb8ccd749bcf468ffad092ebb36c0b6f6a542a805e0ad3b50d382d5583915b6ee8390dfa58a276d8ea531c096dcc0936e1781bee1482bbac3a76dd86ffb2c54a8bc9d8f39224e3fe0d6ebd695f22dd9be3828c2c49ad64c41003fcc3aeff3fae063f0a43d7bc2bc090687c5b56e98b93c3708e24f95a189e4906c212a23e99272c35b662ad6a3c070ac105c6f331aca17f866d1b84ed1542d64e384982e8bdf48e4ed05aa22477b0945313c2630cb2cc24a2bcc95fe5264eac5bcaa76394023eae04ad6847f62c4b708cf2cccf1a387d119cd930ebf8ce8e0a25e20693733d86f6087df164caeae93634c62a02212c975600ec3155f4fa966fbf304ea9c7bdf77c936275956d2cc15b75ba4dd301ee977e2d78f20610ed53132aa3231e1e1cf93a0661fcf1044738876fe58dc4e8f7ad118024781b184f8332eeedf35b850b555ebeed2f8cf65a2f10a0248633346fd7db4afea731dfd8d89c69725257c33c4153dc4d5999b295f1dc21af2d16860f622a60e7ee42138ec3f77d59f998fe48624a3bae5846b0876a914829847bd4ba7f2af0cf1e67c3e75c82e95963bb9ef17a73d4636bb95a98ba369ff41e0c2b748f86b477f911e12de8f09bab08592398ba62d3b9d67496eb486974e7deecbfac913f5a17f8dd784326bfcefeceb069504af24ac8967a5516e5bd451e32cbfcf0946722a849eb858d7f8bb1d24481c895a3afe3c1bc2f2eadd3eb32b5faf6d14a55d8ff2bec16d48a991eaa3b0b1b5ef9e3f623c3381d719bea18c3c0915b48f5e188804ecd6e02354d093d54dc6bb0e16d619195cb4744cb23096b38d0027b47c287aacf3566b5d53a12a725e5043a969976aa3e6228d02366f3cd1440ac7574bde3e1ad145106607f79af0c798e2e7021f472f2ad2a7641f1532d75c977d03fc8df23a543b21fa0953e151707cc4c8cb4551d74ec42277ff1082296ae32b808bcf87513c05a57e8fe9f56ac760b2df0e6ecd8d96f83a27eddeafd9be4123d8891558bcbe2533e492c8666afad8a88321f5e2f394a42e130059c772daedefb246d02e6a49c44dd7ecb9db86a33a7e2c87d9507fa7dd64c503d519896de0cd49dea3a793b28e5d29a889c64528b163bbd3361b6c1cdde672870022d015889224a87dff624f60b31e10a2452afa29a1d834ff610f48bb797303f8ba9d4d15e9c94fb0ab043b2af991435505eec958a6a15c1288bce27d7449e572196f4b43d5ade14e051c148443c47c9d8ab6b76f98043fbfb2a39c9d329f47e270facf4156e63eb0ce528c892b08608fc0b1e701b4cb5b3b808a01a0445077916681268c5a03f291efe70d43c5c1a7afb1d87aaea988bd66b3a91986e7b8f8d417be2d304e7d548208da44f72557217bd0baf1486b5daefe34e83c00f0ce3a25198d0da9db98d7a615afde7f80da2234e5dc5bb3c037aef2aa66cd0aed14c9846f85eb5390bd6ff9bd3ea8f8abf97f49f00bc5ba62fcf86846d3a710371b465faf08fd1c899069060351e56563a4bff432b17a3bce09c3dace1910fa2f4068933c11d156a54569fca4f19011ef14db029d567a48ee914a5afd6b67de7fea0c7fe4e753044485650d9f529f9569484803898273c389691ca410b5e5af5160bbb85cf7ab35a49025918e05237c082cbcda48620a0846c1271255ee38ef54fab4925fd4c57f5e1a832bc2c4882040c83f1640e20fa6d802826eab086441337da7f0bede24d4b5bcf09dc0ae7e1c063213cedcec87b2a4ceb184b30af122dea41f295c6c56e32f8043c7595c869d469074ac00aa25de93394b77831510d121141fb128c33de6a9730485284873cc1a2f2aed6dfdea5cb1849e89a255f8b4f298216489085b5428489b1aefb8a5bc4448a09e27d6d7588f4a8a312db2f57b7d4bdf434adacc14c9fa82bbbef6516b6540c014855f2b4dfad764ab7ce343ba56c3d5aa315685fd1c9525345d2f0e55bde2ee12c7c47c4da475760d0b001c5c5034dbffaf3ea91b87d19cc02280dac26e6c531d2ac0c6c9ccd4afd11af1947fc9cde6d92846a6477877efceeda38a2ec054b92319e22899aa538f38c6c260ed838a58e57c9f8968940644a44b82a463c45c9f488b801da27936370449603e953f15a344e2f87a8655f6aa50aa39079b471e9675658170fc3d5cb8b89d9852ea9d7fcb9905c7b6d002e2e15e3cb98d0dd214ac5b37eb3d26a53b0c63c6bd6789c2f9f0b454c4bc9c6936bad08a4343f6d0363a7c4965fb1995cabfed7cc91f1a41ca8990c31c8dbe332b0a810ed006e041044beae00045d6ca483ca0d875a7422c35439d2746b7c9795532feb2bdc8aee7e6928d0e3cf9ed9617f5a267f0a4f48cbe63c84b69a2a07512ad3502635681c5e7ffd8dce126fcb7fff35641426c95c6a71a1e51e0774c313d5b3cd62ce03242b9bc0a848aec457671758189d2e46331d35e2a25a4b68871652e97eb6ee2fd28f6726fdc5375cfa1c7733696c971876fccc8e3d50f5440fd9031e55631d73c222415efcc817c71fc1ff0280ce68cf8b439c887424f955f7d55542a602d7c663950cea4babeb8b62389d93e56ddab4f97539518f74c9cc50750bbfdcc522575c101b3c471bd6765bbb4b34614890e8dd7fb0d28803457551a1ba91612552391e800979c3eadd8104bce420b7f87f41e80839256b55ac1a73af598b62228ef7b06f618a425774c33da3833c0ce2421ff4b26a2ce3e942438e9c9c11a61e84b8c1533cc1769590ffbc322871d546f336d6ce55a570a3ad86fa9888fe87599e75c73c6f068ce249ca9c6704f099a8d97016ae3169947ad4f10d81c9847b0dab50ae044096ac8f2c8166300d5c83de26dd07acd5a2a0093cd7793efae092aaf5f4e48098de684fc3f9863cd45e29bae57b0924ab2ca887f9c0d96</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好, 这里需要密码.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>加密手册</category>
-      </categories>
-      <tags>
-        <tag>私人文件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>占卜</title>
     <url>/2020/myfile_divination/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
@@ -2106,10 +2183,32 @@
       </tags>
   </entry>
   <entry>
+    <title>个人文件2020-11-10</title>
+    <url>/2020/myfile_2020-11-10/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="20f68acca89b55d321e75b7541b330d160b8eac3a33b5280371fc70830e44107">5b958215de3474a7467406f9b308a4eaf4ea35495365605b1653aadb1e17cc232032195f61d6e9933164ef055b962e7c954ef10be29ff0e410ce183974775a5e1cd3ff47c08ea841cf9d7be4c95b5cb901029550c293817bb4ad0a2937965930963f1f36be9801a66d8c4c22a84939ca2f5724ee4ab07a7213dfa8c44ef40672ede6e97967f3c199cd6a429043d17ce3c579a0aaeac51094b46f1e63bb581c0785b75b8b141285c8b632cb550263e6352e09d228d47b65393cf109252d414f92946ac9c1a3e7d6180c2798dc5789a3cedfa1df8dc0063a4ae38ad465fe5961aecf79a89cec5b6b21a3f6764a37bfc41e75e147d10b596556d6162cfac5472146d2a3cd94ef3fa6a37781d40e7467a4c6fc69aa1b5e85e3419afa862c66ccdef34d60f11b7a70be29790ba9714247d4d38298535c3c79afe1db32adea59525192bc1248194d5b6969ad1770edfc4bc2efdfb2dac48fdc313dc55dc5b3e38a94d61608d03457e6d716ae29c15881af930b19107baf8b1c5d53ce5fa0bfafb3626461dce4434077f1cd9a439effd82cb798d84b94f190c5e28da3f93c2c89b613e8b67f4241ab132e5969f2770369a9e046cf69eda80a54ab30feaf4a8c220a7bff487a331d750dbd276a2d72c759133cd5f2bbb89384f10375fb593162a388426b5a977f1a649ccf63859889451f4de56b46821913be1db6474c8231476d65c7a2e4dbce72514a75872f6b900f79219d1f6357602459d0fe501db2463db1ff86bd7418699a8bb1ad7682eff3e723928e9a059370c8928b774946d44b716a52dc4f9a7fa026ea7a4ae982da5731f230634554039da20d6455dfa7d1ed98f70bbb62e83b16554d0c873a2a5bb5c0b495ff6dd5062604c96515a06ea4c1d27640054d88021b75fb20bd45757bb03e453260d9fbfd15df99211207e63a8ed44e1e28175ac934004c78928674b4a8c69aebfe143cf6a5cc8b245dd1fadbf1d11a33e79d88ef1e43ce2120375d012ce2993a0449a388b05479647952e95639429cb0578ecbb0b610ef12238a6a6625eee2c19329e867d9a1efe92bd0809b0c2eefba6d95ce47873c8ac44906fab95857497f5e8320f44d3fe3803445fd259a70369acb456452ceed8adc7b78af2ac07919906431df15008767b27c11c22feaf5a620dd9e35b950c0ba7746d9811203fe05d777dc5660079fe3c874141ff79d4a0b72819d1d41ddb0f208fd02e22b66f3ad9c296ef5e0f27e0704a25f2a6deb824e2343bf07788820df307c287e21b90f6513e8168923f782fb4b7e882341630987e291e6e265b21c05950502db3f3efc994b81d2b673eb56d9b78295ec17166b699bd6451e4c8dbb0894bae2c49d8dc95980b06e3875fc8d4ab2cd29bc5fe054eedb61bb1186a5e67a6f9ee9bea5503d58113d66785f47cbc6f1b418d7ff6bac1f66ba7d66d4854353b1c1da8358fe7b8cf4b00f46dfbdae6001f4e66a22bfc34d8ba7469b2bf669b1e3cd6d1baccb1734a23fda812bb1664838724f7123a02e41bacbdf5dcfbdac3bbadca3e5886f1ed4ca3c86df1f2043919bf4a9ada2dddedd62a85266d18afaf3fcfc4ede634b5aaecc2442ec070493f9c65a2be790adae3a80ba1cb27b981243cc4a73165f5562d44e790223b084f98a6f2243856e39e72624d62fdf36f7938433825cbfeffdbf50f06295a5af0479da2cc25a8c0be773f3eba19fb47919d3a940198b16e8526f0c6931dd059c4d833e2c0b9ddf0fea04d57e2afd7832cec3d4c7d8cf1d16134a2a9d9f5b81018ff01135f79e63c61dd84ba50d2c01513253addf1cede1963fcd22790ee0ef2281a5ef3ae48d79547e8f0e28c02c458e203b9153347d3127faa51a8268743f46f3ae3452361fde9c415addeef8f4a8a13483f5309fc792a5f9e344086bd4abcebfc0aece3deba61e590b9f300486b5300a04f9a1d7771c6b963f32e73616642f37e2effe1bddca76e1e7c21bfab2b0c958d61da2e24a87e2d20e9415586f0910bf72ed94a94858cbca78ddf25bc503db9cf92b6e8c7f6ce4eff3eaff77f0cf4de3715b96bd615bafba52a5ed48b1153d574289740dd7ad39de384bbe9c01bc6460ee192c12dd60b4b1e50c23d9ba48db8e0d95ddb3b3316c53ca39342bc60a5d47849e63d1088fc43360f1ff7b80bd37fbae107c3bb9f1ec129325c72ecf0b00dbee709ce260bab87cd221f6b00073230f9554c764a86088b33c8bf39e6b2cd02985cfec91bd92dd2ecee607d73ab200b7fd7d71d6b0161ec5bde7572da47b02d3e79ae31a58eccd100d689c038798c1b5baa0e38f96eb8f4be85b45917aa5d00a752ed7c0628c95f480cd61254e11e42adc0704609d5f1fd3600dddd9058997a6448326811efdb077c86a7a29f97330770dadc167e44e2509dd73fc3a1c4d9e9591c9175e5c6fe7dea06f269af0ca9e29467de95c5ca6a75d89962dcdc25a50bb1eb43164a64d2e9a875e97a5f147377d4c1b7370f461c24dc360451ab707b4bf642b21e954a0240a2f19f19e21facba2440f98e087e5dc25f145edebb738c985c02d15a1957317fee6caa324e3015a8929ef26aff02dc390313b586e441488b9341a6475e680e300f75f3c150e009cadcb3973e67be15829403c820701271a1061220518a6bd67a2e2ebf9f7d16ee90c7cbe9dd0ed85e67c500324e3d55f9248d2a86caf201be14cf7f9ffb692069f698a6fd51d4d4da47dc65dff48f4953f892a99b659c383fa1d10ce72081fc4f3dc3d87ea93fe2caf74389c0f435e8d225602215ebf2b889a4a2938ede75642469c849757de4b7f0150fb32ff22b7acf202695e65ab69fffca25822804430368b0f6a178a916d5f6f736d9e2075ff2f300c9656b6e4f9c9c2bf791eb9e568af45c5e5db772cd686611b693dfbcaed757b14813e7f850cbbb76a3f383b11714e6b32b2cb709b83a7bf3d6cbfe5ecc5a77a9a6d7e2f328a1db8c56dd611e0f8e04dc163763d1fe7e3399627d653c5e835a7a99ac887393935aabcd53438322d7c3044588225c6c3383b333495752c98991999f754a62babef17ca864158072f707a283abd42c6934126f311596ebf154eb44af632b93507234bcb7a4453dbb9c259c5f7a9b3db19a810d03744cce141378276db49f8b752a7d416d47dc786be1b1066c84249241edf92aa251dcc190e492e23621cce591c87e17f0bc601e8613eed30ac451e41f24c5b437117172ef04ddd4576fe2eacf25ee1425e75965d38d1224249ede0ec58a0d364dc1ce6040ebfe2c0a94b6ab4d46210e8a9986a39e2f0a2d5e4c62ee3c830a478c42b9d8e2f0b4d5410f7bfcfa136221abf4bd502b2dcda788cb77c005443c6109b5182cfc33ecf3631de9fbeb20f4a0f40cba1f6fd470200426c900211f4bd727890d747e2f2690053ce5fd3bd79a3f7d11cb628fd6f1e9c624d75defaada6a648e4d37a1f9a0ace4998cc5bab65aaaa42de928ea490536815c256d6765f488c97f018d29d251070807e5b4b38e71d36e5d36ec67889832210280256aca23af8bd5e4205d2db98d9be2787d7ded0ba4ef5d85d78711337b2f64818ff8b3cb8ee1221ce830cf36c963ee334bccd0708a66782039a893de38a843e51da61ced20d12e3b58bd6afabd9363ca7571099fcd1700cd1c02c43bb6057249a513f2eac59010680c7548d8f4f34499f74fd79c2b178824d4a8e25227303230e101b3be07fb25b27defab04a4956667d2118167a14d9d184e2094b1b10e4d4a075b24ab75590456b9fddc54463368688664d384bdb64a3b68717a9a784ee628d7db48f0e3779f1226d5cdbd9ea67902b7ec52563915161cfbe9a4ed4b14b54d92983aa1e42b274e81a4926cecfe2038e40786409eaac1a180664cdb481141f1423ef3d9a9b668105ee2614af55981ad7b501d34aa1bf4238166bae9ace3b562cfef1beaeda47109e0752dbe7932152fee33879ea47ad7d1da5171e0954a2676f8ad7d50215fe32f3ede7be90d08341464b49079d53bced83163ef0992dd8b071939f00bf15f8ff70bb000a4580025d3037ae43a9011e489452b0d74dffd2bdc3a112be039e0c86280e012ef8366a30fc7f74fbbf5828cf147e1636f1f76086a0c4ab1f903ce9e5af7f612f000e2020493eb0dc7ba4007fbaa04d4fe85fbf5932d102640e37b7fc7cf91159a9172911214281d27121e45a473b0468d6ce6549bebc43e98b075cdb764b2be857919e9bfb4e47dbce882d511b72a8b927e41bdd3c05878a7919358efdf4ee8c6eebfb15d06b2cb5534f03a60c1b53272f749a76c37e57975eb54a7aed14f5c7550e8750d4f6331f413aa163c60627f15e52dd63a003adcb4e92925cd3c745a9f6fd1cbb8d7985f892770c869ae751b77a1ba4eb4fc0391c7a78d0f32b3f8d4695bc77153f76040274d79f09e5e3dd6a4a8fd33725f8074a828825d7b3e95e35a9bfb59b923c711484f1f3f713729dc3ebc0e7eb7397a767683eab550465f26f87d59392abb17ae729550bfad3744e099206abfcaa4714a59fbdb11ed2fc0996d6ddf61c0c3958ec04416e91cc397b2df5135a3fc5c86c1c0c9ac74d457dd06412e3101d8e7dfed34b9ba299c0912f4971cd0087dcb87d601224f63920c4df45320a45afa7ab634063827202846ddefcf373bd8cff3daac3c56011b3dd84eb0e660ad4c5a7384f39f02bd86902db3c0056ea3e1b9247941b18b7ef02fb08c20e1e1d766dd3202e7cc2fef3b5645cae4274bdb8cf6f8c39b507a076eeafb6d1205006ae972aa54e3a4854c318caedc9aed74d08fbe7452b6bf378b82f705cd0a99b90d8aa0fb8041b47ba758dd2e9dfc9405acbef88524d6ff7d3aea92743ceb559ec1c8516554c289adc5e934b93d1b613b86eed50fed25d73e1357d7bee0ffcee8f0a675e1759e2ab75e4fb3cd66e001aaa2c8b7b8709276b0d3403a46cc98a9131e58dc78f47ed7a9289a17cad0aa0820094199a7155d127ac4c6ad0cfcab48973e1e2abfd682df80824cbd68ba4f18b0551d64876dbd48af5b522e0aac1a848b258450bca3bccd925a2a70ce26b9da73691747f2e3ec4ab0c839bd0445d59b761afea5db5e93d94d24d46c009defaaafb1a25e9b7387d3b7aa12fb6b84955bf4771ac23891674dc45debcb14c7e6bf190fe405d8989334a93ba214d7423ed5141f5bda9bdfc483c5a265129cb7ed25197d07d796ffa737ebcf18fa7306f126fdc23a9fde0e5db7421b00199879058ac47afcd662479ea847c0e84cf888d6a347368ea09fbb92aaa136c520d00d21522b4b7063493f16b2db7cbe9a75c4cee251737f369ec5fbd9f92aacdd560e23a3df42aabb654c07081742f46e8eb03c3ae5a5d64e3794d132963af474973a9bfc073e5b616fd9fbe4ace6a76708b1fecdca3942dfb2c66fcc998d66c5069948df8268f4217a1e747e66c0621dd37928c6653348cdf2183850427648f3c7ffd67ebfeba361f993c5f921591c03e9476486e845edcb2ef3196a0d2a6c66a2d53069e01a86c4d153b377056bf00f27d8173559783a305936b8289e429c0f1266e949592fc461ebaa5177736ec52549b1b9b8facb8ccd749bcf468ffad092ebb36c0b6f6a542a805e0ad3b50d382d5583915b6ee8390dfa58a276d8ea531c096dcc0936e1781bee1482bbac3a76dd86ffb2c54a8bc9d8f39224e3fe0d6ebd695f22dd9be3828c2c49ad64c41003fcc3aeff3fae063f0a43d7bc2bc090687c5b56e98b93c3708e24f95a189e4906c212a23e99272c35b662ad6a3c070ac105c6f331aca17f866d1b84ed1542d64e384982e8bdf48e4ed05aa22477b0945313c2630cb2cc24a2bcc95fe5264eac5bcaa76394023eae04ad6847f62c4b708cf2cccf1a387d119cd930ebf8ce8e0a25e20693733d86f6087df164caeae93634c62a02212c975600ec3155f4fa966fbf304ea9c7bdf77c936275956d2cc15b75ba4dd301ee977e2d78f20610ed53132aa3231e1e1cf93a0661fcf1044738876fe58dc4e8f7ad118024781b184f8332eeedf35b850b555ebeed2f8cf65a2f10a0248633346fd7db4afea731dfd8d89c69725257c33c4153dc4d5999b295f1dc21af2d16860f622a60e7ee42138ec3f77d59f998fe48624a3bae5846b0876a914829847bd4ba7f2af0cf1e67c3e75c82e95963bb9ef17a73d4636bb95a98ba369ff41e0c2b748f86b477f911e12de8f09bab08592398ba62d3b9d67496eb486974e7deecbfac913f5a17f8dd784326bfcefeceb069504af24ac8967a5516e5bd451e32cbfcf0946722a849eb858d7f8bb1d24481c895a3afe3c1bc2f2eadd3eb32b5faf6d14a55d8ff2bec16d48a991eaa3b0b1b5ef9e3f623c3381d719bea18c3c0915b48f5e188804ecd6e02354d093d54dc6bb0e16d619195cb4744cb23096b38d0027b47c287aacf3566b5d53a12a725e5043a969976aa3e6228d02366f3cd1440ac7574bde3e1ad145106607f79af0c798e2e7021f472f2ad2a7641f1532d75c977d03fc8df23a543b21fa0953e151707cc4c8cb4551d74ec42277ff1082296ae32b808bcf87513c05a57e8fe9f56ac760b2df0e6ecd8d96f83a27eddeafd9be4123d8891558bcbe2533e492c8666afad8a88321f5e2f394a42e130059c772daedefb246d02e6a49c44dd7ecb9db86a33a7e2c87d9507fa7dd64c503d519896de0cd49dea3a793b28e5d29a889c64528b163bbd3361b6c1cdde672870022d015889224a87dff624f60b31e10a2452afa29a1d834ff610f48bb797303f8ba9d4d15e9c94fb0ab043b2af991435505eec958a6a15c1288bce27d7449e572196f4b43d5ade14e051c148443c47c9d8ab6b76f98043fbfb2a39c9d329f47e270facf4156e63eb0ce528c892b08608fc0b1e701b4cb5b3b808a01a0445077916681268c5a03f291efe70d43c5c1a7afb1d87aaea988bd66b3a91986e7b8f8d417be2d304e7d548208da44f72557217bd0baf1486b5daefe34e83c00f0ce3a25198d0da9db98d7a615afde7f80da2234e5dc5bb3c037aef2aa66cd0aed14c9846f85eb5390bd6ff9bd3ea8f8abf97f49f00bc5ba62fcf86846d3a710371b465faf08fd1c899069060351e56563a4bff432b17a3bce09c3dace1910fa2f4068933c11d156a54569fca4f19011ef14db029d567a48ee914a5afd6b67de7fea0c7fe4e753044485650d9f529f9569484803898273c389691ca410b5e5af5160bbb85cf7ab35a49025918e05237c082cbcda48620a0846c1271255ee38ef54fab4925fd4c57f5e1a832bc2c4882040c83f1640e20fa6d802826eab086441337da7f0bede24d4b5bcf09dc0ae7e1c063213cedcec87b2a4ceb184b30af122dea41f295c6c56e32f8043c7595c869d469074ac00aa25de93394b77831510d121141fb128c33de6a9730485284873cc1a2f2aed6dfdea5cb1849e89a255f8b4f298216489085b5428489b1aefb8a5bc4448a09e27d6d7588f4a8a312db2f57b7d4bdf434adacc14c9fa82bbbef6516b6540c014855f2b4dfad764ab7ce343ba56c3d5aa315685fd1c9525345d2f0e55bde2ee12c7c47c4da475760d0b001c5c5034dbffaf3ea91b87d19cc02280dac26e6c531d2ac0c6c9ccd4afd11af1947fc9cde6d92846a6477877efceeda38a2ec054b92319e22899aa538f38c6c260ed838a58e57c9f8968940644a44b82a463c45c9f488b801da27936370449603e953f15a344e2f87a8655f6aa50aa39079b471e9675658170fc3d5cb8b89d9852ea9d7fcb9905c7b6d002e2e15e3cb98d0dd214ac5b37eb3d26a53b0c63c6bd6789c2f9f0b454c4bc9c6936bad08a4343f6d0363a7c4965fb1995cabfed7cc91f1a41ca8990c31c8dbe332b0a810ed006e041044beae00045d6ca483ca0d875a7422c35439d2746b7c9795532feb2bdc8aee7e6928d0e3cf9ed9617f5a267f0a4f48cbe63c84b69a2a07512ad3502635681c5e7ffd8dce126fcb7fff35641426c95c6a71a1e51e0774c313d5b3cd62ce03242b9bc0a848aec457671758189d2e46331d35e2a25a4b68871652e97eb6ee2fd28f6726fdc5375cfa1c7733696c971876fccc8e3d50f5440fd9031e55631d73c222415efcc817c71fc1ff0280ce68cf8b439c887424f955f7d55542a602d7c663950cea4babeb8b62389d93e56ddab4f97539518f74c9cc50750bbfdcc522575c101b3c471bd6765bbb4b34614890e8dd7fb0d28803457551a1ba91612552391e800979c3eadd8104bce420b7f87f41e80839256b55ac1a73af598b62228ef7b06f618a425774c33da3833c0ce2421ff4b26a2ce3e942438e9c9c11a61e84b8c1533cc1769590ffbc322871d546f336d6ce55a570a3ad86fa9888fe87599e75c73c6f068ce249ca9c6704f099a8d97016ae3169947ad4f10d81c9847b0dab50ae044096ac8f2c8166300d5c83de26dd07acd5a2a0093cd7793efae092aaf5f4e48098de684fc3f9863cd45e29bae57b0924ab2ca887f9c0d96</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好, 这里需要密码.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>加密手册</category>
+      </categories>
+      <tags>
+        <tag>私人文件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>个人文件Pass</title>
     <url>/2020/myfile_pass/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="8608b88ff653a61dc3bbded3d090f37d3d06bb1385b1375b402acd8cb3cb1d4e">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943799b3dff6da3d4af397de76dd376925f8b5241bdfe4bd828d7da6cf0cfe836c861462b2dfad9f81727afaafb29de9ebe9e2b12974ecf1674b1103003a0f418bc8a0fe54adae68b6e7cd096581a7edd0c22a01242e8e07f46a1005f92d9cf4707b9f381a57d9505e118ad29a8208de172785c47c6b1f12338199b377cccaf555662791da4f6f1b98a8a407043a86003c465edbbb8acbf4d97f76c0015137ea61113de63e7fbda8ff00c6903e8ae81a84150fa444f05dfe59c9331af1ad257271ff8ca7fbc815d35645b7690f513622e2bc170f30cbba7faaaa67176b9997c4557d9db33e49f9ed4a730aa8c97bc60f6eb5ca2a675d6a3f799a5f7da940f24391bd9f15298aa43b20d2d3cdf686dd39fbd9059eb11d8616c84a28f503bec24b214ead55971c3c36e1b0d3a19ccfcef77c554ac327eaac78946506c33a5b5e9b1a9dcc7bdbb8e5826fe9653bea1b9a94f1696bbb7721c1ecd5bf7dc865d2bcf832d6c312bbcc07c6a6aa2bd324a462c8cb5157d4d1fa01cb37e5a4eead990c97af38134a256dfaf807784ee214e0df4e1abec27142ff53d4f268f59d0c2e611791f50c3dce7da944f7a280e035655901cbf696c6be8d1cecc52d8807e1c0eba5809298742d120cb4dc25c89a4c31fd0cafb1f7890fb57f1c792967a70008c4c5c5c12fc13cb7245616b2540ce834ac665a2816f80d2b608dea75c0f1044b1ce45a9b54e55aa3c560910d746ef09a695388a6cca1a823441af49eee57406c5b6d485c85fbfb622e01db5dab3b2afb3197c78247a803dacbf816eb460c24a4d9befeebe7f574863932b1439c922c81616669d182aa06d9d3874a8a6b2df362744ea4288721fe18216849b109df0713e8a40628fae3f4f7a478266aee5ed13684c763f596e5d58cb3aa8a29dd3b9c98b377d27dfdd579a5e6c95e8209d7470807f79c16ad3342e72e0424ec63f39fbb548425afbd6dad72961e28488469c93eded7854d40f37564300999d77c45064e52c77d9db9fccd55877c790d840eb486154e4e30aa1395d508031fe033b0842c25f2e324c3da4d4def51c4d5778fdde80c3017723b71f1f6e730ac61f20c2e26035bcd3b3b9d799bf06595aaa7bdb2ee616884dd1206260b1551522c2c57b1b4c021a3ccf2ad6811344e18267c5c854df8f27da29e60e50e8bfdd755e635f494224b87ea79719a987ec30d75c189feac94c90110b04492bf091e006c9d9d61f507029c214ba22106213c2ca73d0661c32caf379ae5dd8b493af96b77eae542e4c34e123eb3f8ad8c56b5a3d18792392b77db0b0b9bbd19cca389d17a19ca958a0373d3bdf66d3af3f3328267a069cc0e6a7c5ba4e5dc92f3682d691af8deac3581a3ce905c08fdd321aee6ca5c7a4667f3bf3ee181fb40ef5ced0eb567b4089b1babe0058e7ff06937d74362e6b4436fd483ce1202ee24365e100cc4883dd5a519ca85b54ae33d47b5eaef467495e59f47c5c9ec283b66bc838e279de451620d331ca7f68e2a6863b8b412476a6e25fb02768e2a48b134d0c634d82001c8bd1c04bea050de736f2e8ae4b4751fc0e56d63b1ee2794704af80d4ea4d88ba5242811d6079bb80e2e81ab9b5b3b8898d7c8a8e16569f6251470dc3d6a3ee9f5198160e5782c72c28428375a316b7c29b9b3caf3c8119af3e083af2a446f7800ef22f5f14ee7e2b11ee7073a240e94720fb05795d59f5bd027c866cb3e44a6296f8ccf9a21ff91fe7f1c6473d27631fc216fa244871fd7eef6d434bfee008ccd0c2d07a1f240616aef5b16016f9b8bff9bb5f24f0c7bf3445a335fc7bbc2e88ed59f5c68937d41a3ad94a49b2fe79b1303877a986ca55f4799cff98231df551c61a8e1b237986f0a5821b45298d28ab7b78f2be63eee3d1e1b41c805c8e0426a83b253971b075b2a0ea60066cf69aaf9eafec60c6c3b50a34c16d3106bd5992ee0c474c51a0624981cc0cf2f07292e497ce15332cf084077c23b0f6a6984d5e820a36f4b674df7842fc8cc147efbed23047a1dbd1fe1f369298653a357443b4f12dfbee40242461e002ca1f3deab2dfe20500de96a7ca4f781a0dca97c24a02fde2c66e966483d6545c729979e9542ff415f8efa0242a9a227e6486e645a84cfad14f39cfba30670145b0ad1889aec5c7a0b6401c5954972642d5185719beeadda7992e720551b7cdda2beb5bc3027bd28614899474683ffeb302704f47bf698b2b53d3c495eb00776e945d8200fa38cfcfa67bab9b25b07b9775da4f853d4cd8fced316e52235831b9b43b0336b3d991611f5b8109e1b905277e6be3a09306fbc1b8af828f4c4db075476f6dd078c6bc8a0c879397f9376bf0f1057389626608a195577989f94c461850fdd988599feb561692ac204461d84f4ae0fac7653930286fd1da097281eb3bb540d2bdddbcd29939e2c0403a791e9d1078aea819cb5131a1a511c9366cf4457cc822c7486c5ab9f9bc083e92bdcd83d102c5d1716f4aa0e5fee48345abae133b0236661f36c599af08c6f46f698e8865c219fae5cfeb2664b2360a92b96ce14c5ac207aba9a4a7ae09e5ccb206d9938dedcff65dcf3f9d12ccc12e6d2ecc8b6aa40a62902783168051386273c53a20f5d6e2c94227fbd9f72cde1c14cb5a3b02a1c928df0a71a69578b38dee5c46fc94665aa88ffaea5b6f165ad4a5a1be6e711dfbec458ac01979f186484095dea9c073892cce3763ff0ade8722d40832f463156c57b1ef4c943ce2c99052fdf718034073a45708553ecc95f0705b0bee40b90013f22c6a8de1d43bb075e754e6dfd2ca19b4482dc6dba571d5952aad75907d0ab65c88f6418cb0faa427c886e80c238fe48859238669f1f9d2427bdcaf38f02aef75c9597c1d0233f452c798c3b73f8dc85d584f36ffb3c06324863795d3f06323b3b2e6e94ea0e3413dd327eb3d7d2630c4f1aacd12daa0309695f611409898f577cc5361581d5b2751e7d2bb047250d33044f2cd225598f28042e70fd19e4ca5868dd32dcbc98ec88973998a7a2e9840ca8d059ebbbc4fd6c6fa8c8d6711c77dbb0969570e8d71a00e52ffb1f62639679185491e58797c53ce539cfadc069830c7f7024ace7530da98093a251287c7428e319b891c45f94030d076234e4bba19dbcb6838cd2cdf449289742cb2fb596665fe994761a8f9fb0dffed3bf4e21b46d9fee985e73c15abbf41f45c9071c49ab5124f3417348bf54c28f93750c99cbf47eea2745bf8107bbd48c15a085d469d2cbede6b145dae09e53267d40940d905a96b704785329eec7d83ac7d7edb86d993098a72292a21991cad11f887a90f9e70eabeeb298855b893e893c20a3b5499025094f32eeb862b5794cc2e62fd0135f8ee3d8e7de8e47e3a756c1c9fe1dbda758275b33808a27ace0e10dd47ec676f5ddd47f069f1ddd9a209d1f86f5f8dc6922af898462c07896e941c2194815154b9ce3485080c216c28bd5556171481f0c4de7fa3c00280b8495f6eeb0d7a205862ae1fc10eebfae13c90b424262061846b1ec4d58e0ba1c7d5c9a59d6c86064383186472a099f788705d37aaf7ab90dd70d26e36776fdc8318a3ce72a4cb0962bf500633daf9406be57bd28e8921459a6e7e2d0276085044d1bccfd66565a6563ec5e055096ef4ef570c6a6cad770777b8dd91a738e1af1a8e93fd3879a69bc7635ed3541bb2e4206d77db2f4646bede87eb0027e07ce440ddf51281d9eb968eb2e432f6cd21a361ed6a42084ed2d47bdf0be4daecf511a0d510c5aa224a514bf7c41e71168481525848759b95a78a52e5d47030727a3ecd1a93953e422b13b398967ceca19b2150a5b04fc5eb399205b31a9670fd29af19cc5b080446c14d2da88932b5132b4496512fb0e8e8b301a457006f96bfb793e109f0371efc6700ca925254a3e63f418c3dce07002bc84dbc08f09b565665baabf07a628e164b53d4160a939a0970877356e8ce7fde6555490c62eeb1f312e8bf7e22fe3f761fcb4778cabae9816ddc68df9db9747dc73a98cbcc36f82f44657caece9d22195cb4a7a7b2034ed33dbbe2f033d1bc884850f3467f7944457f9c5b67882746c3f1de928356a6737e97138fa5e0dce4068e1ac96beb2f86bb73800e2ccbfba87e0c4e79940220ecd1f6ff1530a90898f2faa82a0e806fa6474af57cc597db592f0c1d811ee296fdf0457d50a845708fcad96decdf54ddbf1a005bd249efe6c6e6e6b0e46eb01567a566ca0faa7ca44d8723c3195a685acaac5c54fb87e2f46d656a24aaf1b8b2bb8235f19d6dc646151c0913ecb2ab1a6f36f0567b31a2d0978297f6674d5f14dcd32141b8192c3c2018c820960189ce77aa9fedb62fd535f08ccbc737e6643e94541e5c67bbe6b8557275f7d40b1eca49b52913305064f2d7e162c8697b0a1506b0b38a3d511bc098b0e5ea65e6d1234e21636fe612919dffec7b8ce211c820c6551b683d0bda5ed3fc8b15b0c04c5edca0351f6b7a10002a88db5af8c1a57cd2de862dce5944feaa0b76ee24050f0fa3206ec57c0d94f5236583e6c26b1a6dbd2a0efb6d643ec77ce95ee38f3a5bc10950d7722bc0bddd27981f33c542292d15219eb85a4b6d174a7e29538d7a3b343975186d17804e0d9c77495fe533ac76175e04bcc4c80f66a13dc6e7fbb68a7fba778475d0932f8cd3d6219793f8f972bcf9f79b0d43de544df2728ca24cf5c1f13b51dcc7637b71440b9729a52af53d473314e3d9028d647328eb36ae0abfaa13b42d07f1639130f454135710a26a592837ff21add0b142cde9e970c13e28e4e7c83cb18094cab692cbe0ca9c919964315b1a1a1cf21c51b751134c4034fede0ae1efb782d558df2a8b95ad3b7cde87713424d38e43a1f2193a3dfa8a69e113f7e2f300e9e64630e80be880d68e818e6898f52a2dd7bdae8dc6b920f146be9edffb5b76d6dd0cebb01525b833299027914eb2e8a06f6b55ef8c21e98bb4d1c45c9a42fef5685828df373b9f6be29dbf7799b547e1dbe6455ec0818640f7b72dcae22374df5d5d1f81275a279412e1f3faa360bbeb0868914f08b944e60b0a569ce91ae4299654b0a88cee41f7b2e310072b0e47adeb</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="668e4eebde8d7fab8aefde5b7cea787e85293013d62e35833a620e00a6708e93">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943b76d0bf56f17f5495a4a0d920589b7df730d31cfe21e2c90fec590c5fe06ad12dd91ce73b006424dcc4b660ad8bacb20f2920ce0bda34fada0aeb8a7ca9500e010c3594317924c9b0cc6985b13a48e33942003b455c777a281da14db30bf0367a84714c15be33274a6b14a9b2f18268b0a8db9cd68f4ffe1f8e8524762ed0bd6da381fa7f778f986537dc3dcf7e1fb1479462836c123272b29eb1bcf66426d1bb1a09966457f8cff607a89033e58af1deb97c0ef510bc00ea0c2bc218ed02ee717aa9e57ca155f58418d6d4793258337263b5be940d968709dc21750c55ea79447450ccd284ad20d294c9ce29c08c64de84d93e968125d8d7a00ce4458888380fe472c395b6da5ce831d97e1fc243be4b84011bc39035d0626f3bc9af8dc68db5a7356ff5e9d210af212b0f7c97dc9324e62b74edd684801d19151238913b61126df942b117c2c0aaffbef020755a2c14f3de9a504f52671999ac379a3ca7b4b130d94536a6fb7e3a615916d363cde895461dab57b8b6c6e608387f2ae6f421c1d87e7660732832e314e02cc9ab235a49544824c688160d59f5af78f8c0196395b4e2b468b215e990ec42a71cac6937fb492796ee1aa906636417fe359b130f46d9f7feae3201ad13d5c7b6e3738e134c90a234283a7ae3d808b293e8efca5723bc2fefb6561ab95764d01c163189faa3f25e6b4d735895648ff5890a0e26bbca6ddad446a997e00082044fb6c4766a5982c127585ba12680c96cb810ee3a50ad7b8a2cf5a81f6627eaaa917770af94ceb00391064b7ba54c39a8351a4024be429ef07ffd880c94e28a93d391c011fd12574f40726bbafa81544a24e5d9553021b96f91a0b773b8eba381485384a4c0d1113663d3a7b95d48ae2f1b26d9e444650cb7634d9780da72854a35fee549042402d6b31336a93d65c8a80a3b993758e90b1eec36349367949ce9580d75b928d8c8118bcc16c3a35c39a4730333fd56c665c3b8d29610ee7cb59b2f8c9dab36299ab5b85e4697031dd0d44a97663f12cb2c44781a3bb78c8fa8b25e95fa5e44396339df7f3fb4e5c41e243a542fd6dc4ce7ab29e0c1c3e30dc4cc37f1cc9a247a3240d02cb1366859b25179dcbd672a38ee12dc58ba63415ac00aea8cb31c9f89167547a736ef01e5cd97545be172d31575c55a2e84aeda1b9c2f7809b489dea1beb315aa5bdcca0ec5935671949c011489318befbca6fa461c389b4e06d7a41a73e2bcb6135734c5e0677e8ccf559935c02a774ca0480b9e13a7d4bf6d6c4fc56d7fa25b7a46bbcd02b394663e27d3221ce6f0c67015666e4564a1c3cd930b5affc9cbc98df32892ec3bf89f885d10ca0e417b683c813d191531d163512ac18ec208d102dc89388937b81b816c853be849847769ac6b2e2553d0023c58defc9a9753597b7dc4fe3c0be8d80810bcbdef0c219c924b6478ec207ed1b78fc3920fe06472f3d3a8efe4b48f1f401deab96aed42cb4e806599d8b77d94bf62a323a1b1a207ee5ac05e1371e15cf811c2171525a020ff206f3da314419d4b50bea3f0d3070d537dd06ad292d2287573114e60dbd8451beef7a0b0c021e38b7c1fbe9920333826d0021fa2e2a9b53f1a8e8454f2d6c12608924e09757952f848f7317cfc3728e63cfe97558d6ee94a322df5505c0ce6eef356a3c7b275d7b8bd761d22120df05b0d0f386a001fea9eb1daef06327b4eb7736e358a403cf55792b840b5de9f67c18dd8f4b2785d5f3f5f90b7e6b578513fe7362e538a124d396c8603fc5426d7941d6a18a8a27e60b1acc5d681f6e030fb3a12d57735f38352e0605737973005e32f9b3378c1a0fb2b9b9faa649d10e22dcaa55049808473012cda66f8b223959a14f28d908720e039f651ca5357feb4ef38710b829761923090c993d6e93f902c6182ee81da1ad738cf6987f114afb481154e89dc39f9e7bb09953dddfc52b55e2d4c224665bd5e8b73df53165fa59ba89d62f4b9ee715c2d58666d8204ea586400542aac6dfd07e7423831413220ad2c2fd226a04e10cf0159cc43688315ae5a1e38dcc5e249af7c771dea2029eaded64b5af619d0989eaa769992e1505a5efb4639d6dff7dd0d21e8814d904ac2de9e770665fdef2bf17756df5a30332e94abac428684c5fe9bd093858c9a6cb41dc9b10ae019b9d6aae8817f2baaec758eed2b4c6c1484f196c212cc9f2707d498c318700d5c6e58d24727640294b1746a6d16a719e18315cb662c2933b4cbef4120248ce1f1ed7e093c84b174a2f5e4921d10fa428badd1d2535acf97c9ef1fbefbd7bed0b777b3dc362ef52639f03021d6dc507503d993449a5dae9b1f2ed1320e7d394e3ee35252ddc27139daa69712ed7cbdae8fb67489f1960bd6ac3ccbaf8b1d68a58311120607c0794b992c772df15c37a665de4b02c33b5b74439aeef6ad230db0d91b3a6dbca8929c0c84f97451407f1071d15b36a81794d052200fc1cda12b5e35cf26bb6384392838a8d614b52af79e4bf73dfe1b83f2aa7f52bfbdd3f36bd6f76c251d3167d3981d57eaec5ad3b7068b11931e120d12b3ea1b6a6a6264dae26a6c4aec7a44c90ef2b37f055c660fd9030cad090a956c6237dce95a1594cd041bd4f121053d180b86e2b02422318da9ebf5f9bae74ba84dac9c7b5ce82299e2d502b66e42a509bd3e6288b99ff95734f42e892b5a66be0db7d520f47c800b876ed27e261aff60b920afe472d515670f72223d0e30ddaa394d100f3517fb2c1a060f106fe4972ee6605e0182a913abe1aa85a77bd25eb531ff49bcba60b29312e2370876ea452c1d10d613e9c7ca8d482446084e3db0414e7f4fed6a92d1a388e00c62819fbbcf07466dedbe5023b3f2952c81fb7c5c08f3cad109d314783504cc5674c0bb4eb50e539694414597e5c8466552285a770652c124cd52afa084f26cdf3d7af9d305beee4b071c3857d51d8107678d6b7856f422e9008a95ed111b0b59e78489afe3db72072c1b04bfb2725777a6374d223c3648506c70099c7b5cb97b0a92af767f3a462dba35a2772d604a3795b6c96b56268aadaca4a9a49186ac86822a61510fb4dc987c534de32fbcf46a159c3758527acdf246bd13f99ef7153e6732b3f867abde966acce92b8e305ff3a22f9f7d9d0ae5f47588ab3afa33346288841fcbdfba969ffefe8db649286b6853a8c7770db52a3fa59d8c0342242bb815a2f63759dcfbf160b87e0a3f6220fd16872e2fa8ee6463bb0f80ebe7aa0c7d9a31e8612cec12f126b5986a361c89d33f61a88dc146ad4c1772b32cdaa1d106f0f476305be5d6117ba0257440f8248dca522333ff170ca6325eb67a9d2ac00390fdce80995c9a020ae459c0701b3210b68a5943babcd6721854a59a85a7acaffca89767edc94c6ee9ddb6b8fd04797e0ea5b936a78f3f35e4cedcf9d843c860dc530c1155cdfed9ed5630646438cef7457cd0b9e43ab4cb8b5c53f74ccf039bd9a57b085a6993a5b811b8d7b9c1cc878c374e2f7db695827011d88d5dcddaecd66af0e470f27de1365a0972f3b23398d73f1c26ada65d86ceed2ce81a43055a2006c885415e29c3663f0d79c5bf95ec2becd54949e3ffc231d3240bae529251bd8b63e2297ef295ec3179d11463e68f7f2d41be250597dc5849bd8ce9aee190d01989ebe87de96e13fa3d1118cf2473af33301d9150ddfc81c520370f327f8592aa122d2c97b02f7d42577646341b3082dd464841dc0fbf2e9156ee5da189c6699baf0708844bb81bd105843115b96ddeb4e6fdb22c5d690eb85fd4f4ae2777d8e615cc6224bd3d3286f4acbc34f88af1d5e36cbf4c1c63055e02c6ba38f2d66bc121ef878f47a22a9931e1783b5319347f5aaa196224a85853c8d01f77f65a0675598ef1522c65229317a38fe2ae2fff70539602ac5ec1eaae2bef1ef390d23deef6d1e63f93a2663266432adc7ee69e2546d4988ee7838b5ecd7ffb2953df653e1d08aee15add5b57f4977d6b19bb3a7dd6cd290d483bc2450552ca29e57d793044ad87ce480648f12d807c984648bb9ffaa5d09c2025fe62dd9a911998c2f57a6bddd16a4a80a56d300c445fe4e784791a50f4e457653102c25636d87822e90adfe0e5579d6383da96fc252c27ae9a8fbd9e7d33ecf611b150f5190adbc07573c4c0e210c268e16ad73dfd32a88ee65df849f4c84723b9400623b55580d86a71ece380f49a02a6aedd7d5cae7e3731cdc9594e6897a0dfa9968220619eed2a09010ef0150da37fef472a4ac395f813aed630c190d97e891f9ec613d44852cb11d255d9efee81647d367ac416f6d97544ce62809d37a3754388f3ca0ded6efd3ce5a5a701e45cc2df59ba1f020aef6a2935aa85060d1d8801807ed9f770ed25adab88052c9338a285b6d49bf0ff729e95144a3f9b0d807c80a1db85c2049f1d9bcd4693595d51d71378a51f48c4931f22c813d30372b57fc70352096a1c91694d762f185aaf3042d900c9c71efb5c67f8f73ce558dc200ade26de6ef03dd752ad6da816e9315b99a8b759b941e54f8c7f66dc5b49a14a3c74d52287076b6014836452addc3f4f6d277277b8214e6e8deb98e820a180246ad9e3ca109d1e571f26c4b6160f5e1c0e7fea84544c7fdbcba8a8afe033a8690f4e9d7b7d11b5112cc8257e62e068bb8dd5e5c94da18a3f961e0d9ec909b21efe364503f16021f504cc54ceceb1b64153d30bae53046ca5dcfa24ab1be271afa259873a8d543f934b4c04cc3440da19a405ea106d0257a1fc0caf529587313b98fe82de33a1882b1ee0e4029e523bbc2dd1710855cd3878c490cac0ffa4a1dcb7978e0657964db6dd3934b199732a10f35bc078aec86aea1933e7ebc4bdbdc6f7e5f9a3f11d6cd6cbde4f423586521ba952342778838d19f5d4bcbc30cbe96211dd5a30cc080e85987643cd30e058fe03f90287e95b8c734d175129f7b1dfcaeb6b37f40d626975bb75f26cd4481a355576ad33cbac94574f582fdea27e43f94963ac0bc6f99c8a350f014ef290defd842c292b0067a3d2c0e5ab2ce42b459213de50ca10000d1b745b0347e710b</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -4077,6 +4176,65 @@
       </tags>
   </entry>
   <entry>
+    <title>Python3.7 新特性</title>
+    <url>/2022/python_3_7_feature/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.7 发布于2018年6月27日，这儿总结一下改版本引入的一些新功能</p>
+<p>官方新特性链接 <a href="https://docs.python.org/zh-cn/3.7/whatsnew/3.7.html">Python3.7 新特性</a></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处主要介绍在Ubuntu下安装 Python3.7</p>
+<ol>
+<li>添加deadsnakes源<ul>
+<li><code>sudo add-apt-repository ppa:deadsnakes/ppa</code></li>
+<li><code>sudo apt-get update</code></li>
+</ul>
+</li>
+<li>安装 Python3.7<ul>
+<li><code>sudo apt install python3.7-full</code></li>
+</ul>
+</li>
+<li>安装 Python3.7 的pip<ul>
+<li><code>python3.7 -m ensurepip --upgrade</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="breakpoint-函数"><a href="#breakpoint-函数" class="headerlink" title="breakpoint 函数"></a>breakpoint 函数</h2><p>内置了新的 <code>breakpoint()</code> 函数，作为简单进入Python调试的方式，使用 <code>breakpoint()</code> 函数，相当于设置了断点，遇到 <code>breakpoint()</code> 会自动进入 pdb 调试模式</p>
+<p>内置 breakpoint() 会调用 sys.breakpointhook()。 在默认情况下后者会导入 pdb 然后再调用 pdb.set_trace()，但是通过将 sys.breakpointhook() 绑定到你选定的函数，breakpoint() 可以进入任何调试器。 此外，环境变量 PYTHONBREAKPOINT 可被设置为你选定的调试器的可调用对象。 设置 PYTHONBREAKPOINT&#x3D;0 会完全禁用内置 breakpoint()。</p>
+<h2 id="具有纳秒级精度的新时间函数"><a href="#具有纳秒级精度的新时间函数" class="headerlink" title="具有纳秒级精度的新时间函数"></a>具有纳秒级精度的新时间函数</h2><p>现代系统的时钟精度可以超过由 time.time() 函数及其变化形式所返回的浮点数的有限精度。 为了避免精度损失，Python3.7 在 time 模块中增加了原有计时器函数的六个新“纳秒版”变化形式</p>
+<ul>
+<li>time.clock_gettime_ns()</li>
+<li>time.clock_settime_ns()</li>
+<li>time.monotonic_ns()</li>
+<li>time.perf_counter_ns()</li>
+<li>time.process_time_ns()</li>
+<li>time.time_ns()</li>
+</ul>
+<p>这些新函数会以整数值的形式返回纳秒数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"><span class="built_in">print</span>(time.time_ns())</span><br><span class="line"><span class="comment"># 1663496284.7790382</span></span><br><span class="line"><span class="comment"># 1663496284779068663</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="新增-dataclasses"><a href="#新增-dataclasses" class="headerlink" title="新增 dataclasses"></a>新增 dataclasses</h2><p>新的 dataclass() 装饰器提供了一种声明数据类的方式。 数据类使用变量标注来描述其属性。 它的构造器和其他魔术方法例如 <strong>repr</strong>(), <strong>eq</strong>() 以及 <strong>hash</strong>() 会自动地生成。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass</span><br><span class="line"></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>:</span><br><span class="line">    x: <span class="built_in">float</span></span><br><span class="line">    y: <span class="built_in">float</span></span><br><span class="line">    z: <span class="built_in">float</span> = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">同一下代码</span></span><br><span class="line"><span class="string">class Point:</span></span><br><span class="line"><span class="string">    def __init__(self, x: float, y: float, z: float=0.0):</span></span><br><span class="line"><span class="string">        self.x = x</span></span><br><span class="line"><span class="string">        self.y = y</span></span><br><span class="line"><span class="string">        self.z = z</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">p = Point(<span class="number">1.5</span>, <span class="number">2.5</span>)</span><br><span class="line"><span class="built_in">print</span>(p)   <span class="comment"># produces &quot;Point(x=1.5, y=2.5, z=0.0)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="dict-对象正式保持插入时顺序"><a href="#dict-对象正式保持插入时顺序" class="headerlink" title="dict 对象正式保持插入时顺序"></a>dict 对象正式保持插入时顺序</h2><p>dict 对象会保持插入时的顺序这个特性其实在 Python 3.6 中已经非正式的出场了，现在 Python 3.7 中正式宣布成为 Python 语言官方规范的一部分。</p>
+<p>dict 对象有了顺序，对于一些方法自然就有了影响，比如 popitem 之前是随机删除，而现在 就是删除最后加入的键值对了，有了确定性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a=&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(a.popitem())</span><br><span class="line"><span class="comment"># (&#x27;c&#x27;, 3)</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># &#123;&#x27;a&#x27;: 1, &#x27;b&#x27;: 2&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，按照 dict 的特性，我们在写代码的过程中依然不应该依赖 dict 有序，实际开发中还是应该按照无序处理</p>
+<h2 id="新增-getattr-定制对模块属性的访问"><a href="#新增-getattr-定制对模块属性的访问" class="headerlink" title="新增 getattr() 定制对模块属性的访问"></a>新增 <strong>getattr</strong>() 定制对模块属性的访问</h2><p>Python 3.7 允许在模块上定义 <code>__getattr__()</code> 并且当以其他方式找不到某个模块属性时将会调用它。 在模块上定义 <code>__dir__()</code> 现在也是允许的。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line">    sex: <span class="built_in">int</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, item</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Can&#x27;t find <span class="subst">&#123;item&#125;</span> attribute&quot;</span></span><br><span class="line"></span><br><span class="line">user = User(<span class="string">&#x27;stolen&#x27;</span>, <span class="number">18</span>, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(user.name)</span><br><span class="line"><span class="built_in">print</span>(user.age)</span><br><span class="line"><span class="built_in">print</span>(user.sex)</span><br><span class="line"><span class="built_in">print</span>(user.info)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">stolen</span></span><br><span class="line"><span class="string">18</span></span><br><span class="line"><span class="string">2</span></span><br><span class="line"><span class="string">Can&#x27;t find info attribute</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>async 和 await 变为了保留关键字</li>
+<li>typing 不会向核心 CPython 解释器引入的限制取消了</li>
+<li>允许将超过 255 个参数传递给一个函数，而现在一个函数也可以拥有超过 255 个形参</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>更新日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python3.6 新特性</title>
     <url>/2022/python_3_6_feature/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.6 发布于2016年12月23日，这儿总结一下改版本引入的一些新功能</p>
@@ -4137,65 +4295,6 @@
 <h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
 <li>将 Windows 文件系统编码和控制台编码都更改为 UTF-8</li>
 <li>重新实现了字典 dict，使其内存使用减少了 20%-25%</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>更新日志</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3.7 新特性</title>
-    <url>/2022/python_3_7_feature/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.7 发布于2018年6月27日，这儿总结一下改版本引入的一些新功能</p>
-<p>官方新特性链接 <a href="https://docs.python.org/zh-cn/3.7/whatsnew/3.7.html">Python3.7 新特性</a></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处主要介绍在Ubuntu下安装 Python3.7</p>
-<ol>
-<li>添加deadsnakes源<ul>
-<li><code>sudo add-apt-repository ppa:deadsnakes/ppa</code></li>
-<li><code>sudo apt-get update</code></li>
-</ul>
-</li>
-<li>安装 Python3.7<ul>
-<li><code>sudo apt install python3.7-full</code></li>
-</ul>
-</li>
-<li>安装 Python3.7 的pip<ul>
-<li><code>python3.7 -m ensurepip --upgrade</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="breakpoint-函数"><a href="#breakpoint-函数" class="headerlink" title="breakpoint 函数"></a>breakpoint 函数</h2><p>内置了新的 <code>breakpoint()</code> 函数，作为简单进入Python调试的方式，使用 <code>breakpoint()</code> 函数，相当于设置了断点，遇到 <code>breakpoint()</code> 会自动进入 pdb 调试模式</p>
-<p>内置 breakpoint() 会调用 sys.breakpointhook()。 在默认情况下后者会导入 pdb 然后再调用 pdb.set_trace()，但是通过将 sys.breakpointhook() 绑定到你选定的函数，breakpoint() 可以进入任何调试器。 此外，环境变量 PYTHONBREAKPOINT 可被设置为你选定的调试器的可调用对象。 设置 PYTHONBREAKPOINT&#x3D;0 会完全禁用内置 breakpoint()。</p>
-<h2 id="具有纳秒级精度的新时间函数"><a href="#具有纳秒级精度的新时间函数" class="headerlink" title="具有纳秒级精度的新时间函数"></a>具有纳秒级精度的新时间函数</h2><p>现代系统的时钟精度可以超过由 time.time() 函数及其变化形式所返回的浮点数的有限精度。 为了避免精度损失，Python3.7 在 time 模块中增加了原有计时器函数的六个新“纳秒版”变化形式</p>
-<ul>
-<li>time.clock_gettime_ns()</li>
-<li>time.clock_settime_ns()</li>
-<li>time.monotonic_ns()</li>
-<li>time.perf_counter_ns()</li>
-<li>time.process_time_ns()</li>
-<li>time.time_ns()</li>
-</ul>
-<p>这些新函数会以整数值的形式返回纳秒数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"><span class="built_in">print</span>(time.time_ns())</span><br><span class="line"><span class="comment"># 1663496284.7790382</span></span><br><span class="line"><span class="comment"># 1663496284779068663</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="新增-dataclasses"><a href="#新增-dataclasses" class="headerlink" title="新增 dataclasses"></a>新增 dataclasses</h2><p>新的 dataclass() 装饰器提供了一种声明数据类的方式。 数据类使用变量标注来描述其属性。 它的构造器和其他魔术方法例如 <strong>repr</strong>(), <strong>eq</strong>() 以及 <strong>hash</strong>() 会自动地生成。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass</span><br><span class="line"></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>:</span><br><span class="line">    x: <span class="built_in">float</span></span><br><span class="line">    y: <span class="built_in">float</span></span><br><span class="line">    z: <span class="built_in">float</span> = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">同一下代码</span></span><br><span class="line"><span class="string">class Point:</span></span><br><span class="line"><span class="string">    def __init__(self, x: float, y: float, z: float=0.0):</span></span><br><span class="line"><span class="string">        self.x = x</span></span><br><span class="line"><span class="string">        self.y = y</span></span><br><span class="line"><span class="string">        self.z = z</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">p = Point(<span class="number">1.5</span>, <span class="number">2.5</span>)</span><br><span class="line"><span class="built_in">print</span>(p)   <span class="comment"># produces &quot;Point(x=1.5, y=2.5, z=0.0)&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="dict-对象正式保持插入时顺序"><a href="#dict-对象正式保持插入时顺序" class="headerlink" title="dict 对象正式保持插入时顺序"></a>dict 对象正式保持插入时顺序</h2><p>dict 对象会保持插入时的顺序这个特性其实在 Python 3.6 中已经非正式的出场了，现在 Python 3.7 中正式宣布成为 Python 语言官方规范的一部分。</p>
-<p>dict 对象有了顺序，对于一些方法自然就有了影响，比如 popitem 之前是随机删除，而现在 就是删除最后加入的键值对了，有了确定性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a=&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(a.popitem())</span><br><span class="line"><span class="comment"># (&#x27;c&#x27;, 3)</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># &#123;&#x27;a&#x27;: 1, &#x27;b&#x27;: 2&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>但是，按照 dict 的特性，我们在写代码的过程中依然不应该依赖 dict 有序，实际开发中还是应该按照无序处理</p>
-<h2 id="新增-getattr-定制对模块属性的访问"><a href="#新增-getattr-定制对模块属性的访问" class="headerlink" title="新增 getattr() 定制对模块属性的访问"></a>新增 <strong>getattr</strong>() 定制对模块属性的访问</h2><p>Python 3.7 允许在模块上定义 <code>__getattr__()</code> 并且当以其他方式找不到某个模块属性时将会调用它。 在模块上定义 <code>__dir__()</code> 现在也是允许的。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line">    sex: <span class="built_in">int</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, item</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Can&#x27;t find <span class="subst">&#123;item&#125;</span> attribute&quot;</span></span><br><span class="line"></span><br><span class="line">user = User(<span class="string">&#x27;stolen&#x27;</span>, <span class="number">18</span>, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(user.name)</span><br><span class="line"><span class="built_in">print</span>(user.age)</span><br><span class="line"><span class="built_in">print</span>(user.sex)</span><br><span class="line"><span class="built_in">print</span>(user.info)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">stolen</span></span><br><span class="line"><span class="string">18</span></span><br><span class="line"><span class="string">2</span></span><br><span class="line"><span class="string">Can&#x27;t find info attribute</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
-<li>async 和 await 变为了保留关键字</li>
-<li>typing 不会向核心 CPython 解释器引入的限制取消了</li>
-<li>允许将超过 255 个参数传递给一个函数，而现在一个函数也可以拥有超过 255 个形参</li>
 </ul>
 ]]></content>
       <categories>

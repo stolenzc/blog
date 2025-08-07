@@ -20,27 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.stolenzc.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.23.2","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="一文搞懂 Go 占位符">
+    <meta name="description" content="浏览器跨域技术细节">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Go 占位符">
-<meta property="og:url" content="https://blog.stolenzc.com/2023/go_format/index.html">
+<meta property="og:title" content="浏览器跨域技术细节">
+<meta property="og:url" content="https://blog.stolenzc.com/2025/cors/index.html">
 <meta property="og:site_name" content="stolen&#39;s blog">
-<meta property="og:description" content="一文搞懂 Go 占位符">
+<meta property="og:description" content="浏览器跨域技术细节">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-22T15:57:32.000Z">
+<meta property="article:published_time" content="2025-08-06T14:58:32.000Z">
 <meta property="article:modified_time" content="2025-08-07T02:11:42.716Z">
 <meta property="article:author" content="stolen">
-<meta property="article:tag" content="操作使用">
+<meta property="article:tag" content="技术原理">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://blog.stolenzc.com/2023/go_format/">
+<link rel="canonical" href="https://blog.stolenzc.com/2025/cors/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.stolenzc.com/2023/go_format/","path":"2023/go_format/","title":"Go 占位符"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.stolenzc.com/2025/cors/","path":"2025/cors/","title":"浏览器跨域技术细节"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Go 占位符 | stolen's blog</title>
+<title>浏览器跨域技术细节 | stolen's blog</title>
   
 
 
@@ -162,7 +162,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%E4%BB%A3%E7%A0%81"><span class="nav-text">说明代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">普通占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">布尔占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">整数占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">浮点占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E5%AD%97%E7%AC%A6%E5%88%87%E7%89%87"><span class="nav-text">字符串与字符切片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88"><span class="nav-text">指针</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%A8%E5%9F%9F%E7%AE%80%E4%BB%8B"><span class="nav-text">跨域简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E4%B8%8D%E5%90%8C%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F%E8%B7%A8%E5%9F%9F%E9%99%90%E5%88%B6"><span class="nav-text">浏览器对不同请求方式跨域限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%A3%80%E6%B5%8B%E6%98%AF%E5%90%A6%E5%85%81%E8%AE%B8%E8%B7%A8%E5%9F%9F"><span class="nav-text">如何检测是否允许跨域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="nav-text">什么是简单请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%9A%84%E8%AF%B7%E6%B1%82%E5%A4%B4%E3%80%81%E5%93%8D%E5%BA%94%E5%A4%B4%E5%90%AB%E4%B9%89"><span class="nav-text">相关的请求头、响应头含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-text">示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%B7%A8%E5%9F%9F%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-text">其他跨域解决方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSONP%EF%BC%88JSON-with-Padding%EF%BC%89"><span class="nav-text">JSONP（JSON with Padding）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PROXY"><span class="nav-text">PROXY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-text">参考链接</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -241,7 +241,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.stolenzc.com/2023/go_format/">
+    <link itemprop="mainEntityOfPage" href="https://blog.stolenzc.com/2025/cors/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -254,12 +254,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Go 占位符 | stolen's blog">
-      <meta itemprop="description" content="一文搞懂 Go 占位符">
+      <meta itemprop="name" content="浏览器跨域技术细节 | stolen's blog">
+      <meta itemprop="description" content="浏览器跨域技术细节">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Go 占位符
+          浏览器跨域技术细节
         </h1>
 
         <div class="post-meta-container">
@@ -270,7 +270,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-02-22 23:57:32" itemprop="dateCreated datePublished" datetime="2023-02-22T23:57:32+08:00">2023-02-22</time>
+      <time title="创建时间：2025-08-06 22:58:32" itemprop="dateCreated datePublished" datetime="2025-08-06T22:58:32+08:00">2025-08-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,7 +278,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+          <a href="/categories/Frontend/" itemprop="url" rel="index"><span itemprop="name">Frontend</span></a>
         </span>
     </span>
 
@@ -295,257 +295,104 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2k</span>
+      <span>2.5k</span>
     </span>
 </div>
 
-            <div class="post-description">一文搞懂 Go 占位符</div>
+            <div class="post-description">浏览器跨域技术细节</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="说明代码"><a href="#说明代码" class="headerlink" title="说明代码"></a>说明代码</h2><p>本文部分示例代码基于以下代码执行</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	age  <span class="type">int</span></span><br><span class="line">	man  <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stolen = User&#123;</span><br><span class="line">	name: <span class="string">&quot;stolen&quot;</span>,</span><br><span class="line">	age:  <span class="number">18</span>,</span><br><span class="line">	man: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="普通占位符"><a href="#普通占位符" class="headerlink" title="普通占位符"></a>普通占位符</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%v</code></td>
-<td>相应值的默认格式</td>
-<td><code>Printf(&quot;%v&quot;, stolen)</code></td>
-<td><code>&#123;stolen 18 true&#125;</code></td>
-</tr>
-<tr>
-<td><code>%+v</code></td>
-<td>打印结构体时会添加字段名</td>
-<td><code>Printf(&quot;%+v&quot;, stolen)</code></td>
-<td><code>&#123;name:stolen age:18 man:true&#125;</code></td>
-</tr>
-<tr>
-<td><code>%#v</code></td>
-<td>相应类型的 Go 语言表达方式</td>
-<td><code>Printf(&quot;%#v&quot;, stolen)</code></td>
-<td><code>main.User&#123;name:&quot;stolen&quot;, age:18, man:true&#125;</code></td>
-</tr>
-<tr>
-<td><code>%T</code></td>
-<td>相应值的类型的 Go 语法表示</td>
-<td><code>Printf(&quot;%T&quot;, stolen)</code></td>
-<td><code>main.User</code></td>
-</tr>
-<tr>
-<td><code>%%</code></td>
-<td>取消对 % 的转译</td>
-<td><code>Printf(&quot;%%&quot;)</code></td>
-<td><code>%</code></td>
-</tr>
-</tbody></table>
-<h2 id="布尔占位符"><a href="#布尔占位符" class="headerlink" title="布尔占位符"></a>布尔占位符</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%t</code></td>
-<td>对布尔值的格式化输出，值为 true 或 false</td>
-<td><code>Printf(&quot;%t&quot;, stolen.man)</code></td>
-<td><code>true</code></td>
-</tr>
-</tbody></table>
-<h2 id="整数占位符"><a href="#整数占位符" class="headerlink" title="整数占位符"></a>整数占位符</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%b</code></td>
-<td>二进制表示</td>
-<td><code>Printf(&quot;%b&quot;, stolen.age)</code></td>
-<td><code>10010</code></td>
-</tr>
-<tr>
-<td><code>%#b</code></td>
-<td>二进制表示，开头有二进制标识 0b</td>
-<td><code>Printf(&quot;%#b&quot;, stolen.age)</code></td>
-<td><code>0b10010</code></td>
-</tr>
-<tr>
-<td><code>%c</code></td>
-<td>相应Unicode码点所表示的字符</td>
-<td><code>Printf(&quot;%c&quot;, 20013)</code></td>
-<td><code>中</code></td>
-</tr>
-<tr>
-<td><code>%d</code></td>
-<td>十进制表示</td>
-<td><code>Printf(&quot;%d&quot;, stolen.age)</code></td>
-<td><code>18</code></td>
-</tr>
-<tr>
-<td><code>%o</code></td>
-<td>八进制表示</td>
-<td><code>Printf(&quot;%o&quot;, stolen.age)</code></td>
-<td><code>22</code></td>
-</tr>
-<tr>
-<td><code>%#o</code></td>
-<td>八进制表示，开头有八进制标识 0</td>
-<td><code>Printf(&quot;%#o&quot;, stolen.age)</code></td>
-<td><code>022</code></td>
-</tr>
-<tr>
-<td><code>%q</code></td>
-<td>单引号围绕的字符字面值，由Go语法安全地转义</td>
-<td><code>Printf(&quot;%q&quot;, 20013)</code></td>
-<td><code>&#39;中&#39;</code></td>
-</tr>
-<tr>
-<td><code>%x</code></td>
-<td>十六进制表示，字母形式为小写 a-f</td>
-<td><code>Printf(&quot;%x&quot;, stolen.age)</code></td>
-<td><code>12</code></td>
-</tr>
-<tr>
-<td><code>%#x</code></td>
-<td>十六进制表示，字母形式为小写 a-f，开头有十六进制标识 0x</td>
-<td><code>Printf(&quot;%#x&quot;, stolen.age)</code></td>
-<td><code>0x12</code></td>
-</tr>
-<tr>
-<td><code>%X</code></td>
-<td>十六进制表示，字母形式为小写 A-F</td>
-<td><code>Printf(&quot;%X&quot;, stolen.age)</code></td>
-<td><code>12</code></td>
-</tr>
-<tr>
-<td><code>%#X</code></td>
-<td>十六进制表示，字母形式为小写 A-F，开头有十六进制标识 0X</td>
-<td><code>Printf(&quot;%#X&quot;, stolen.age)</code></td>
-<td><code>0X12</code></td>
-</tr>
-<tr>
-<td><code>%U</code></td>
-<td>Unicode格式：<code>U+1234</code>，等同于 <code>U+%04X</code></td>
-<td><code>Printf(&quot;%U&quot;, 0x4E2D)</code></td>
-<td><code>U+4E2D</code></td>
-</tr>
-</tbody></table>
-<h2 id="浮点占位符"><a href="#浮点占位符" class="headerlink" title="浮点占位符"></a>浮点占位符</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%b</code></td>
-<td>指数为二的幂的科学计数法，例如1.0的值为 4503599627370496 * 2 ^ -52</td>
-<td><code>Printf(&quot;%b&quot;, 1.0)</code></td>
-<td><code>4503599627370496p-52</code></td>
-</tr>
-<tr>
-<td><code>%e</code></td>
-<td>科学计数法，输出显示为小e</td>
-<td><code>Printf(&quot;%e&quot;, 120.0)</code></td>
-<td><code>1.200000e+02</code></td>
-</tr>
-<tr>
-<td><code>%E</code></td>
-<td>科学计数法，输出显示为大E</td>
-<td><code>Printf(&quot;%E&quot;, 120.0)</code></td>
-<td><code>1.200000E+02</code></td>
-</tr>
-<tr>
-<td><code>%f</code></td>
-<td>以值的形式显示小数</td>
-<td><code>Printf(&quot;%f&quot;, 120.0)</code></td>
-<td><code>120.000000</code></td>
-</tr>
-<tr>
-<td><code>%g</code></td>
-<td>根据形势选择 %e 或 %f</td>
-<td><code>Printf(&quot;%g %g&quot;, 120.0,1200000.0)</code></td>
-<td><code>120 1.2e+06</code></td>
-</tr>
-<tr>
-<td><code>%G</code></td>
-<td>根据形势选择 %E 或 %f</td>
-<td><code>Printf(&quot;%G %G&quot;, 120.0,1200000.0)</code></td>
-<td><code>120 1.2E+06</code></td>
-</tr>
-</tbody></table>
-<h2 id="字符串与字符切片"><a href="#字符串与字符切片" class="headerlink" title="字符串与字符切片"></a>字符串与字符切片</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%s</code></td>
-<td>输出字符串表示（string类型或[]byte)</td>
-<td><code>Printf(&quot;%s %s&quot;, []byte(stolen.name), stolen.name)</code></td>
-<td><code>stolen stolen</code></td>
-</tr>
-<tr>
-<td><code>%q</code></td>
-<td>双引号围绕的字符串</td>
-<td><code>Printf(&quot;%q&quot;, stolen.name)</code></td>
-<td><code>&quot;stolen&quot;</code></td>
-</tr>
-<tr>
-<td><code>%x</code></td>
-<td>十六进制, 小写字母, 每字节两个字符</td>
-<td><code>Printf(&quot;%x&quot;, stolen.name)</code></td>
-<td><code>73746f6c656e</code></td>
-</tr>
-<tr>
-<td><code>%X</code></td>
-<td>十六进制, 大写字母, 每字节两个字符</td>
-<td><code>Printf(&quot;%X&quot;, []byte(stolen.name))</code></td>
-<td><code>73746F6C656E</code></td>
-</tr>
-</tbody></table>
-<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><table>
-<thead>
-<tr>
-<th>占位符</th>
-<th>说明</th>
-<th>举例</th>
-<th>输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>%p</code></td>
-<td>指针的值</td>
-<td><code>Printf(&quot;%p&quot;, &amp;stolen)</code></td>
-<td><code>0x119ade0</code></td>
-</tr>
-</tbody></table>
-<p>参考文章：</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="跨域简介"><a href="#跨域简介" class="headerlink" title="跨域简介"></a>跨域简介</h2><p>跨域问题（Cross-Origin）是Web开发中因浏览器的同源策略（Same-Origin Policy） 引发的安全限制，当网页尝试访问与自身源（协议、域名、端口）不同的资源时会被浏览器拦截。</p>
+<p>关键点</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39386145/article/details/125543243">go语言中的占位符</a></li>
+<li>跨域为浏览器引入，仅在浏览器中存在</li>
+<li>同源：一个完整的url组成如下 <code>协议://域名:端口/路由</code> 。 协议、域名、端口均相同为同源</li>
+</ul>
+<h2 id="浏览器对不同请求方式跨域限制"><a href="#浏览器对不同请求方式跨域限制" class="headerlink" title="浏览器对不同请求方式跨域限制"></a>浏览器对不同请求方式跨域限制</h2><ul>
+<li><code>AJAX</code> 完整的跨域限制</li>
+<li><code>img/audio/video</code> 标签，允许跨域加载资源并进行展示，但如果出现跨域且响应资源不允许跨域。则无法在自身站点逻辑中读取到具体的内容。</li>
+<li><code>script</code> 能跨域下载并执行脚本，但不能读取内容</li>
+<li><code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> 能跨域获取并渲染样式，但是无法读取样式内容</li>
+<li><code>iframe</code> 发生跨域则无法与内部网页进行交互</li>
+</ul>
+<h2 id="如何检测是否允许跨域"><a href="#如何检测是否允许跨域" class="headerlink" title="如何检测是否允许跨域"></a>如何检测是否允许跨域</h2><p>检测跨域分为两种方式</p>
+<ol>
+<li>简单请求，直接请求数据，根据响应的响应头来决定是否允许跨域并读取响应内容</li>
+<li>预检请求（Preflight Request）：对于非简单请求，会触发使用 <code>OPTIONS</code> 进行预检，满足跨域条件时才会进行真实请求。</li>
+</ol>
+<h2 id="什么是简单请求"><a href="#什么是简单请求" class="headerlink" title="什么是简单请求"></a>什么是简单请求</h2><p>根据W3C规范，满足以下全部条件的请求为简单请求，不需要进行 <code>OPTIONS</code> 预检</p>
+<ol>
+<li>请求方式必须是以下三种之一<ol>
+<li><code>GET</code></li>
+<li><code>POST</code></li>
+<li><code>HEAD</code></li>
+</ol>
+</li>
+<li>请求头中只能携带以下内容<ol>
+<li><code>Accept</code></li>
+<li><code>Accept-Language</code></li>
+<li><code>Content-Language</code></li>
+<li><code>Content-Type</code> ，且值必须为以下内容<ol>
+<li><code>application/x-www-form-urlencoded</code> </li>
+<li><code>multipart/form-data</code></li>
+<li><code>text/plain</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>不能使用任何自定义的头（例如： <code>token</code> 、 <code>Authorization</code> 等）</li>
+</ol>
+<h2 id="相关的请求头、响应头含义"><a href="#相关的请求头、响应头含义" class="headerlink" title="相关的请求头、响应头含义"></a>相关的请求头、响应头含义</h2><p>请求头</p>
+<ul>
+<li><code>Origin</code> - 请求发起的来源，所有的请求均需携带。示例值： <code>www.baidu.com</code></li>
+<li><code>Access-Control-Request-Method</code> - 预检请求中使用，表示接下来要发起请求的请求方式。示例值： <code>PUT</code></li>
+<li><code>Access-Control-Request-Headers</code> - 预检请求中使用，表示实际请求中将会携带的自定义请求头。示例值： <code>TOKEN</code> &#x2F; <code>SIGN</code></li>
+</ul>
+<p>响应头</p>
+<ul>
+<li><code>Access-Control-Allow-Origin</code> - 表示允许访问资源的外域，*表示允许所有外域访问。示例值： <code>*</code> &#x2F; <code>www.baidu.com</code></li>
+<li><code>Access-Control-Allow-Methods</code> - 表示允许外域访问资源的请求方式，在 <code>OPTIONS</code>  请求时，如果允许跨域，将会返回请求时携带的 <code>Access-Control-Request-Method</code> 。示例值： <code>PUT</code></li>
+<li><code>Access-Control-Allow-Headers</code> - 表示允许外域访问资源携带的自定义请求头，在 <code>OPTIONS</code>  请求时，如果允许跨域，将会返回请求时携带的 <code>Access-Control-Request-Headers</code> 。示例值： <code>TOKEN</code> &#x2F; <code>SIGN</code></li>
+<li><code>Access-Control-Allow-Credentials</code> - 是否允许携带cookie。示例值： <code>true</code></li>
+<li><code>Access-Control-Expose-Headers</code> - 哪些响应头允许被浏览器的JS读取。示例值： <code>Content-Length,Date,Server</code></li>
+<li><code>Access-Control-Max-Age</code> - 预检请求的缓存时间（秒）。示例值： <code>86400</code></li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>无论是普通请求，还是预检请求，都需要在响应头中包含 <code>Access-Control-Allow-Origin</code> 。否则就会认为跨域请求。（部分时候前端和后端接口不在同一个域名下时，前端请求后端一个不存在的接口，会优先报CORS错误）</li>
+<li>普通的GET接口，在HEADER中携带上token后，也需要进行预检</li>
+</ol>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><ul>
+<li>GET请求，未设置自定义headers，不会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;)</code></li>
+</ul>
+</li>
+<li>GET请求，设置了允许的headers，不会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;, &#123;&quot;headers&quot;: &#123;&quot;Accept-Language&quot;: &quot;abab&quot;&#125;&#125;)</code></li>
+</ul>
+</li>
+<li>GET请求，设置了不允许的headers，会发送OPTIONS请求<ul>
+<li><code>fetch(&quot;https://httpbin.org/&quot;, &#123;&quot;headers&quot;: &#123;&quot;token&quot;: &quot;abc&quot;&#125;&#125;)</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="其他跨域解决方式"><a href="#其他跨域解决方式" class="headerlink" title="其他跨域解决方式"></a>其他跨域解决方式</h2><h3 id="JSONP（JSON-with-Padding）"><a href="#JSONP（JSON-with-Padding）" class="headerlink" title="JSONP（JSON with Padding）"></a>JSONP（JSON with Padding）</h3><p>非标准，早期使用，利用浏览器对 <code>&lt;script&gt;</code> 标签的限制放宽来实现。服务器响应内容为一个javascript的函数调用</p>
+<p>浏览器调用方式： <code>&lt;script src=&quot;https://api.example.com/data.js&quot;&gt;&lt;/script&gt;</code></p>
+<p>服务器响应内容： <code>callback(&#123; name: &quot;Alice&quot;, age: 20 &#125;)</code></p>
+<p>确保页面上提前定义了这个 <code>callback</code> 函数，就能获取数据！</p>
+<p>限制：</p>
+<ul>
+<li>只能发送GET请求</li>
+<li>无法携带自定义请求头</li>
+</ul>
+<h3 id="PROXY"><a href="#PROXY" class="headerlink" title="PROXY"></a>PROXY</h3><p>因为跨域的同源策略限制只会在浏览器中发生。故可以将跨域调用通过同源的服务器中转调用。从而实现跨域的解决</p>
+<p>如 a.com 想要访问 b.com&#x2F;api 的内容，并且 b 网站不支持跨域。则可以创造一个 a.com&#x2F;api 的服务器。a.com 直接访问 a.com&#x2F;api ，a.com&#x2F;api 在服务器上调用 b.com&#x2F;api。对于 a.com 来说，就不存在跨域了</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.w3.org/TR/cors/">https://www.w3.org/TR/cors/</a></li>
+<li><a target="_blank" rel="noopener" href="https://httpbin.org/">https://httpbin.org/</a></li>
 </ul>
 
     </div>
@@ -556,21 +403,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E4%BD%BF%E7%94%A8/" rel="tag"># 操作使用</a>
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/" rel="tag"># 技术原理</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/encode/" rel="prev" title="略谈计算机编码">
-                  <i class="fa fa-angle-left"></i> 略谈计算机编码
+                <a href="/2025/gitignore/" rel="prev" title="Git gitignore 技术细节">
+                  <i class="fa fa-angle-left"></i> Git gitignore 技术细节
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/python_list_memory/" rel="next" title="Python 三种方式生成列表的内存分析">
-                  Python 三种方式生成列表的内存分析 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
