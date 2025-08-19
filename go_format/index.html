@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/blog2_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/blog2_16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.stolenzc.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.24.1","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="一文搞懂 Go 占位符">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 占位符">
+<meta property="og:url" content="https://blog.stolenzc.com/go_format/index.html">
+<meta property="og:site_name" content="stolen&#39;s blog">
+<meta property="og:description" content="一文搞懂 Go 占位符">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-22T15:57:32.000Z">
+<meta property="article:modified_time" content="2025-08-19T07:27:48.183Z">
+<meta property="article:author" content="stolen">
+<meta property="article:tag" content="操作使用">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.stolenzc.com/go_format/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.stolenzc.com/go_format/","path":"go_format/","title":"Go 占位符"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Go 占位符 | stolen's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.9.0/mermaid.min.js","integrity":"sha256-Cz7UN0EXNjgV2u/a38wg/3BNfdRRO1XtgDq93L2GqJg="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">stolen's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">逆风的方向，更适合飞翔</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%E4%BB%A3%E7%A0%81"><span class="nav-text">说明代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">普通占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">布尔占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">整数占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">浮点占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E5%AD%97%E7%AC%A6%E5%88%87%E7%89%87"><span class="nav-text">字符串与字符切片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88"><span class="nav-text">指针</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="stolen"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">stolen</p>
+  <div class="site-description" itemprop="description">一个热爱技术的Python开发者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/stolenzc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;stolenzc" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3333060672" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3333060672" rel="noopener me" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.stolenzc.com/" title="https:&#x2F;&#x2F;www.stolenzc.com" rel="noopener" target="_blank">个人网站</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://tools.stolenzc.com/" title="https:&#x2F;&#x2F;tools.stolenzc.com" rel="noopener" target="_blank">静态工具</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://stolenzc.gitee.io/" title="https:&#x2F;&#x2F;stolenzc.gitee.io" rel="noopener" target="_blank">gitee主页</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.stolenzc.com/go_format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="stolen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="stolen's blog">
+      <meta itemprop="description" content="一个热爱技术的Python开发者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Go 占位符 | stolen's blog">
+      <meta itemprop="description" content="一文搞懂 Go 占位符">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go 占位符
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-22 23:57:32" itemprop="dateCreated datePublished" datetime="2023-02-22T23:57:32+08:00">2023-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+</div>
+
+            <div class="post-description">一文搞懂 Go 占位符</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="说明代码"><a href="#说明代码" class="headerlink" title="说明代码"></a>说明代码</h2><p>本文部分示例代码基于以下代码执行</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	age  <span class="type">int</span></span><br><span class="line">	man  <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stolen = User&#123;</span><br><span class="line">	name: <span class="string">&quot;stolen&quot;</span>,</span><br><span class="line">	age:  <span class="number">18</span>,</span><br><span class="line">	man: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="普通占位符"><a href="#普通占位符" class="headerlink" title="普通占位符"></a>普通占位符</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%v</code></td>
+<td>相应值的默认格式</td>
+<td><code>Printf(&quot;%v&quot;, stolen)</code></td>
+<td><code>&#123;stolen 18 true&#125;</code></td>
+</tr>
+<tr>
+<td><code>%+v</code></td>
+<td>打印结构体时会添加字段名</td>
+<td><code>Printf(&quot;%+v&quot;, stolen)</code></td>
+<td><code>&#123;name:stolen age:18 man:true&#125;</code></td>
+</tr>
+<tr>
+<td><code>%#v</code></td>
+<td>相应类型的 Go 语言表达方式</td>
+<td><code>Printf(&quot;%#v&quot;, stolen)</code></td>
+<td><code>main.User&#123;name:&quot;stolen&quot;, age:18, man:true&#125;</code></td>
+</tr>
+<tr>
+<td><code>%T</code></td>
+<td>相应值的类型的 Go 语法表示</td>
+<td><code>Printf(&quot;%T&quot;, stolen)</code></td>
+<td><code>main.User</code></td>
+</tr>
+<tr>
+<td><code>%%</code></td>
+<td>取消对 % 的转译</td>
+<td><code>Printf(&quot;%%&quot;)</code></td>
+<td><code>%</code></td>
+</tr>
+</tbody></table>
+<h2 id="布尔占位符"><a href="#布尔占位符" class="headerlink" title="布尔占位符"></a>布尔占位符</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%t</code></td>
+<td>对布尔值的格式化输出，值为 true 或 false</td>
+<td><code>Printf(&quot;%t&quot;, stolen.man)</code></td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<h2 id="整数占位符"><a href="#整数占位符" class="headerlink" title="整数占位符"></a>整数占位符</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%b</code></td>
+<td>二进制表示</td>
+<td><code>Printf(&quot;%b&quot;, stolen.age)</code></td>
+<td><code>10010</code></td>
+</tr>
+<tr>
+<td><code>%#b</code></td>
+<td>二进制表示，开头有二进制标识 0b</td>
+<td><code>Printf(&quot;%#b&quot;, stolen.age)</code></td>
+<td><code>0b10010</code></td>
+</tr>
+<tr>
+<td><code>%c</code></td>
+<td>相应Unicode码点所表示的字符</td>
+<td><code>Printf(&quot;%c&quot;, 20013)</code></td>
+<td><code>中</code></td>
+</tr>
+<tr>
+<td><code>%d</code></td>
+<td>十进制表示</td>
+<td><code>Printf(&quot;%d&quot;, stolen.age)</code></td>
+<td><code>18</code></td>
+</tr>
+<tr>
+<td><code>%o</code></td>
+<td>八进制表示</td>
+<td><code>Printf(&quot;%o&quot;, stolen.age)</code></td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td><code>%#o</code></td>
+<td>八进制表示，开头有八进制标识 0</td>
+<td><code>Printf(&quot;%#o&quot;, stolen.age)</code></td>
+<td><code>022</code></td>
+</tr>
+<tr>
+<td><code>%q</code></td>
+<td>单引号围绕的字符字面值，由Go语法安全地转义</td>
+<td><code>Printf(&quot;%q&quot;, 20013)</code></td>
+<td><code>&#39;中&#39;</code></td>
+</tr>
+<tr>
+<td><code>%x</code></td>
+<td>十六进制表示，字母形式为小写 a-f</td>
+<td><code>Printf(&quot;%x&quot;, stolen.age)</code></td>
+<td><code>12</code></td>
+</tr>
+<tr>
+<td><code>%#x</code></td>
+<td>十六进制表示，字母形式为小写 a-f，开头有十六进制标识 0x</td>
+<td><code>Printf(&quot;%#x&quot;, stolen.age)</code></td>
+<td><code>0x12</code></td>
+</tr>
+<tr>
+<td><code>%X</code></td>
+<td>十六进制表示，字母形式为小写 A-F</td>
+<td><code>Printf(&quot;%X&quot;, stolen.age)</code></td>
+<td><code>12</code></td>
+</tr>
+<tr>
+<td><code>%#X</code></td>
+<td>十六进制表示，字母形式为小写 A-F，开头有十六进制标识 0X</td>
+<td><code>Printf(&quot;%#X&quot;, stolen.age)</code></td>
+<td><code>0X12</code></td>
+</tr>
+<tr>
+<td><code>%U</code></td>
+<td>Unicode格式：<code>U+1234</code>，等同于 <code>U+%04X</code></td>
+<td><code>Printf(&quot;%U&quot;, 0x4E2D)</code></td>
+<td><code>U+4E2D</code></td>
+</tr>
+</tbody></table>
+<h2 id="浮点占位符"><a href="#浮点占位符" class="headerlink" title="浮点占位符"></a>浮点占位符</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%b</code></td>
+<td>指数为二的幂的科学计数法，例如1.0的值为 4503599627370496 * 2 ^ -52</td>
+<td><code>Printf(&quot;%b&quot;, 1.0)</code></td>
+<td><code>4503599627370496p-52</code></td>
+</tr>
+<tr>
+<td><code>%e</code></td>
+<td>科学计数法，输出显示为小e</td>
+<td><code>Printf(&quot;%e&quot;, 120.0)</code></td>
+<td><code>1.200000e+02</code></td>
+</tr>
+<tr>
+<td><code>%E</code></td>
+<td>科学计数法，输出显示为大E</td>
+<td><code>Printf(&quot;%E&quot;, 120.0)</code></td>
+<td><code>1.200000E+02</code></td>
+</tr>
+<tr>
+<td><code>%f</code></td>
+<td>以值的形式显示小数</td>
+<td><code>Printf(&quot;%f&quot;, 120.0)</code></td>
+<td><code>120.000000</code></td>
+</tr>
+<tr>
+<td><code>%g</code></td>
+<td>根据形势选择 %e 或 %f</td>
+<td><code>Printf(&quot;%g %g&quot;, 120.0,1200000.0)</code></td>
+<td><code>120 1.2e+06</code></td>
+</tr>
+<tr>
+<td><code>%G</code></td>
+<td>根据形势选择 %E 或 %f</td>
+<td><code>Printf(&quot;%G %G&quot;, 120.0,1200000.0)</code></td>
+<td><code>120 1.2E+06</code></td>
+</tr>
+</tbody></table>
+<h2 id="字符串与字符切片"><a href="#字符串与字符切片" class="headerlink" title="字符串与字符切片"></a>字符串与字符切片</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%s</code></td>
+<td>输出字符串表示（string类型或[]byte)</td>
+<td><code>Printf(&quot;%s %s&quot;, []byte(stolen.name), stolen.name)</code></td>
+<td><code>stolen stolen</code></td>
+</tr>
+<tr>
+<td><code>%q</code></td>
+<td>双引号围绕的字符串</td>
+<td><code>Printf(&quot;%q&quot;, stolen.name)</code></td>
+<td><code>&quot;stolen&quot;</code></td>
+</tr>
+<tr>
+<td><code>%x</code></td>
+<td>十六进制, 小写字母, 每字节两个字符</td>
+<td><code>Printf(&quot;%x&quot;, stolen.name)</code></td>
+<td><code>73746f6c656e</code></td>
+</tr>
+<tr>
+<td><code>%X</code></td>
+<td>十六进制, 大写字母, 每字节两个字符</td>
+<td><code>Printf(&quot;%X&quot;, []byte(stolen.name))</code></td>
+<td><code>73746F6C656E</code></td>
+</tr>
+</tbody></table>
+<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+<th>举例</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%p</code></td>
+<td>指针的值</td>
+<td><code>Printf(&quot;%p&quot;, &amp;stolen)</code></td>
+<td><code>0x119ade0</code></td>
+</tr>
+</tbody></table>
+<p>参考文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39386145/article/details/125543243">go语言中的占位符</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E4%BD%BF%E7%94%A8/" rel="tag"># 操作使用</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/encode/" rel="prev" title="略谈计算机编码">
+                  <i class="fa fa-angle-left"></i> 略谈计算机编码
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/python_list_memory/" rel="next" title="Python 三种方式生成列表的内存分析">
+                  Python 三种方式生成列表的内存分析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">stolenzc</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">235k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

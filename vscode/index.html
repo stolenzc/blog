@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/blog2_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/blog2_16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.stolenzc.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.24.1","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="VSCode插件和配置介绍，以及一些遇到的使用问题解决方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode的使用">
+<meta property="og:url" content="https://blog.stolenzc.com/vscode/index.html">
+<meta property="og:site_name" content="stolen&#39;s blog">
+<meta property="og:description" content="VSCode插件和配置介绍，以及一些遇到的使用问题解决方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-22T08:01:38.000Z">
+<meta property="article:modified_time" content="2021-04-22T01:26:13.000Z">
+<meta property="article:author" content="stolen">
+<meta property="article:tag" content="MacOS">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.stolenzc.com/vscode/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.stolenzc.com/vscode/","path":"vscode/","title":"VSCode的使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>VSCode的使用 | stolen's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.9.0/mermaid.min.js","integrity":"sha256-Cz7UN0EXNjgV2u/a38wg/3BNfdRRO1XtgDq93L2GqJg="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">stolen's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">逆风的方向，更适合飞翔</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="nav-text">基础配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE%E4%BD%BF%E7%94%A8"><span class="nav-text">快捷键使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-text">软件操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3%E7%AE%A1%E7%90%86"><span class="nav-text">窗口管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%A0%BC%E5%BC%8F"><span class="nav-text">代码格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E4%BE%A7%E5%B7%A5%E5%85%B7%E6%A0%8F"><span class="nav-text">左侧工具栏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E5%8F%8A%E5%8A%9F%E8%83%BD"><span class="nav-text">插件及功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">常见的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E9%A2%84%E8%A7%88%E5%8A%9F%E8%83%BD"><span class="nav-text">关闭预览功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#go%E5%8C%85%E8%B7%B3%E8%BD%AC%E5%88%B0%E5%A4%96%E9%83%A8%E7%BD%91%E7%AB%99"><span class="nav-text">go包跳转到外部网站</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A0%87%E6%89%80%E5%9C%A8%E8%AF%8D%E7%BB%84%E9%AB%98%E4%BA%AE"><span class="nav-text">光标所在词组高亮</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="stolen"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">stolen</p>
+  <div class="site-description" itemprop="description">一个热爱技术的Python开发者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/stolenzc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;stolenzc" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3333060672" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3333060672" rel="noopener me" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.stolenzc.com/" title="https:&#x2F;&#x2F;www.stolenzc.com" rel="noopener" target="_blank">个人网站</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://tools.stolenzc.com/" title="https:&#x2F;&#x2F;tools.stolenzc.com" rel="noopener" target="_blank">静态工具</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://stolenzc.gitee.io/" title="https:&#x2F;&#x2F;stolenzc.gitee.io" rel="noopener" target="_blank">gitee主页</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.stolenzc.com/vscode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="stolen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="stolen's blog">
+      <meta itemprop="description" content="一个热爱技术的Python开发者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="VSCode的使用 | stolen's blog">
+      <meta itemprop="description" content="VSCode插件和配置介绍，以及一些遇到的使用问题解决方法">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VSCode的使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-22 16:01:38" itemprop="dateCreated datePublished" datetime="2020-05-22T16:01:38+08:00">2020-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%97%A5%E5%B8%B8%E8%BD%AF%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">日常软件</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+</div>
+
+            <div class="post-description">VSCode插件和配置介绍，以及一些遇到的使用问题解决方法</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><p>settings.json（首选项，打开设置）的配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.fontSize&quot;</span><span class="punctuation">:</span> <span class="number">18</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.wordWrap&quot;</span><span class="punctuation">:</span> <span class="string">&quot;on&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.rulers&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="number">100</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.renderControlCharacters&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.renderWhitespace&quot;</span><span class="punctuation">:</span> <span class="string">&quot;all&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;terminal.integrated.cursorBlinking&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;terminal.integrated.cursorStyle&quot;</span><span class="punctuation">:</span> <span class="string">&quot;line&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;terminal.integrated.fontSize&quot;</span><span class="punctuation">:</span> <span class="number">20</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;workbench.tree.indent&quot;</span><span class="punctuation">:</span> <span class="number">16</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;emmet.extensionsPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;python.linting.flake8Enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;python.formatting.provider&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yapf&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;python.linting.flake8Args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;--max-line-length=256&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--extend-ignore=F821&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;python.linting.pylintEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.minimap.enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>editor.wordWrpa</code> - 代码自动换行</li>
+<li><code>editor.rulers</code> - 设置一个代码单行最长提示线</li>
+<li><code>editor.renderControlCharacters</code> - 是否显示控制字符(如tab)</li>
+<li><code>editor.renderWhitespace</code> - 什么情况下显示空格(可设置为all)</li>
+<li><code>terminal.integrated.cursorBlinking</code> - 集成终端光标是否闪烁</li>
+<li><code>terminal.integrated.cursorStyle</code> - 集成终端光标样式</li>
+<li><code>terminal.integrated.fontSize</code> - 集成终端字体大小</li>
+<li><code>python.linting.flake8Enabled</code> - 设置flake8工具是否开启</li>
+<li><code>python.formatting.provider</code> - 设置python的格式化工具</li>
+<li><code>python.linting.flake8Args</code> - 设置flake8的检查规则<ul>
+<li><code>--max-line-length</code> - 设置单行的最长长度</li>
+<li><code>--extend-ignore</code> - 设置排除的检查</li>
+</ul>
+</li>
+<li><code>python.linting.pylintEnable</code> - 设置pylint是否开启</li>
+<li><code>editor.occurrencesHighlight</code> - 设置光标所在单词是否高亮</li>
+<li><code>workbench.editor.enablePreview</code> - 是否允许查找文件后保持预览</li>
+<li><code>Editor.Links</code> - 控制编辑器中是否检测链接并使其可被点击</li>
+</ul>
+<p>~&#x2F;.ssh&#x2F;config的配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host 192.168.0.153</span><br><span class="line">  HostName 192.168.0.153</span><br><span class="line">  User root</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>分别指定远程连接的地址和用户名</p>
+</blockquote>
+<h2 id="快捷键使用"><a href="#快捷键使用" class="headerlink" title="快捷键使用"></a>快捷键使用</h2><blockquote>
+<p>在Mac下ctrl均使用command替代</p>
+</blockquote>
+<h3 id="软件操作"><a href="#软件操作" class="headerlink" title="软件操作"></a>软件操作</h3><ul>
+<li><code>ctrl + shift + p</code> &#x2F;<code>f1</code> - 打开命令面板</li>
+<li><code>ctrl + p</code> - 文件搜索框<ul>
+<li><code>?</code> - 列出当前可执行的动作</li>
+<li><code>!</code>&#x2F;<code>Ctrl+Shift+M</code> - 显示Errors或Warnings</li>
+<li><code>:</code>&#x2F;<code>Ctrl+G</code> - 跳转到行数</li>
+<li><code>@</code>&#x2F;<code>Ctrl+Shift+O</code> - 跳转到symbol，查找属性或函数</li>
+<li><code>#</code>&#x2F;<code>Ctrl+T</code> - 根据名字查找symbol</li>
+</ul>
+</li>
+</ul>
+<h3 id="窗口管理"><a href="#窗口管理" class="headerlink" title="窗口管理"></a>窗口管理</h3><ul>
+<li><code>Ctrl+N/W</code> - 新建&#x2F;关闭tab页</li>
+<li><code>Ctrl+Shift+N/W</code> - 打开&#x2F;关闭一个新的VSCode编辑器</li>
+<li><code>Ctrl+Tab</code> - 切换窗口</li>
+<li><code>Ctrl+\</code> - 向右拆分屏幕，最多三个</li>
+<li><code>Ctrl+1/2/3</code> - 切换拆分后的编辑器窗口</li>
+<li><code>Ctrl + O</code> - 打开文件</li>
+</ul>
+<h3 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h3><ul>
+<li><code>Ctrl+[/]</code> - 代码行向左或者向右缩进</li>
+<li><code>Ctrl+C/X</code> - 复制&#x2F;剪切当前行&#x2F;选中内容</li>
+<li><code>Shift+Alt+F</code> - 代码格式化</li>
+<li><code>Alt+Up/Down</code> - 将当前代码向上或向下移动一行</li>
+<li><code>Shift+Alt+Up/Down</code> - 将代码向上&#x2F;向下复制一行</li>
+<li><code>Ctrl+Enter</code> - 在当前行下方插入一行</li>
+<li><code>Ctrl+Shift+Enter</code> - 在当前行上方插入一行</li>
+<li><code>Ctrl + D</code> - 选中光标所在词组</li>
+</ul>
+<h3 id="左侧工具栏"><a href="#左侧工具栏" class="headerlink" title="左侧工具栏"></a>左侧工具栏</h3><ul>
+<li><code>ctrl + b</code> - 展开&#x2F;收起侧边栏</li>
+<li><code>ctrl + shift + f</code> - 搜索</li>
+<li><code>ctrl + shift + e</code> - 资源管理器<ul>
+<li><code>⬆️</code>&#x2F; <code>⬇️</code> - 移动光标</li>
+<li><code>⬅️</code> - 收起文件夹</li>
+<li><code>➡️</code> - 展开文件夹</li>
+<li><code>空格</code> - 打开文件</li>
+</ul>
+</li>
+<li><code>ctrl + shift + g</code> - 源代码管理</li>
+<li><code>ctrl + shift + x</code> - 插件管理</li>
+</ul>
+<h2 id="插件及功能"><a href="#插件及功能" class="headerlink" title="插件及功能"></a>插件及功能</h2><ul>
+<li><strong>Chinese Language</strong>: VSCode中文插件，国产程序员开发必备插件</li>
+<li><strong>TabNine</strong>: 智能输入插件，根据输入历史和场景，自动预测输入内容</li>
+<li><strong>Git History</strong>: 查看git历史记录的插件，安装后打开文件在标签页右键，会看到最下面多了一个<code>Git: View File History</code>；提供了查看提交记录，文件历史，比较分支和不同提交之间的区别</li>
+<li><strong>GitLens-Git supercharged</strong>: 该插件增强了VSCode自带的git功能，可以方便在每一行最后看到该行最近的改动记录。</li>
+<li><strong>Markdown All in One</strong>: VSCode下编辑Markdown较为全能的插件，提供了键盘快捷方式、TOC目录、自动预览等功能</li>
+<li><strong>Markdown Preview</strong>: 该插件是一个提供Github风格的Markdown预览插件</li>
+<li><strong>open in browser</strong>: 该插件是一个允许用户用浏览器或应用程序打开当前的文件，方便HTML开发预览</li>
+<li><strong>OpenAPI (Swagger) Editor</strong>: 该插件在VSCode中提供了对JSON或YAML格式的OpenAPI规范（OAS）（以前称为Swagger规范）的支持。 、包括，例如文档lint，代码导航，定义链接，静态安全分析等！</li>
+<li><strong>openapi-lint</strong>: 该插件为OpenAPI文件提供了更为强大的lint功能，包括对$ref引用的lint</li>
+<li><strong>Pylance</strong>: 该插件提供了VSCode上开发Python文件的服务支持，前身为Pyright，提供了包括python代码lint，自动跳转，自动导入等Pycharm才拥有的功能。该插件通常每周四更新</li>
+<li><strong>Python</strong>: Python开发的基础插件，提供运行、调试、检测代码等功能</li>
+<li><strong>Remote - SSH</strong>: VSCode上远程开发的必备插件，使您可以将带有SSH服务器的任何远程计算机用作开发环境。</li>
+<li><strong>Remote - SSH: Editing Configuration Files</strong>: 编辑SSH配置文件时，此扩展补充了Remote-SSH扩展的语法颜色，关键字intellisense和简单摘要。</li>
+<li><strong>YAML</strong>: 该插件提供对YAML语法支持以及内置的Kubernetes语法支持</li>
+<li><strong>Comment Translate</strong>: vscode中的翻译插件，可以翻译注释，驼峰变量等单词，英语不好的开发者必备插件</li>
+</ul>
+<h2 id="常见的问题"><a href="#常见的问题" class="headerlink" title="常见的问题"></a>常见的问题</h2><h3 id="关闭预览功能"><a href="#关闭预览功能" class="headerlink" title="关闭预览功能"></a>关闭预览功能</h3><p>setting中搜索<code>workbench.editor.enablePreview</code>，将前面的勾去掉即可</p>
+<h3 id="go包跳转到外部网站"><a href="#go包跳转到外部网站" class="headerlink" title="go包跳转到外部网站"></a>go包跳转到外部网站</h3><p>settings中搜索<code>Editor.Links</code>，将前面的勾去掉即可</p>
+<h3 id="光标所在词组高亮"><a href="#光标所在词组高亮" class="headerlink" title="光标所在词组高亮"></a>光标所在词组高亮</h3><p>settings中搜索<code>editor.occurrencesHighlight</code>，去掉勾即可</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MacOS/" rel="tag"># MacOS</a>
+              <a href="/tags/Windows/" rel="tag"># Windows</a>
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/drf_serializer/" rel="prev" title="DRF的Serializer">
+                  <i class="fa fa-angle-left"></i> DRF的Serializer
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/mac/" rel="next" title="MacOS使用">
+                  MacOS使用 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">stolenzc</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">235k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
