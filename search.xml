@@ -260,6 +260,65 @@
       </tags>
   </entry>
   <entry>
+    <title>CPython-01 源码解析入门</title>
+    <url>/cpython_01_intro/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python 3.14（π）即将发布，在此时机，决定从头系统学习 Python 源码，在 2025 年末来完成这个大目标。本系列暂基于 CPython 3.14 rc 版本进行源码分析。后续会随官方更新切换为正式版。</p>
+<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>CPython 源码下载有一下几种渠道</p>
+<ol>
+<li><p><a href="https://www.python.org/downloads">python 官网下载页</a> 选择需要的版本，进入下载页面后选择 <code>Gzipped source tarball</code> 或者 <code>XZ compressed source tarball</code> 下载源码包。</p>
+</li>
+<li><p><a href="https://github.com/python/cpython/">CPython Github 仓库</a> 下载压缩包，或直接使用 git 克隆仓库。</p>
+</li>
+<li><p><a href="https://gitee.com/mirrors/cpython">CPython Gitee 镜像仓库</a> 下载方式与 Github 相同。</p>
+</li>
+<li><p><a href="https://mirrors.aliyun.com/python-release/">阿里云开源镜像站</a> 提供了 CPython 的各个版本的安装包及其源码下载。</p>
+</li>
+</ol>
+<h2 id="结构介绍"><a href="#结构介绍" class="headerlink" title="结构介绍"></a>结构介绍</h2><p>下载完源码后，解压缩得到的目录结构大致如下：</p>
+<p>注意，本文及其后续 CPython 源码分析均基于 CPython3.13.3 版本(截止到本文编辑时最新的版本)的代码进行</p>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">CPython</span><br><span class="line">.</span><br><span class="line">├── Android</span><br><span class="line">├── Doc</span><br><span class="line">├── Grammar</span><br><span class="line">├── Include</span><br><span class="line">├── InternalDocs</span><br><span class="line">├── LICENSE</span><br><span class="line">├── Lib</span><br><span class="line">├── Mac</span><br><span class="line">├── Makefile.pre.in</span><br><span class="line">├── Misc</span><br><span class="line">├── Modules</span><br><span class="line">├── Objects</span><br><span class="line">├── PC</span><br><span class="line">├── PCbuild</span><br><span class="line">├── Parser</span><br><span class="line">├── Programs</span><br><span class="line">├── Python</span><br><span class="line">├── README.rst</span><br><span class="line">├── Tools</span><br><span class="line">├── aclocal.m4</span><br><span class="line">├── config.guess</span><br><span class="line">├── config.sub</span><br><span class="line">├── configure</span><br><span class="line">├── configure.ac</span><br><span class="line">├── iOS</span><br><span class="line">├── install-sh</span><br><span class="line">└── pyconfig.h.in</span><br></pre></td></tr></table></figure>
+
+<h3 id="Doc"><a href="#Doc" class="headerlink" title="Doc"></a>Doc</h3><p>存放 Python 文档的源文件（.rst），编译之后生成 Python 官方文档</p>
+<h3 id="Grammar"><a href="#Grammar" class="headerlink" title="Grammar"></a>Grammar</h3><p>定义了 Python 的语法规则</p>
+<h3 id="Include"><a href="#Include" class="headerlink" title="Include"></a>Include</h3><p>存放 Python 的公开头文件，这些头文件定义了 Python 解释器的接口（C API），供其他 C 扩展模块使用。</p>
+<h3 id="InternalDocs"><a href="#InternalDocs" class="headerlink" title="InternalDocs"></a>InternalDocs</h3><p>面向 CPython 开发人员的 CPython 细节文档。该文档主要用作开发人员参考，不作为用户文档。</p>
+<h3 id="Lib"><a href="#Lib" class="headerlink" title="Lib"></a>Lib</h3><p>使用 Python 编写的标准库代码</p>
+<h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p>包含各种各种杂项文件，入配置文件，工具。</p>
+<h3 id="Modules"><a href="#Modules" class="headerlink" title="Modules"></a>Modules</h3><p>Python 使用 C 编写的内置库模块，编译后会内嵌在解释器中。主要是一些与性能或底层相关的部分。例如：re、datetime等</p>
+<h3 id="Objects"><a href="#Objects" class="headerlink" title="Objects"></a>Objects</h3><p>Python 核心数据结构，包括内置数据类型（list, dict, str 等）的具体实现</p>
+<h3 id="Parser"><a href="#Parser" class="headerlink" title="Parser"></a>Parser</h3><p>Python 编译器的具体实现，负责将 Python 代码编译为字节码（PyCodeObject）对象。编译之后的字节码可以交给虚拟机来执行了</p>
+<h3 id="Programs"><a href="#Programs" class="headerlink" title="Programs"></a>Programs</h3><p>Python 可执行文件（python&#x2F;python.exe）本身的入口点（main 函数）的源代码</p>
+<h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><p>Python 虚拟机的具体实现，负责解释执行字节码。</p>
+<h3 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h3><p>构建或扩展 Python 时有用的 Python 程序。例如：检查未添加新全局变量的工具、一个用于分析 C 代码（尤其是 CPython 代码库）的工具、pdb、i18n 等。</p>
+<h3 id="平台相关"><a href="#平台相关" class="headerlink" title="平台相关"></a>平台相关</h3><p>主要是一些在特定的操作系统下编译，或者和特定的操作系统相关的代码。</p>
+<ul>
+<li>Android</li>
+<li>iOS</li>
+<li>Mac</li>
+<li>PC</li>
+<li>PCbuild</li>
+</ul>
+<h2 id="Python-代码执行过程"><a href="#Python-代码执行过程" class="headerlink" title="Python 代码执行过程"></a>Python 代码执行过程</h2><p>通过源码目录可知，Python 代码执行实际上会分为 <code>编译</code> 和 <code>解释</code> 两个阶段。具体的过程如下</p>
+<ol>
+<li><code>Read File</code> - 读取 Python 代码文件</li>
+<li><code>Scanner</code> - 进行语法分词，将源代码（.py 文件）转换为tokens（词法单元）</li>
+<li><code>Parser</code> - 语法分析，生成抽象语法树 AST</li>
+<li><code>Compiler</code> - 编译 AST 为字节码</li>
+<li><code>Code Eval</code> - 解释执行字节码</li>
+</ol>
+<p>其中，1、2、3、4 均由 Python 编译器负责，5 由 Python 虚拟机负责。所以，Python 解释器实际上是由 Python 编译器 + Python 虚拟机组成的。</p>
+<p><code>Python 解释器</code> &#x3D; <code>Python 编译器</code> + <code>Python 虚拟机</code></p>
+<p>后续学习的细节会着重在语言细节的实现上，而不是编译器或虚拟机的实现上。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>技术原理</tag>
+        <tag>CPython</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Curl 使用手册</title>
     <url>/curl/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CURL (Client URL)是一个命令行工具，用于在命令行下发送 HTTP 请求。对于热爱命令行的人来说，这个是必备的工具。</p>
@@ -669,6 +728,68 @@
       </tags>
   </entry>
   <entry>
+    <title>Edge上手</title>
+    <url>/edge/</url>
+    <content><![CDATA[<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><h3 id="iGG谷歌访问助手"><a href="#iGG谷歌访问助手" class="headerlink" title="iGG谷歌访问助手"></a>iGG谷歌访问助手</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/mchibleoefileemjfghfejaggonplmmg?hl=zh-CN">iGG谷歌访问助手</a></p>
+<p>该插件可以通过Edge商店安装，安装该助手可以访问到google旗下的一些网站，例如谷歌搜索、谷歌play、Gmail，最重要的是可以访问Chrome插件商店，那么Chrome商店中所有的插件都可以安装了。</p>
+<h3 id="PDF-Viewer"><a href="#PDF-Viewer" class="headerlink" title="PDF Viewer"></a>PDF Viewer</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/pdf-viewer/oemmndcbldboiebfnladdacbdfmadadm">PDF Viewer</a></p>
+<p>Edge目前有一个较大的功能缺失就是PDF阅读，使用该插件可以有效的弥补该功能的缺陷，该插件在Edge插件商店没有上架，只能科学上网访问Chrome插件商店安装。</p>
+<p><strong>注意</strong>：</p>
+<blockquote>
+<ol>
+<li>Edge 86以上的版本中阅读pdf已经带有目录</li>
+<li>使用该插件需要在插件的设置中勾选允许访问文件URL</li>
+</ol>
+</blockquote>
+<h3 id="IDM-Integration-Module"><a href="#IDM-Integration-Module" class="headerlink" title="IDM Integration Module"></a>IDM Integration Module</h3><p>这是一个IDM的补充插件，在安装IDM的时候会自动进入微软商店进行安装。安装好后可以进行网页嗅探，比如视频，歌曲等内容都能嗅探到下载链接。该插件没有安装地址，只需安装IDM即可。IDM相关信息详见：<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#IDM">IDM</a></p>
+<p><strong>注意</strong>：该插件只适用于Windows</p>
+<h3 id="Tampermonkey"><a href="#Tampermonkey" class="headerlink" title="Tampermonkey"></a>Tampermonkey</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=zh-CN">Tampermonkey</a></p>
+<p>油猴插件，浏览器最强大的扩展插件，通过安装脚本可以获得许多高级的功能，该插件在Edge插件商店和Chrome插件商店都有。</p>
+<p>脚本推荐：</p>
+<blockquote>
+<ol>
+<li>科学上网插件，详情参见<a href="/2020/gwf/">科学上网</a></li>
+<li>网盘助手插件， <a href="https://greasyfork.org/zh-CN/scripts/378301">网盘助手</a> 获取脚本，进入百度网盘，选中文件，点击生成链接，获得链接后使用IDM或者迅雷即可下载</li>
+<li>网页翻译插件，<a href="https://greasyfork.org/zh-CN/scripts/389784">翻译</a> 获取脚本，支持三种翻译引擎</li>
+<li>百度优化插件，<a href="https://greasyfork.org/zh-CN/scripts/14178">百度重定向插件</a> 获取脚本，支持去除百度链接的重定向，去除广告，自动翻页等功能</li>
+<li>倍速视频插件，<a href="https://greasyfork.org/zh-CN/scripts/372673">计时器掌控者</a> 自定义倍速视频，可以方便跳过广告</li>
+</ol>
+</blockquote>
+<h3 id="谷歌翻译"><a href="#谷歌翻译" class="headerlink" title="谷歌翻译"></a>谷歌翻译</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb">谷歌翻译</a></p>
+<p>便捷上国外网站使用，可以进行网页翻译，也可以使用划词查询。使用划词查询需要允许上传内容。</p>
+<p><strong>注意</strong>：该插件的所有翻译均是通过translate.google.com提供支持。需要使用科学上网才能进行正常的翻译使用。使用谷歌访问助手也可。</p>
+<h3 id="彩云小译"><a href="#彩云小译" class="headerlink" title="彩云小译"></a>彩云小译</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E5%BD%A9%E4%BA%91%E5%B0%8F%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6/abbgboelhkajgikdbjclaecchkneaoma">彩云小译</a></p>
+<p>一款支持划词翻译、整个网页翻译的插件，该插件不用使用科学上网即可使用，并且该插件进行整页翻译时会保留原来的网页内容。方便进行对照。在一定程度上比谷歌翻译更好用。</p>
+<h3 id="AdblockPlus"><a href="#AdblockPlus" class="headerlink" title="AdblockPlus"></a>AdblockPlus</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/adblock-plus-%E5%85%8D%E8%B4%B9%E7%9A%84%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8/gmgoamodcdcjnbaobigkjelfplakmdhh">AdblockPlus</a></p>
+<p>广告拦截器，该插件可以拦截大部分的弹窗广告，使用拦截元素还可以去除掉百度热搜之类的内容</p>
+<h3 id="Cookie-Editor"><a href="#Cookie-Editor" class="headerlink" title="Cookie Editor"></a>Cookie Editor</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/cookie-editor/ajfboaconbpkglpfanbmlfgojgndmhmc">Cookie Editor</a></p>
+<p>能够更方便的编辑网站的cookie内容，在浏览器控制台-应用程序-存储-Cookie中也可以进行相同的编辑</p>
+<h3 id="Dark-Reader"><a href="#Dark-Reader" class="headerlink" title="Dark Reader"></a>Dark Reader</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/dark-reader/ifoakfbpdcdoeenechcleahebpibofpc">DarkReader</a></p>
+<p>这个插件对长时间使用浏览器用户非常友好，可以自适应计算界面的颜色，使整个网页背景变为黑色，该插件在大部分的网页上的显示都非常完美。但是依然会有部分网页显示可能有问题。</p>
+<p><strong>注意:</strong> 最近才发现Edge浏览器自带这个功能，在设置外观中将主题改为黑色，然后进入<code>edge://flags</code>，将<code>Force Dark Mode for Web Contents</code> 改为Enable也能实现黑色效果</p>
+<h3 id="Listen1"><a href="#Listen1" class="headerlink" title="Listen1"></a>Listen1</h3><p>安装地址：<a href="https://github.com/listen1/listen1_chrome_extension/releases">github</a> ，<a href="https://microsoftedge.microsoft.com/addons/detail/listen-1/hneiglcmpeedblkmbndhfbeahcpjojjg?hl=zh-CN">微软插件商店</a></p>
+<p>浏览器听歌聚合平台。聚合了包括网易云音乐、虾米音乐、咪咕音乐、QQ音乐等平台的歌曲，可以同步歌单到Github Gist。</p>
+<h3 id="Undo-closed-tabs-button"><a href="#Undo-closed-tabs-button" class="headerlink" title="Undo closed tabs button"></a>Undo closed tabs button</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/undo-closed-tabs-button/hfigadnahbppkfoomjopnladdokbmnkc">Undo closed tabs button</a></p>
+<p>一个可以便捷恢复已经关闭的tabs页的插件。</p>
+<h3 id="百度药丸"><a href="#百度药丸" class="headerlink" title="百度药丸"></a>百度药丸</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E7%99%BE%E5%BA%A6%E8%8D%AF%E4%B8%B8-baidu-capsule/hmmpaaklbinfllncmnnbdhedmhafnjkj">百度药丸</a></p>
+<p>解决网页使用百度的许多痛点，比如去掉百度热搜（分散注意力的东西）、去除推广、阻止百度推广等。常用百度的人员必备插件。</p>
+<h3 id="有范全网通"><a href="#有范全网通" class="headerlink" title="有范全网通"></a>有范全网通</h3><p>安装地址：<a href="http://www.ufanw.com/">有范全网通</a></p>
+<p>可以看到视频网站上VIP的视频</p>
+<h2 id="高级输入"><a href="#高级输入" class="headerlink" title="高级输入"></a>高级输入</h2><p><code>thisisunsafe</code> - 遇到网页因为不安全而无法访问且没有跳过按钮的情况，不用定位光标到任何位置，活动窗口选择为Edge浏览器，直接输入即可</p>
+<p><code>edge://flags</code></p>
+<ul>
+<li><code>Parallel downloading</code> - 开启并行下载（使用多线程下载）</li>
+<li><code>Force Dark Mode for Web Contents</code> - 对网页内容强制启用黑夜模式</li>
+</ul>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>略谈计算机编码</title>
     <url>/encode/</url>
     <content><![CDATA[<p>最近被问到 Unicode 和 UTF-8 的区别，于是就想起来了，之前也有人问过我这个问题，当时我也是一脸懵逼，于是就去查了一下，然后就忘了，现在又被问到了，于是就想着记录一下。</p>
@@ -833,68 +954,6 @@
       </categories>
       <tags>
         <tag>技术原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Edge上手</title>
-    <url>/edge/</url>
-    <content><![CDATA[<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><h3 id="iGG谷歌访问助手"><a href="#iGG谷歌访问助手" class="headerlink" title="iGG谷歌访问助手"></a>iGG谷歌访问助手</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/mchibleoefileemjfghfejaggonplmmg?hl=zh-CN">iGG谷歌访问助手</a></p>
-<p>该插件可以通过Edge商店安装，安装该助手可以访问到google旗下的一些网站，例如谷歌搜索、谷歌play、Gmail，最重要的是可以访问Chrome插件商店，那么Chrome商店中所有的插件都可以安装了。</p>
-<h3 id="PDF-Viewer"><a href="#PDF-Viewer" class="headerlink" title="PDF Viewer"></a>PDF Viewer</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/pdf-viewer/oemmndcbldboiebfnladdacbdfmadadm">PDF Viewer</a></p>
-<p>Edge目前有一个较大的功能缺失就是PDF阅读，使用该插件可以有效的弥补该功能的缺陷，该插件在Edge插件商店没有上架，只能科学上网访问Chrome插件商店安装。</p>
-<p><strong>注意</strong>：</p>
-<blockquote>
-<ol>
-<li>Edge 86以上的版本中阅读pdf已经带有目录</li>
-<li>使用该插件需要在插件的设置中勾选允许访问文件URL</li>
-</ol>
-</blockquote>
-<h3 id="IDM-Integration-Module"><a href="#IDM-Integration-Module" class="headerlink" title="IDM Integration Module"></a>IDM Integration Module</h3><p>这是一个IDM的补充插件，在安装IDM的时候会自动进入微软商店进行安装。安装好后可以进行网页嗅探，比如视频，歌曲等内容都能嗅探到下载链接。该插件没有安装地址，只需安装IDM即可。IDM相关信息详见：<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#IDM">IDM</a></p>
-<p><strong>注意</strong>：该插件只适用于Windows</p>
-<h3 id="Tampermonkey"><a href="#Tampermonkey" class="headerlink" title="Tampermonkey"></a>Tampermonkey</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=zh-CN">Tampermonkey</a></p>
-<p>油猴插件，浏览器最强大的扩展插件，通过安装脚本可以获得许多高级的功能，该插件在Edge插件商店和Chrome插件商店都有。</p>
-<p>脚本推荐：</p>
-<blockquote>
-<ol>
-<li>科学上网插件，详情参见<a href="/2020/gwf/">科学上网</a></li>
-<li>网盘助手插件， <a href="https://greasyfork.org/zh-CN/scripts/378301">网盘助手</a> 获取脚本，进入百度网盘，选中文件，点击生成链接，获得链接后使用IDM或者迅雷即可下载</li>
-<li>网页翻译插件，<a href="https://greasyfork.org/zh-CN/scripts/389784">翻译</a> 获取脚本，支持三种翻译引擎</li>
-<li>百度优化插件，<a href="https://greasyfork.org/zh-CN/scripts/14178">百度重定向插件</a> 获取脚本，支持去除百度链接的重定向，去除广告，自动翻页等功能</li>
-<li>倍速视频插件，<a href="https://greasyfork.org/zh-CN/scripts/372673">计时器掌控者</a> 自定义倍速视频，可以方便跳过广告</li>
-</ol>
-</blockquote>
-<h3 id="谷歌翻译"><a href="#谷歌翻译" class="headerlink" title="谷歌翻译"></a>谷歌翻译</h3><p>安装地址：<a href="https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb">谷歌翻译</a></p>
-<p>便捷上国外网站使用，可以进行网页翻译，也可以使用划词查询。使用划词查询需要允许上传内容。</p>
-<p><strong>注意</strong>：该插件的所有翻译均是通过translate.google.com提供支持。需要使用科学上网才能进行正常的翻译使用。使用谷歌访问助手也可。</p>
-<h3 id="彩云小译"><a href="#彩云小译" class="headerlink" title="彩云小译"></a>彩云小译</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E5%BD%A9%E4%BA%91%E5%B0%8F%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6/abbgboelhkajgikdbjclaecchkneaoma">彩云小译</a></p>
-<p>一款支持划词翻译、整个网页翻译的插件，该插件不用使用科学上网即可使用，并且该插件进行整页翻译时会保留原来的网页内容。方便进行对照。在一定程度上比谷歌翻译更好用。</p>
-<h3 id="AdblockPlus"><a href="#AdblockPlus" class="headerlink" title="AdblockPlus"></a>AdblockPlus</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/adblock-plus-%E5%85%8D%E8%B4%B9%E7%9A%84%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8/gmgoamodcdcjnbaobigkjelfplakmdhh">AdblockPlus</a></p>
-<p>广告拦截器，该插件可以拦截大部分的弹窗广告，使用拦截元素还可以去除掉百度热搜之类的内容</p>
-<h3 id="Cookie-Editor"><a href="#Cookie-Editor" class="headerlink" title="Cookie Editor"></a>Cookie Editor</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/cookie-editor/ajfboaconbpkglpfanbmlfgojgndmhmc">Cookie Editor</a></p>
-<p>能够更方便的编辑网站的cookie内容，在浏览器控制台-应用程序-存储-Cookie中也可以进行相同的编辑</p>
-<h3 id="Dark-Reader"><a href="#Dark-Reader" class="headerlink" title="Dark Reader"></a>Dark Reader</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/dark-reader/ifoakfbpdcdoeenechcleahebpibofpc">DarkReader</a></p>
-<p>这个插件对长时间使用浏览器用户非常友好，可以自适应计算界面的颜色，使整个网页背景变为黑色，该插件在大部分的网页上的显示都非常完美。但是依然会有部分网页显示可能有问题。</p>
-<p><strong>注意:</strong> 最近才发现Edge浏览器自带这个功能，在设置外观中将主题改为黑色，然后进入<code>edge://flags</code>，将<code>Force Dark Mode for Web Contents</code> 改为Enable也能实现黑色效果</p>
-<h3 id="Listen1"><a href="#Listen1" class="headerlink" title="Listen1"></a>Listen1</h3><p>安装地址：<a href="https://github.com/listen1/listen1_chrome_extension/releases">github</a> ，<a href="https://microsoftedge.microsoft.com/addons/detail/listen-1/hneiglcmpeedblkmbndhfbeahcpjojjg?hl=zh-CN">微软插件商店</a></p>
-<p>浏览器听歌聚合平台。聚合了包括网易云音乐、虾米音乐、咪咕音乐、QQ音乐等平台的歌曲，可以同步歌单到Github Gist。</p>
-<h3 id="Undo-closed-tabs-button"><a href="#Undo-closed-tabs-button" class="headerlink" title="Undo closed tabs button"></a>Undo closed tabs button</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/undo-closed-tabs-button/hfigadnahbppkfoomjopnladdokbmnkc">Undo closed tabs button</a></p>
-<p>一个可以便捷恢复已经关闭的tabs页的插件。</p>
-<h3 id="百度药丸"><a href="#百度药丸" class="headerlink" title="百度药丸"></a>百度药丸</h3><p>安装地址：<a href="https://microsoftedge.microsoft.com/addons/detail/%E7%99%BE%E5%BA%A6%E8%8D%AF%E4%B8%B8-baidu-capsule/hmmpaaklbinfllncmnnbdhedmhafnjkj">百度药丸</a></p>
-<p>解决网页使用百度的许多痛点，比如去掉百度热搜（分散注意力的东西）、去除推广、阻止百度推广等。常用百度的人员必备插件。</p>
-<h3 id="有范全网通"><a href="#有范全网通" class="headerlink" title="有范全网通"></a>有范全网通</h3><p>安装地址：<a href="http://www.ufanw.com/">有范全网通</a></p>
-<p>可以看到视频网站上VIP的视频</p>
-<h2 id="高级输入"><a href="#高级输入" class="headerlink" title="高级输入"></a>高级输入</h2><p><code>thisisunsafe</code> - 遇到网页因为不安全而无法访问且没有跳过按钮的情况，不用定位光标到任何位置，活动窗口选择为Edge浏览器，直接输入即可</p>
-<p><code>edge://flags</code></p>
-<ul>
-<li><code>Parallel downloading</code> - 开启并行下载（使用多线程下载）</li>
-<li><code>Force Dark Mode for Web Contents</code> - 对网页内容强制启用黑夜模式</li>
-</ul>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
       </tags>
   </entry>
   <entry>
@@ -2210,7 +2269,7 @@
     <title>个人文件Pass</title>
     <url>/myfile_pass/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="49ada36af96e50422069999777b0177b08db900c14b2006eb3a0cf2c839d6c60">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943799b3dff6da3d4af397de76dd376925fc47fad83627b37ea8a86717c4cca162c475d4bde6f02131fcc4f588e26e05e31878faa85284fd2c46ab8b62243ded8ff956d5ab431206b570103cf308da6de0c42568a68c086d4a5bb96b49fbcd78f31715a0909ab3fb9e3da779dbfa5c30224a7e5547a375ab9b205e38c22d52a8e3b8a82b735c0e10234d742ebfce6e13433f02f2a4bac7b8c6596719ae69f0d15461009fd5c093e63425e5cb745ef2e5ec57ee5d7ae534267ae3d8cfba38ca5eb137900360a265afb18e611eb3426cb120c18e389aa75cd47ca109ed4a371b9c2a8cfc6ca278e2767cab9f8a57e79a2ae661defbd9777c24f72bd85f5c278a6ba0602f95f45e3192ff8105964b8e2be83a0ff1bf968aef3dd29b9f1c6eeefb61ed30b2bde0b6f1c02a9c0b7d0edb5cab19d0d01149013c0a223dfe900cc4543cccebf4c63d65cfe99fa4c6bce28d8142e983e7d117865212d87bd00ed09bc5c3d35cd300b7ca5f7445331a10d5c931278be92393a7fc8ee14304982d8e32eb1daf19381810742b68ff30dbf4652c4a71fa919b9831f4873d7fed6f917d774bf68a1d923af357e0ee29abcdd1683fb97817dddb5c7aa93fb59e59b6b7ecea6e6526c6d4d6edd225e4ee1a25837750313564579386930fb36fd933858501ebd40f8d6554c408e88db7cf42b694bdd8727d6ada70f165f85b56e367c793ca31ab2288a7eb62c146ed2fabf4bb78c92a27da7ec66ec36cb548723bc55f8ccd39ce6960207a042f82a02e3ac51643ebc8617d4070812c6a55cc29b2e23a9d11ccb077063a6e90d6594dc8026f28d6fe0ba811ad147b2b870b540364431b65b4947061482f581a3bc506e24a2dfaeaf3b4035bd5e1a4ccdd5b497a52d59843a963fafa5f76dad695468c9716a9daa74b6fad9bc756f9fad300f14bd202e3bf6154b7329b04fe5e0e71493fa8ef27822694e51dc4f8c568eecce85024f33264b7c590c9eccf7df298e59bb79a01b2cac7ec34bc2779968d82ee1de0b7d373a7b8a055d0c0a12ab5c26855855bc9b03793b39acf1c80e1d4af3cfe42cc100092049fc597b317b25347af95cb416c442c5f170eb31753d1ca387460aebd2b82d807059b26cc0109fc50ea2d8413de2ed91356acd782f0e5a37f62037a9374a43fd40ecaa1a7c29c38176c500a4dd215f2d7626d0c44ef4fc20ad5a8be3d3e4b19b4284877b81d18fb314f2b1ccd2a0200e3dc75ecd520e74b7ce0052b0d1dd5ff43d91aeff3b8f1933cc8549328dad68e841a7faf5c29c958f1d9530fd2f9f74c0caceb47d5bf535408b5b155a220302ff0f06a82cfe76891e52f8b6334cddda73280d24f4db78900490c30854621548c662207d761de3ea7dc47e1986124dc162e8a1f0d9579299d0f7b2ca27887bf0e276c5697203267d3bdf5f84a023169eade506e1ab21134255a529308ec9785dc759651cc9cb3eada394b1e852761cc69c0235333659c2fca348bc5c31746e7f66de4c504770c40ce5987adeef0e46a8aa0604d5da55e470a2083c2a3bdf2bc590b61b21ce1b2357a0ae8470d672ea416cae58299a8a899e2dcab1d0497a0bde0252631629ed55e0577d8e3497b3185dce3f9263aec7901f83e0e8d98005fb90966fa31782faaa1689926b77e3fc1715d4d4ead855ed84018c0a4222d2fb23dcf0d239e77fda4461cfbdab02e8ff870e7a91b6e13e28e5efa1bbd96e1ba8825d610ac76cd24337e087ccc74d8924ba7a66773dacab0bbe71f93191622e880c1fdab918faa7a16763ce2f690aa10d42cc4300793c5555ef10b05c443463710db90d8af00ce92e6088c22b8075b10ffc7e97b5482df3f52120b0a8846d7575ab80f4f3d66b87d7fd3e486f0064032faae46c23014a3afba3fad754bfcbc6d40c7a1a6fd8918d0d62dbe4219aa773bad62e74925b38c569390584b3614dfe57522d025c70a7107cfbb93aa18fbabe2612a0bc976539454de46e3705998244eb32096be9773095a2b5f5aff75a98f23792d0f13c94d11e8f57da494a7f777e90b461f7987efa047c3942a02a2fddc5adac403843a31ea2c76509647e82831c7ce557ceb74fec1f110915724c3a9d63cfe05b8e88b5bbcb37c20e19a34a691e14765d0ae523b5489b4d37dc0009dfe9469b8c63f6e8d5e5608bb9eb7dec73564083442475ec4840c87e49d354e4135054b5aef038a2b12ee1b7811fa7f8f4f9941776a3f6e3e3e9ed2ee2d009f4a92cac78d2dcd2ed84259540702e9e705955d0e9c888637fea79c69480ff5fe99dfd1ac66e16fab8cea6f84bf96520c5c8ff39dbd8ecaef4a0bc5ea981438a8b80f85ff3eb243fc7bff6ca3947dfd9b52372a25350a5b5e3db555a76830b885f24d0ac45c6012541dd4731d70d1e031c58a722dcc21466efe6ee47b4779e7e5daf80a0c21f6325c4dd8284fa1ff9c55e0bbaf50b16f80bdd5bec11847f9b9af48dbef10d1cdfce06d87aef0638db454a306dc2727e33dc1cee520e84080d4452c642b4b6e1bb2e3ded4928eba3ab3b05f4199c0eab59d679a1eb00afe02dbe4a7228af8b10c8fa4bb64f13e85c8387475814889268764dc313235a7f9055b439dcea6bf28ada4f424253bebba7aef82126aaa159111082a7b9a41b621070f4a2b1f05edc721f801c317cefefdd3002d08e1ad61ccbdf7518e1551e140b25f41cbccd910fcec5d6c58158964affc731a8d2a9db3e5ef2cd629f8d2e6e5f97a043ee35ca463893a2ee3a629525c836d960451b76a68305ce272e533f421732d12b1cf22c0a2cf6cc052c0ee14807d748e15794372ec84f29b0f6fb5fe39dd3603e45da427a43efdf0976bed8532fae5a0567b216e4ee835b0cad602bfceeedb4eb6da7d528c9bb5a929e31913af811199ecfb1d42a56928525cdf3b2063c314f06182bd27930b77dad9ef6811bc832f3b61fe579e6880400b7b116dcf69508f9633b277ad6679e065ba61dc3c97fa245faa54cf1d22aeeab7888db77e155b5f7af859b8c2e95bf90a47575c488ff72d7435c03c01dbfbcdd911a9e914589b24abebf79327740e2a538a52e388a9d71babecee702ab6dafa39c9abe703a4642df9247d0932df4cdc13627b6c9ec3a6bfee275eaa5291155f421766d541cf9bd882eb77b8dc16f6d7c0f9e0ccf5001f736ebf5e76efa2b020f613cf7dbf9779b65f76547a1b70de20858d5a27904837f37be29c2a5c890413fcbfcbd2b94a3865c56c8a05748b57c0a4643823790671a2576e08314cbff40d2353f934f09f317cc46e44db0a7deecd723f80a0382ac27eb005dee57606f7883962294adbc0c353b6904745cb04c5b90a09ce1e657abc5998a9cee399c73044a2b785d5d9b6e89376639e82d11a5cbc731634aa3f57d7e8ba73f66effdfa2234fed5f02a38ab4740c07e137578d257e38fb2e9e1da2f7dc94c9d9787332eb4d6692e1214473abe04555980c92942caff877b45159674909df45fdf3fa18194c5da04f506679258224f0428be4bad9d9cbe836edbb5e47d18de60ffab7463506b551c9477fe751ccde93e8741863a5f56300535e5b1fde5eb7779c2d33ba675181b494b6fd1be0279a976952541ad44fa023137d70ada4bfe16b32aa4254e33c307f98b8d61f490d9ca62c71e0e4503e0aa740eb7d2ac8bede90318c46c386badb505079a97d0540f089a025860100a5bc70b0d08db5be55bb52d5accb68110fecf6f1c310d83dc30ad652720b293d4c180a7c3b25825f6df35d7144d610ec2274a14e8485dd5db1a04dbea92d8951fe3c400b91666404a62317e3859f85e7e65c57f64ad05d30f5308d3ee976b917f2a441ad672b6151ce53d5e72423b608ce90936299a8a59a9e5cf6a8b18add8201c298e082af0165ef06b5c29f29c514e70ea0c76cc0957e6d973cd44372a5d249cb91514b3f9fc1dbf4bcd116b5d28bb35e43de4da9b06427176e26b92de50cef38465b92f445b1bbb7bb997379874d4c0168f06a9a0dd89e826f2a2e3d49d3dceb821a3cc6fbc82a7beb0c71f860fc2c6fe8f77393aaae27e46ad2723fd63380ccd08fd524491c268233dfef6e1243d0234dec76c1070fd0d9eb14079ea0ec873c95545af1c4cf51db142c6c93b621e4d8c659769fce455f0cd18b9d06c1a1b129bfe3dd1f903886ea3e245a59bfb648cdbb64123f798312a6058441335d29e2a1253b28ecebc1b4a05d4aacc20721765355645835e0453f278c1897347fb8a0ca1dd3c2f5722d8e10a07c289823d62eff9358dd1264a9a14dc393d979e500323dc617aae05df8ca22d7d1dd270debdb0dae068adbe98170f68f23a191d26fe22aa0b7450aa7bb84d9662a4a7786890d0ed556e3041648aa86621f342a6ddb3a83f7ca42803e4d17ab0946656179c5d082275a234ebe52e689e5730eaaf14bdfe01a72426f6428f56b546e1ad9bdb52bafc07182d9bdfe7283a9b9535d478b96c76d90bd35c13effe37e5c696c9378606d4e1ec82573b8939f4b87c0363f41c941ac2a7d1417f9364b4d5bae7a9cfe35df42ba804a97cb426a11295b882fbb087ccfea7dd1b10ee83daa3ff48674fc3d52e71529f5426f29c126d41b923e347ac15947e4d8589ff0eb159847b3f29c363461c6e7c0b127f1c3823fba53d200d1f8af8886611b85483cf0c3875d9769ee0ea85ed13c8e61d6d50b2fc7bea643a6a3f596ac4d313203d019eca1936b5bb9e0b7c30c3a30e7001cc9132915256855b1bd69aaa0349e4f8b2bd989689a3b5b7ba5734724eefa415537c4aeb5c6de3ee3c232bfbe7f1c6e47ecaf312c7032ddec12511feef038bb706e127bd20ce13de9e7039b1a13250b0380b963e9c54f52f4c48b036dd13938791d49e52ed2ed702b9c9e20aad75975deedc07d5ee2b1b5d21d2143fb3bb899548d5cfbb74a56d1f9f1c6042ab414579e396c79c215840d1d9557f15f5906af6f8cc1afaa75b3b32acc83d283e4cf94bf177c83b0ff81c227f8446c5c5b3f406fa67d4318de8f4ecfe386ce2332b4fb3ea4cb7f2c7776399641b3dbab0586040dab8f0d1e003290b27e517a46fbe1cb12bfe01ae5b897736f32c3ff3d497546c834962678a467edeeea4f1ae</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="452f3c96f58fda20727259dbb485c012043e942c21024ca17b782245b8b731aa">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943e705ae542b416c7f1fbbbb135c8bc0eba2650d336daa9470328ac95ed4f25c0f9f4e900d8aa261fb1deeef0491e3a77ee70515bf40e3aacda7ca4121736d47a0edbe1ebf7c84e72539ce234e518122c82b4c0757536be5743081b6e0a9f1943c30392eb7567e97825c1cc386b212dd3bd81519fd02afcbf76695e3b06fc5fdb477a193dbc2244596b355f04abab283b288cd9646c7f55d3b8d799f78f3e188da478390d0ebb6a932612cf4165f04ad85bdbe14d58390cc10940acb6c8eed3e85fc61372fd6bb2be92685bbaac6f525c26d41ba6438baa2021cbf41debdc212331722d91bfd29360760110382fdd71429e5ef994f88e0eff3019290f2bd1a676003c4054dc4d51b2a43231ce332b314c02b2af3272a2b8cc24ff0320d069e1f46b706fe2d215b996c6c054c026f8a8f057bc70111480c4d06c47b5de945defb2530a821e917a24fbca3f52768e231d1f3680281188782514acaee0e47c57889310a78135d840ff9a57608745598f662506a04cfecbf566c1f1b7948dc605a043e53939a0a391cb9e29031f7e602e21bff67eaaec587a1d3abc08565efa136def5abec76c1d8f4d5a0c3fc2cad1676b785aa7d3bc8b603962fd3b848e2f680728c5021b3832fabc9a7e6dd478371b63099de641fc617b68d918d71b69ca169aba4ac26229b4fed4df545e2ac47562f3c4549a81abb7b6e8f586e54ff63425eb8d35358cf6c36ddb800a4b65a1a484a637c5fb0ee646af08a3abf575cf1f55ac573ff0bf7f44f754b0d5a5733cf9a27851caaffbc8a33c43f641d9a35f8eb0dca139d9d9073ef78528483da90232cb9ac1cf53579f5a98f3b71cb8796d1eabf7fba2b29cdfeff3d6cf361387dd006fb5013753a3a7473e2221fdbc978a69c421ec922080ef019e1447043ef02cdd5200fd5b226722fd787d231ede3b6927fd699f0db16b7c475cf7ffc0920ddb07f0a8fb4a6665cd6ed0ec8ea77a6107a5748c4f6e931a97a70fc81b98f7f355d7a65fff8e55f79c3c73b380abc54e5c070aa0a1e4d632ce9c771878b24efd389831bd6c28867c834f6e6ecdcfa46ec639fb51828b40fdf25b2d06509bc39bc9688403e4c9b531775729e76fe3e0a2869395633bf3b03f49fcae6841e6024edacfe0387d1454a0e856c6cb5ab0ff70405b4a3e92638fb4ff3d75c5855626173d71b1023eb697a6cb60ca7d99e82ae4f7b4a2c00f99e06e70255a0095b628b6a864fd2a3c2c20113b9375290764872a186d92139fb4c135843f9de579256b77ed1742364e1aeef69f2556b00cf2dd259b624b4991a0e0ee09b84fac566033a3e9924976e9b72edd14495294a9152629852c075026108690cd0200db54a7a0a5a816a4edce9849fca78d501cd3d80d9365b516c583a08c5075d8534224d4dc5f55d4c4a3723408301074473afca22125dbbe4ebd20c577305a0c1b25d6784348d544ea42a911d5a77a224d730e3d94ecb099c65aab89d20f59d61faa0d70b0b240badd15c22a4c573ddb24ddc9f866fe1b0872da0ba3f74d6d6f4fcfe4fb0f75876fd576ae9be0567a52a905b27be143123f6fba19184125a9ab1daf0d9c1470dbf8b0c148d60f25f15e258aaac7f130e5ef793cfd1811ead499c7833fe5726dda8db123f0761295098619bb2ce98b4423f8e54a3d203bf44cda5b23a26b8325842814f17d6b33a85ada8827f65acab11e65a25eddeef16e1573af13eb3b8e7b0ba5af29037b093153b680b734662f7f2dc53676d808b3e5c2324fbd67d7495b319412bb99bbf0624668dcf4c4a37824230dd1904283507028d8b8778c950ecf863888e19546f10f66bfd6cc177427184cdff2bd81994c0461da25b796bbb6ef66361794bbbc0081623f03e6ffc978e8acb7cf7ad76d40f9de5954fa074b8fc94b8db9bc0b7ed5a50be702faf7175b254297967f3e199d802f073650b0553d0f6768b724e019750c1bf585136332e7bff4df36bf96cd2cdd5577c8e496b64fc6955eeaaa18a6d6d403ae97b23534cb491533bd4490295b26a551493faa506b7ef50d08f23b845c304c4ecbc4b139ba9750d7eb6d2ace289b416597fd9e38a384d59d6c4b0182b55fb56e4c3a13b8795189791f9e8964907da49e4035505e33d2ab0062ce7995c3de950619e7a914c3f70d453801fc0159be93d5d5a5427dc2f29c7c7641d0c3b3507a45bbae7c735096289cda4a85ac215dba179d116e2fc6fc075562d7a69c7bcc7cb2f1e8c4083e9c0dad52d7b961940b30d29d01c47cd23c79f9983939be776177f45c9f268f43d8ea801bb02a2b40ef7d50576ecbc476d2995214de0d9ded523dc54c57a1892eda4ff422632801dcdc85626fe5acb96d5f96719378e8c6d3fb872928b67e9c432f58b0b6b280d16b1284444609eaa642cf97dd5d102dc7348be0a56e1305ea60a8dcd38a34776a8547d29ba87a90c7824ce4e9549e5bb63cd95062962d02bda7a2e657cb9ef919fe88b7839ec384ff02852eab4bb3b2ee3e942366e524799e69b3704649922b8e845e33be73e87b143ae73faed139a352474f952b1c98f3cdf6da891c8413b89025d55894da471f34e5d7521483bb516d3064b2aac3fd7e558043fa262b48665e2cd1f2cae2a851660d260f808fa7a2ef76aa7849e157dfbe3b0589beb5434f0825b6802d97241625324ee63f0c8fb48a18c92ee621c8c189b0e5495579ae181cfe68887027a92199ebf5c0ab25a9811a665166a0c52058c6b5e35e9ce853a58b1cb42eccab23cc05e769c29fcb4a5f233080e6e6a0bd79eb6ba2a4299d0112ac7d3458104d2c7cf5c661dd9eefc60291d7c13b98eecd38415ed50853352e09102ff61c6aa604fdfd6be839b42e88bb357f87000c794256b3a2bfe977be631730fed7651310c50d37a4370c4cf0d4209d4690eb37316f98f2f1e3804a84c793b7aeaa7e6269cec311ca39d52434b35b056a46994187b799f4fcaa0e9dbdbca55f2ac824c98036e32d251be9445a6af2456f1be0f3cbde679ada6a49be6230577b05077b8ef432e3f507d6979bb90cde51ecd0566bce45e7e31d57f306c52b728d3aa7100954eb22ea62cca6a8d7eb95ed2ebed139a24d9b5254e3dc48d68e5237b3119400e1d5ba5039b2ac0ee359f42e893489f69ee5d1109bf463508406df8390f850a76f7786ae19497ae3f4483e4596892eb69e2fc43b180a792f4fb63008bbaa539a452e85bf75bbe848b6f4705e90be4ab75a568a727f03175dda234483a769639cec18a200ebd58b3aad72d04f86f7994841e4db8d937604ea0db13ad7214739e74b35c995eb66f2cc913d6cbd7452fa8a54e371b5cb07186db18d0029fa6309ac7ec29028d44ae5be4d21c81e4f09e4f9e1dd29bce1938f6a7483e55b72b9a71dbeef517df713bcf3afe44b7d070e6fcca79f13690cb2f169d3753257de4f2d646af9c01eb074aae036627b23557b5fae7da04aa030f2119ee3f860d0df7833b206296c8af83469fcffe5a3b88af7aa46a1fa94cc1f1ea026a6c718da07e22eda4b2d47f6f233203f3c8c9ede385f5d4017efc9d1671e5d9fa2b8713e337ba52eb4197aff9760652ef4b57070d757ec33556fea74f7a839d0072deeacafa7ec8f7817069946bad5481afc234c20223a9f6e7560399b4bb46b844a77728bb7b2034cb8e478be5a53b4751bd19ed61caf97223bbe919fb4b9cd4d35590cabb6412391b07ff2fada36f2436684810b832a3340c850ab4f7969b9a4692052b9e2d3980daf733fa9dc3827f7a8de2441570280b49bd072ce22707e1dccfbd9e4211992e950d1b0bcf87e7c6292e992a5b957e4e1943092d9f6b30383a8e3516a6d56be2803ee752128f052ed9a3b8a40fbc5f6fc708966a555b614fe5ffbe6afd13d230c585b0c0e3810b3de64e1ce8a7b51b1bc6b90977b1474108b8b1c318df5fabab03e5ac549a71b9b0c9846a681f4174397a9ec6ed233f80224caf2b72b13b44dc5103290985ddffacffa3670e1521b738498feec35c8c8c5de3fab8241a1b3cf3c97151b3231bd0f5860a3719f5d1d1e60804bbe590e3e96161d0a8b852827ecc1de9c17d9d1822f1c982cd7a48025a3aefbd0e6830783fd81e7864e114cc7edeaa9410435ff98493f43e79d796dd91d4cb81d1605e17c448ab3696b680f7534eebf920eb56c32fd6abcb6877b903530fe80767a8b8d8f7aa9c0789e57468dea3d5f4eba9a65934ce7c13847140f648c8e840fd4c291f5422768ea563039ac188e2170a413cb2029e3ce8f5d7094da29ef1bd42a41b4684f0a78d1fa7b5208485ee6c58e9795d6a05d50fa6b2dcd91d8a654810068fea30b7c5c9c8164420c364517118011422c0415ad0253796801724786b7d5267bedd2b3f144b579b8cb6880e819724d51814627797e2bf94b70388a04d27e3d3200645a54877224400e08abcc9453c7b15b09502363bf32294e738fa4affa910249b9c28e85730d024ae70d9d429a0c46c3ecc700c55cbcf23230eeb9c5f920712864cfad9f5ed38e841d31cdb9920d41bf108cbbb51b73184450b3e07cf9f94946b0616fbbe8e8197fc696b65f2dd8a8ac11c079b44ae10a202fe7f9d9168e88208b5868307ec83af72eba43878f8b791a0a2d4abe5b6d1c7a0f14d0a0a9096480566125ec7a1929a458f2b78bec874ec1952a84cbb4d837917209b8fca22a153f8d87ca2464f5f603afb60f767645b95724eb6848aa016e5c07fbd6e1c6884c960cf8328b6c703ecd684778e80f2a159a8d5fec33566368bfadae93f6220a4829e59c5813d9405a044f3becd8f5b56b569c40526e9a7bd8e1df8133b7ad059d954ab1b22b3738ce9434cbfc7823afda14345866541731d395a4eb60069732136a3cca5c1f7cde70a63e6fe34a8cf6b286d5d70b444b9398a682dc3b9a98fbf016b820918fd621476f9df49acecf2d870fc0933df4d66a756bb1e68b428e95de78dd2ba6bad843642c1cf5a706073f39ba7be267063aeeeb96a9cc8c49d1032fd2361bc219d59cbe3421aea7ee4f570a8c980b5b8ef907dd7ba1d29c5a86e6f8454c7e7a7ad17307dbb727af7b3193f3b9576860b9e</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -3346,6 +3405,137 @@
       </tags>
   </entry>
   <entry>
+    <title>OAuth2.0认证</title>
+    <url>/oauth2/</url>
+    <content><![CDATA[<h2 id="OAuth介绍"><a href="#OAuth介绍" class="headerlink" title="OAuth介绍"></a>OAuth介绍</h2><p><a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth2.0官方文档</a></p>
+<ul>
+<li>Open Standard Authorization (OAuth)</li>
+<li>OAuth是一个网络开放协议。为保证用户资源的安全授权提供了简易的标准</li>
+</ul>
+<p>特点：</p>
+<ul>
+<li>简单：不管是OAUTH服务提供者还是应用开发者，都很易于理解与使用</li>
+<li>安全：没有涉及到用户密钥等信息，更安全更灵活</li>
+<li>开放：任何服务提供商都可以实现OAUTH，任何软件开发商都可以使用OAuth</li>
+</ul>
+<h2 id="OAuth2-0"><a href="#OAuth2-0" class="headerlink" title="OAuth2.0"></a>OAuth2.0</h2><ul>
+<li>2012年10月，OAuth 2.0协议正式发布为RFC 6749</li>
+<li>OAuth协议的下一版本，但不向后兼容OAuth 1.0</li>
+<li>OAuth 2.0关注客户端开发者的简易性，同时为Web应用，桌面应用和手机，和起居室设备提供专门的认证流程</li>
+</ul>
+<h2 id="OAuth2-0角色"><a href="#OAuth2-0角色" class="headerlink" title="OAuth2.0角色"></a>OAuth2.0角色</h2><p>resource owner: 资源所有者，指的是用户</p>
+<p>resource server: 资源服务器，指的是应用服务器</p>
+<p>client: 客户端，指的是应用</p>
+<p>authorization server: 授权服务器，指的是应用服务器</p>
+<h2 id="OAuth2-0流程"><a href="#OAuth2-0流程" class="headerlink" title="OAuth2.0流程"></a>OAuth2.0流程</h2><pre><code> +--------+                               +---------------+
+ |        |--(A)- Authorization Request -&gt;|   Resource    |
+ |        |                               |     Owner     |
+ |        |&lt;-(B)-- Authorization Grant ---|               |
+ |        |                               +---------------+
+ |        |
+ |        |                               +---------------+
+ |        |--(C)-- Authorization Grant --&gt;| Authorization |
+ | Client |                               |     Server    |
+ |        |&lt;-(D)----- Access Token -------|               |
+ |        |                               +---------------+
+ |        |
+ |        |                               +---------------+
+ |        |--(E)----- Access Token ------&gt;|    Resource   |
+ |        |                               |     Server    |
+ |        |&lt;-(F)--- Protected Resource ---|               |
+ +--------+                               +---------------+
+</code></pre>
+<p>A: 客户端向资源所有者请求授权。这授权请求可以直接向资源所有者提出，或者最好通过授权间接服务器作为中介</p>
+<p>B: 客户端收到授权授权，这是一个代表资源所有者授权的凭证</p>
+<p>C: 客户端通过身份验证请求访问令牌 授权服务器并提供授权许可</p>
+<p>D: 授权服务器对客户端进行身份验证并验证授权，如果有效，则颁发访问令牌</p>
+<p>E: 客户端向资源请求受保护的资源 服务器并通过提供访问令牌进行身份验证</p>
+<p>F: 资源服务器验证访问令牌，如果有效，则提供资源</p>
+<h2 id="OAuth2-0授权类型"><a href="#OAuth2-0授权类型" class="headerlink" title="OAuth2.0授权类型"></a>OAuth2.0授权类型</h2><ul>
+<li>授权码（Authorization Code）</li>
+<li>隐藏式（implicit）</li>
+<li>密码式（password）</li>
+<li>客户端凭证（client credentials）</li>
+</ul>
+<h3 id="授权码授权类型（Authorization-Code）"><a href="#授权码授权类型（Authorization-Code）" class="headerlink" title="授权码授权类型（Authorization Code）"></a>授权码授权类型（Authorization Code）</h3><p>第三方应用先申请一个授权码，再通过授权码获取访问令牌。适合有后端的应用，比如网站应用。</p>
+<p>scope参数</p>
+<p>步骤：</p>
+<ol>
+<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
+<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中携带一个授权码</li>
+<li>A网站拿到授权码，在后端携带授权码来请求A网站的接口（携带授权码、appkey、secretkey）</li>
+<li>B站收到请求，验证授权码，如果验证成功，则返回访问令牌，重刷令牌（access_token, refresh_token）</li>
+</ol>
+<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=code&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
+<ul>
+<li>response_type: 授权类型，必须为code</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>redirect_uri: 申请成功后网站的回跳地址</li>
+<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
+</ul>
+<p>响应格式: 在回跳地址中携带授权码，比如：<code>https://stolenzc.com/callback?code=1234567890</code></p>
+<p>后台再请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;appsecret=appsecret&amp;grant_type=authorization_code&amp;code=code&amp;redirect_uri=redirect_uri</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为authorization_code</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>appsecret: 网站的身份，为应用在网站申请的appsecret,appsecret为保密的，所以只能在后端请求</li>
+<li>code: 授权码</li>
+<li>redirect_uri: 验证成功后授权方带上token数据请求该uri地址传递token数据</li>
+</ul>
+<h3 id="隐藏式授权类型（implicit）"><a href="#隐藏式授权类型（implicit）" class="headerlink" title="隐藏式授权类型（implicit）"></a>隐藏式授权类型（implicit）</h3><p>第三方应用请求接口直接获取访问令牌。适合没有后端的应用，比如移动应用。</p>
+<p>步骤：</p>
+<ol>
+<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
+<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中以锚点的形式携带一个访问令牌</li>
+</ol>
+<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=token&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
+<ul>
+<li>response_type: 授权类型，必须为token</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>redirect_uri: 申请成功后网站的回跳地址</li>
+<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
+</ul>
+<h3 id="密码式授权类型（password）"><a href="#密码式授权类型（password）" class="headerlink" title="密码式授权类型（password）"></a>密码式授权类型（password）</h3><p>第三方应用拿到用户账号密码，直接用账号密码获取令牌</p>
+<ol>
+<li>A网站要求用户提供账号和密码，拿到后A网站直接向B网站请求令牌</li>
+<li>B网站验证密码后，直接返回令牌，不需要进行跳转</li>
+</ol>
+<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;grant_type=password&amp;username=username&amp;password=password</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为password</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>username: 用户名</li>
+<li>password: 密码</li>
+</ul>
+<h3 id="凭证式授权类型（client-credentials）"><a href="#凭证式授权类型（client-credentials）" class="headerlink" title="凭证式授权类型（client credentials）"></a>凭证式授权类型（client credentials）</h3><p>凭证式适用于没有前端的命令行应用，通常是多个用户享用一个令牌，通常针对第三方应用，不是针对用户的。</p>
+<ol>
+<li>A应用在命令行向B应用发出接口请求，只需要携带appkey和secretkey即可</li>
+<li>B应用验证通过后，直接返回令牌</li>
+</ol>
+<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=client_credentials&amp;appkey=appkey&amp;secretkey=secretkey</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为client_credentials</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
+</ul>
+<h2 id="使用令牌和令牌过期"><a href="#使用令牌和令牌过期" class="headerlink" title="使用令牌和令牌过期"></a>使用令牌和令牌过期</h2><p>后续请求资源的时候，需要将令牌放在请求头中携带</p>
+<p>通常在申请令牌的时候，会同时返回一个refresh_token，用来在token失效的时候，重新申请一个新的令牌。</p>
+<p>重刷令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=refresh_token&amp;appkey=appkey&amp;secretkey=secretkey&amp;refresh_token=refresh_token</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为refresh_token</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
+<li>refresh_token: 重刷令牌</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Backend</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PEP 526 -- 变量注解的语法</title>
     <url>/pep-0526/</url>
     <content><![CDATA[<h2 id="Meta"><a href="#Meta" class="headerlink" title="Meta"></a>Meta</h2><ul>
@@ -3552,137 +3742,6 @@
       <tags>
         <tag>翻译</tag>
         <tag>PEP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OAuth2.0认证</title>
-    <url>/oauth2/</url>
-    <content><![CDATA[<h2 id="OAuth介绍"><a href="#OAuth介绍" class="headerlink" title="OAuth介绍"></a>OAuth介绍</h2><p><a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth2.0官方文档</a></p>
-<ul>
-<li>Open Standard Authorization (OAuth)</li>
-<li>OAuth是一个网络开放协议。为保证用户资源的安全授权提供了简易的标准</li>
-</ul>
-<p>特点：</p>
-<ul>
-<li>简单：不管是OAUTH服务提供者还是应用开发者，都很易于理解与使用</li>
-<li>安全：没有涉及到用户密钥等信息，更安全更灵活</li>
-<li>开放：任何服务提供商都可以实现OAUTH，任何软件开发商都可以使用OAuth</li>
-</ul>
-<h2 id="OAuth2-0"><a href="#OAuth2-0" class="headerlink" title="OAuth2.0"></a>OAuth2.0</h2><ul>
-<li>2012年10月，OAuth 2.0协议正式发布为RFC 6749</li>
-<li>OAuth协议的下一版本，但不向后兼容OAuth 1.0</li>
-<li>OAuth 2.0关注客户端开发者的简易性，同时为Web应用，桌面应用和手机，和起居室设备提供专门的认证流程</li>
-</ul>
-<h2 id="OAuth2-0角色"><a href="#OAuth2-0角色" class="headerlink" title="OAuth2.0角色"></a>OAuth2.0角色</h2><p>resource owner: 资源所有者，指的是用户</p>
-<p>resource server: 资源服务器，指的是应用服务器</p>
-<p>client: 客户端，指的是应用</p>
-<p>authorization server: 授权服务器，指的是应用服务器</p>
-<h2 id="OAuth2-0流程"><a href="#OAuth2-0流程" class="headerlink" title="OAuth2.0流程"></a>OAuth2.0流程</h2><pre><code> +--------+                               +---------------+
- |        |--(A)- Authorization Request -&gt;|   Resource    |
- |        |                               |     Owner     |
- |        |&lt;-(B)-- Authorization Grant ---|               |
- |        |                               +---------------+
- |        |
- |        |                               +---------------+
- |        |--(C)-- Authorization Grant --&gt;| Authorization |
- | Client |                               |     Server    |
- |        |&lt;-(D)----- Access Token -------|               |
- |        |                               +---------------+
- |        |
- |        |                               +---------------+
- |        |--(E)----- Access Token ------&gt;|    Resource   |
- |        |                               |     Server    |
- |        |&lt;-(F)--- Protected Resource ---|               |
- +--------+                               +---------------+
-</code></pre>
-<p>A: 客户端向资源所有者请求授权。这授权请求可以直接向资源所有者提出，或者最好通过授权间接服务器作为中介</p>
-<p>B: 客户端收到授权授权，这是一个代表资源所有者授权的凭证</p>
-<p>C: 客户端通过身份验证请求访问令牌 授权服务器并提供授权许可</p>
-<p>D: 授权服务器对客户端进行身份验证并验证授权，如果有效，则颁发访问令牌</p>
-<p>E: 客户端向资源请求受保护的资源 服务器并通过提供访问令牌进行身份验证</p>
-<p>F: 资源服务器验证访问令牌，如果有效，则提供资源</p>
-<h2 id="OAuth2-0授权类型"><a href="#OAuth2-0授权类型" class="headerlink" title="OAuth2.0授权类型"></a>OAuth2.0授权类型</h2><ul>
-<li>授权码（Authorization Code）</li>
-<li>隐藏式（implicit）</li>
-<li>密码式（password）</li>
-<li>客户端凭证（client credentials）</li>
-</ul>
-<h3 id="授权码授权类型（Authorization-Code）"><a href="#授权码授权类型（Authorization-Code）" class="headerlink" title="授权码授权类型（Authorization Code）"></a>授权码授权类型（Authorization Code）</h3><p>第三方应用先申请一个授权码，再通过授权码获取访问令牌。适合有后端的应用，比如网站应用。</p>
-<p>scope参数</p>
-<p>步骤：</p>
-<ol>
-<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
-<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中携带一个授权码</li>
-<li>A网站拿到授权码，在后端携带授权码来请求A网站的接口（携带授权码、appkey、secretkey）</li>
-<li>B站收到请求，验证授权码，如果验证成功，则返回访问令牌，重刷令牌（access_token, refresh_token）</li>
-</ol>
-<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=code&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
-<ul>
-<li>response_type: 授权类型，必须为code</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>redirect_uri: 申请成功后网站的回跳地址</li>
-<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
-</ul>
-<p>响应格式: 在回跳地址中携带授权码，比如：<code>https://stolenzc.com/callback?code=1234567890</code></p>
-<p>后台再请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;appsecret=appsecret&amp;grant_type=authorization_code&amp;code=code&amp;redirect_uri=redirect_uri</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为authorization_code</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>appsecret: 网站的身份，为应用在网站申请的appsecret,appsecret为保密的，所以只能在后端请求</li>
-<li>code: 授权码</li>
-<li>redirect_uri: 验证成功后授权方带上token数据请求该uri地址传递token数据</li>
-</ul>
-<h3 id="隐藏式授权类型（implicit）"><a href="#隐藏式授权类型（implicit）" class="headerlink" title="隐藏式授权类型（implicit）"></a>隐藏式授权类型（implicit）</h3><p>第三方应用请求接口直接获取访问令牌。适合没有后端的应用，比如移动应用。</p>
-<p>步骤：</p>
-<ol>
-<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
-<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中以锚点的形式携带一个访问令牌</li>
-</ol>
-<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=token&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
-<ul>
-<li>response_type: 授权类型，必须为token</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>redirect_uri: 申请成功后网站的回跳地址</li>
-<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
-</ul>
-<h3 id="密码式授权类型（password）"><a href="#密码式授权类型（password）" class="headerlink" title="密码式授权类型（password）"></a>密码式授权类型（password）</h3><p>第三方应用拿到用户账号密码，直接用账号密码获取令牌</p>
-<ol>
-<li>A网站要求用户提供账号和密码，拿到后A网站直接向B网站请求令牌</li>
-<li>B网站验证密码后，直接返回令牌，不需要进行跳转</li>
-</ol>
-<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;grant_type=password&amp;username=username&amp;password=password</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为password</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>username: 用户名</li>
-<li>password: 密码</li>
-</ul>
-<h3 id="凭证式授权类型（client-credentials）"><a href="#凭证式授权类型（client-credentials）" class="headerlink" title="凭证式授权类型（client credentials）"></a>凭证式授权类型（client credentials）</h3><p>凭证式适用于没有前端的命令行应用，通常是多个用户享用一个令牌，通常针对第三方应用，不是针对用户的。</p>
-<ol>
-<li>A应用在命令行向B应用发出接口请求，只需要携带appkey和secretkey即可</li>
-<li>B应用验证通过后，直接返回令牌</li>
-</ol>
-<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=client_credentials&amp;appkey=appkey&amp;secretkey=secretkey</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为client_credentials</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
-</ul>
-<h2 id="使用令牌和令牌过期"><a href="#使用令牌和令牌过期" class="headerlink" title="使用令牌和令牌过期"></a>使用令牌和令牌过期</h2><p>后续请求资源的时候，需要将令牌放在请求头中携带</p>
-<p>通常在申请令牌的时候，会同时返回一个refresh_token，用来在token失效的时候，重新申请一个新的令牌。</p>
-<p>重刷令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=refresh_token&amp;appkey=appkey&amp;secretkey=secretkey&amp;refresh_token=refresh_token</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为refresh_token</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
-<li>refresh_token: 重刷令牌</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
       </tags>
   </entry>
   <entry>
@@ -5150,6 +5209,22 @@
       </tags>
   </entry>
   <entry>
+    <title>Python下遇到的一些故障</title>
+    <url>/python_issue/</url>
+    <content><![CDATA[<h2 id="mysqlclient安装失败"><a href="#mysqlclient安装失败" class="headerlink" title="mysqlclient安装失败"></a>mysqlclient安装失败</h2><p>Ubuntu下安装mysqlclient需要依次安装以下包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install libmysqlclient-dev</span><br><span class="line"><span class="built_in">sudo</span> apt install libssl-dev</span><br><span class="line"><span class="built_in">sudo</span> apt install libcrypto++-dev</span><br><span class="line"><span class="built_in">sudo</span> pip3 install mysqlclient</span><br><span class="line"><span class="comment"># 报错error: invalid command &#x27;bdist_wheel</span></span><br><span class="line">pip3 install wheel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果还报错就执行下面的包安装</span></span><br><span class="line"><span class="built_in">sudo</span> apt-get install python3 python-dev python3-dev</span><br><span class="line"><span class="built_in">sudo</span> apt-get install build-essential libssl-dev libffi-dev</span><br><span class="line"><span class="built_in">sudo</span> apt-get install libxml2-dev libxslt1-dev zlib1g-dev</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装flask-mongoengine报错"><a href="#安装flask-mongoengine报错" class="headerlink" title="安装flask-mongoengine报错"></a>安装flask-mongoengine报错</h2><p>需要安装一下依赖包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install rednose</span><br><span class="line">pip3 install nose</span><br><span class="line">pip3 install coverage</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Issue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 三种方式生成列表的内存分析</title>
     <url>/python_list_memory/</url>
     <content><![CDATA[<p>注意：以下内容均在 Python 3.9.13 上进行实验，其他版本可能有所不同。</p>
@@ -5213,22 +5288,6 @@
       </categories>
       <tags>
         <tag>技术原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python下遇到的一些故障</title>
-    <url>/python_issue/</url>
-    <content><![CDATA[<h2 id="mysqlclient安装失败"><a href="#mysqlclient安装失败" class="headerlink" title="mysqlclient安装失败"></a>mysqlclient安装失败</h2><p>Ubuntu下安装mysqlclient需要依次安装以下包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install libmysqlclient-dev</span><br><span class="line"><span class="built_in">sudo</span> apt install libssl-dev</span><br><span class="line"><span class="built_in">sudo</span> apt install libcrypto++-dev</span><br><span class="line"><span class="built_in">sudo</span> pip3 install mysqlclient</span><br><span class="line"><span class="comment"># 报错error: invalid command &#x27;bdist_wheel</span></span><br><span class="line">pip3 install wheel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果还报错就执行下面的包安装</span></span><br><span class="line"><span class="built_in">sudo</span> apt-get install python3 python-dev python3-dev</span><br><span class="line"><span class="built_in">sudo</span> apt-get install build-essential libssl-dev libffi-dev</span><br><span class="line"><span class="built_in">sudo</span> apt-get install libxml2-dev libxslt1-dev zlib1g-dev</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装flask-mongoengine报错"><a href="#安装flask-mongoengine报错" class="headerlink" title="安装flask-mongoengine报错"></a>安装flask-mongoengine报错</h2><p>需要安装一下依赖包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install rednose</span><br><span class="line">pip3 install nose</span><br><span class="line">pip3 install coverage</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Issue</tag>
       </tags>
   </entry>
   <entry>
@@ -5851,44 +5910,6 @@
       <tags>
         <tag>操作使用</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VBA小计</title>
-    <url>/vba/</url>
-    <content><![CDATA[<h2 id="教程使用环境"><a href="#教程使用环境" class="headerlink" title="教程使用环境"></a>教程使用环境</h2><ul>
-<li>Windows10 insider 2004 19041.208</li>
-<li>Microsoft office 专业增强版 2019</li>
-</ul>
-<h2 id="录制宏方法"><a href="#录制宏方法" class="headerlink" title="录制宏方法"></a>录制宏方法</h2><p>在Excel中依次选择<code>视图&gt;宏&gt;录制宏</code>，填入名称和快捷键即可开始录制，会记录下接下来对excel表格的所有操作，对菜单操作不会记录；操作完后，点击<code>视图&gt;宏&gt;结束录制</code>，即可完成录制；可以通过查看录制进入Visual Basic for Application编辑界面</p>
-<h2 id="语法解释"><a href="#语法解释" class="headerlink" title="语法解释"></a>语法解释</h2><ul>
-<li><code>Dim a as Integer</code> - 定义变量</li>
-<li><code>a = 5</code> - 给变量赋值</li>
-<li><code>For i=5 to 30...Next</code> - for循环语句</li>
-<li><code>If 条件 then ... end if</code> - 条件判断语句</li>
-<li><code>selection.offset(x, y)</code> - 在当前选中的单元格基础上横跨y列，纵跨x行选中单元格。直接操作是操作其值。</li>
-<li><code>Selection.Row</code> - 获取当前行的行号</li>
-<li><code>Selection.Column</code> - 获取当前列的列号</li>
-<li><code>sheet1.cells(x, y)</code> - 通过行号和列号直接定位单元格，直接操作是对值进行操作。</li>
-</ul>
-<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p>以下代码实现了一个从第四行到第十一行对角线循环填充的功能</p>
-<figure class="highlight vbscript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Sub</span> 宏<span class="number">1</span>()</span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line"><span class="comment">&#x27; 宏1 宏</span></span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line"><span class="comment">&#x27; 快捷键: Ctrl+k</span></span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line">    <span class="keyword">Dim</span> r As Integer</span><br><span class="line">    <span class="keyword">Dim</span> c As Integer</span><br><span class="line">    <span class="keyword">Dim</span> value As String</span><br><span class="line">    r = Selection.Row</span><br><span class="line">    c = Selection.Column</span><br><span class="line">    value = Selection.Offset(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">For</span> j = <span class="number">1</span> <span class="keyword">To</span> <span class="number">30</span>    </span><br><span class="line">        r = r + <span class="number">1</span></span><br><span class="line">        <span class="keyword">If</span> r &gt; <span class="number">11</span> <span class="keyword">Then</span></span><br><span class="line">        r = <span class="number">4</span></span><br><span class="line">        <span class="keyword">End</span> <span class="keyword">If</span>    </span><br><span class="line">        Sheet1.Cells(r, j + c) = value</span><br><span class="line">    <span class="keyword">Next</span></span><br><span class="line"><span class="keyword">End</span> <span class="keyword">Sub</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="全局使用"><a href="#全局使用" class="headerlink" title="全局使用"></a>全局使用</h2><p>创建宏的时候，如果需要全局使用该宏，需要用一下方法操作：</p>
-<ol>
-<li>创建时选择保存在<code>个人宏工作簿</code></li>
-<li>录制下宏操作，选择停止录制。</li>
-<li>如果需要编辑VBS代码，需要先选择<code>视图&gt;窗口&gt;取消隐藏</code>，会自动打开一个PERSONAL.XLSB的文件，在该文件中点击<code>查看宏&gt;编辑</code>即可进入VBS编辑界面。</li>
-<li>编辑完成后，保存退出宏界面，然后在PERSONAL.XLSB文件中选择<code>视图&gt;窗口&gt;隐藏</code>，该文件就会隐藏。</li>
-<li>在初始文件中就可以使用该宏，退出的时候，会弹窗是否保存PERSONAL.XLSB文件，选择保存即可。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Script</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -6650,6 +6671,44 @@
       </tags>
   </entry>
   <entry>
+    <title>VBA小计</title>
+    <url>/vba/</url>
+    <content><![CDATA[<h2 id="教程使用环境"><a href="#教程使用环境" class="headerlink" title="教程使用环境"></a>教程使用环境</h2><ul>
+<li>Windows10 insider 2004 19041.208</li>
+<li>Microsoft office 专业增强版 2019</li>
+</ul>
+<h2 id="录制宏方法"><a href="#录制宏方法" class="headerlink" title="录制宏方法"></a>录制宏方法</h2><p>在Excel中依次选择<code>视图&gt;宏&gt;录制宏</code>，填入名称和快捷键即可开始录制，会记录下接下来对excel表格的所有操作，对菜单操作不会记录；操作完后，点击<code>视图&gt;宏&gt;结束录制</code>，即可完成录制；可以通过查看录制进入Visual Basic for Application编辑界面</p>
+<h2 id="语法解释"><a href="#语法解释" class="headerlink" title="语法解释"></a>语法解释</h2><ul>
+<li><code>Dim a as Integer</code> - 定义变量</li>
+<li><code>a = 5</code> - 给变量赋值</li>
+<li><code>For i=5 to 30...Next</code> - for循环语句</li>
+<li><code>If 条件 then ... end if</code> - 条件判断语句</li>
+<li><code>selection.offset(x, y)</code> - 在当前选中的单元格基础上横跨y列，纵跨x行选中单元格。直接操作是操作其值。</li>
+<li><code>Selection.Row</code> - 获取当前行的行号</li>
+<li><code>Selection.Column</code> - 获取当前列的列号</li>
+<li><code>sheet1.cells(x, y)</code> - 通过行号和列号直接定位单元格，直接操作是对值进行操作。</li>
+</ul>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p>以下代码实现了一个从第四行到第十一行对角线循环填充的功能</p>
+<figure class="highlight vbscript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Sub</span> 宏<span class="number">1</span>()</span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line"><span class="comment">&#x27; 宏1 宏</span></span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line"><span class="comment">&#x27; 快捷键: Ctrl+k</span></span><br><span class="line"><span class="comment">&#x27;</span></span><br><span class="line">    <span class="keyword">Dim</span> r As Integer</span><br><span class="line">    <span class="keyword">Dim</span> c As Integer</span><br><span class="line">    <span class="keyword">Dim</span> value As String</span><br><span class="line">    r = Selection.Row</span><br><span class="line">    c = Selection.Column</span><br><span class="line">    value = Selection.Offset(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">For</span> j = <span class="number">1</span> <span class="keyword">To</span> <span class="number">30</span>    </span><br><span class="line">        r = r + <span class="number">1</span></span><br><span class="line">        <span class="keyword">If</span> r &gt; <span class="number">11</span> <span class="keyword">Then</span></span><br><span class="line">        r = <span class="number">4</span></span><br><span class="line">        <span class="keyword">End</span> <span class="keyword">If</span>    </span><br><span class="line">        Sheet1.Cells(r, j + c) = value</span><br><span class="line">    <span class="keyword">Next</span></span><br><span class="line"><span class="keyword">End</span> <span class="keyword">Sub</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="全局使用"><a href="#全局使用" class="headerlink" title="全局使用"></a>全局使用</h2><p>创建宏的时候，如果需要全局使用该宏，需要用一下方法操作：</p>
+<ol>
+<li>创建时选择保存在<code>个人宏工作簿</code></li>
+<li>录制下宏操作，选择停止录制。</li>
+<li>如果需要编辑VBS代码，需要先选择<code>视图&gt;窗口&gt;取消隐藏</code>，会自动打开一个PERSONAL.XLSB的文件，在该文件中点击<code>查看宏&gt;编辑</code>即可进入VBS编辑界面。</li>
+<li>编辑完成后，保存退出宏界面，然后在PERSONAL.XLSB文件中选择<code>视图&gt;窗口&gt;隐藏</code>，该文件就会隐藏。</li>
+<li>在初始文件中就可以使用该宏，退出的时候，会弹窗是否保存PERSONAL.XLSB文件，选择保存即可。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Script</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+        <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Viper</title>
     <url>/viper/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://github.com/spf13/viper"><code>Viper</code></a> 是一个 Go 应用的完整配置解决方案，包括<a href="https://12factor.net/#the_twelve_factors">微服务的12要素</a>，主要支持一下特性</p>
@@ -6741,93 +6800,6 @@
         <tag>MacOS</tag>
         <tag>Windows</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>WebSocket 工作原理</title>
-    <url>/websocket/</url>
-    <content><![CDATA[<h2 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h2><p>WebSocket 握手过程是一个将 HTTP 升级为 WebSocket 的过程</p>
-<ol>
-<li><p>首先由客户端发送一个 GET 请求</p>
- <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">GET</span> <span class="string">/chat</span> <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="attr">Host:</span> <span class="string">server.example.com</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Key:</span> <span class="string">dGhlIHNhbXBsZSBub25jZQ==</span></span><br><span class="line"><span class="attr">Origin:</span> <span class="string">http://example.com</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat,</span> <span class="string">superchat</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Version:</span> <span class="number">13</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
-<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
-<li><code>Sec-WebSocket-Key</code>: 必需字段，随机字符串</li>
-<li><code>Sec-WebSocket-Protocol</code>: 可选字段，表示应用层的协议</li>
-<li><code>Sec-WebSocket-Version</code>: 必需字段，代表 WebSocket 协议的版本，值必需为13，否则握手失败</li>
-</ul>
-</li>
-<li><p>服务端会返回一个状态码为101的响应</p>
- <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">HTTP/1.1</span> <span class="number">101</span> <span class="string">Switching</span> <span class="string">Protocols</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Accept:</span> <span class="string">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
-<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
-<li><code>Sec-WebSocket-Accept</code>: 规定必需字段，该字段是通过固定字符串 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Key</code> 值，计算 SHA1 哈希摘要的结果</li>
-<li><code>Sec-WebSocket-Protocol</code>: 对应请求中的 <code>Sec-WebSocket-Protocol</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="WebSocket-协议数据帧"><a href="#WebSocket-协议数据帧" class="headerlink" title="WebSocket 协议数据帧"></a>WebSocket 协议数据帧</h2><p>数据帧的定义如下</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"> <span class="number">0</span>                   <span class="number">1</span>                   <span class="number">2</span>                   <span class="number">3</span></span><br><span class="line"> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+-------------------------------+</span></span><br><span class="line"><span class="string">|F|R|R|R|</span> <span class="string">opcode|M|</span> <span class="string">Payload</span> <span class="string">len</span> <span class="string">|</span>    <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span>    <span class="string">|</span></span><br><span class="line"><span class="string">|I|S|S|S|</span>  <span class="string">(4)</span>  <span class="string">|A|</span>     <span class="string">(7)</span>     <span class="string">|</span>             <span class="string">(16/64)</span>           <span class="string">|</span></span><br><span class="line"><span class="string">|N|V|V|V|</span>       <span class="string">|S|</span>             <span class="string">|</span>   <span class="string">(if</span> <span class="string">payload</span> <span class="string">len==126/127)</span>   <span class="string">|</span></span><br><span class="line"><span class="string">|</span> <span class="string">|1|2|3|</span>       <span class="string">|K|</span>             <span class="string">|</span>                               <span class="string">|</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>     <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span> <span class="string">continued,</span> <span class="string">if</span> <span class="string">payload</span> <span class="string">len</span> <span class="string">==</span> <span class="number">127</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+-------------------------------+</span></span><br><span class="line"><span class="string">|</span>                               <span class="string">|Masking-key,</span> <span class="string">if</span> <span class="string">MASK</span> <span class="string">set</span> <span class="string">to</span> <span class="number">1</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+-------------------------------+-------------------------------+</span></span><br><span class="line"><span class="string">|</span> <span class="string">Masking-key</span> <span class="string">(continued)</span>       <span class="string">|</span>          <span class="string">Payload</span> <span class="string">Data</span>         <span class="string">|</span></span><br><span class="line"><span class="string">+--------------------------------</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">:</span>                     <span class="attr">Payload Data continued ...                :</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>                     <span class="string">Payload</span> <span class="string">Data</span> <span class="string">continued</span> <span class="string">...</span>                <span class="string">|</span></span><br><span class="line"><span class="string">+---------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>以上数据，一行代表 32 bit(位)，也就是 4 bytes，总体包含以上两部分，帧头部和数据内容。每个从 WebSocket 链接中接受到的数据帧，都要按照以上格式进行解析，这样才能知道该数据帧是用于控制的还是用于传送数据的。部分字段解释：</p>
-<ul>
-<li><code>FIN</code>: 1 bit，当该比特位值为 <code>%x0</code> 时，表示后面还有更多的数据帧，<code>%x1</code> 表示为最后一个数据帧</li>
-<li><code>RSV1</code>, <code>RSV2</code>, <code>RSV3</code>: 各占 1 bit，一般全为 0，当客户端和服务端协商采用 WebSocket 扩展时，三个标志位为非 0，且该值由扩展进行定义。如果没有采用 WebSocket 扩展，且为非零时，连接出错</li>
-<li><code>opcode</code> - 4 bit，用于表明数据帧的类型，一共可以表示 16 种帧类型<ul>
-<li><code>%x0</code> - 表示这是一个分片的帧，属于前面帧的后续帧</li>
-<li><code>%x1</code> - 表示数据帧携带的数据类型是文本类型，且编码为 UTF-8</li>
-<li><code>%x2</code> - 表示携带的是二进制数据</li>
-<li><code>%x3-7</code> - 保留未使用</li>
-<li><code>%x8</code> - 表示该帧用于关闭 WebSocket 链接</li>
-<li><code>%x9</code> - 表示该帧代表了 Ping 操作</li>
-<li><code>%xA</code> - 表示该帧代表了 Pong 回应</li>
-<li><code>%xB-F</code> - 保留未使用</li>
-</ul>
-</li>
-<li><code>MASK</code> - 1 bit，<code>%x0</code> 表示数据帧没有经过掩码计算，<code>%x1</code> 表示数据帧经过了掩码计算，需要解码才能得到真正的数据，通常浏览器发送给服务器才会进行掩码计算</li>
-<li><code>Payload len</code> - 7 bit，表示数据帧携带的数据长度，7 bit 代表的最大值为 127，会存在三种情况<ul>
-<li><code>%x0-7D</code> - 0-125，表示数据长度，数据总长度的就是 7 bit 表示的长度</li>
-<li><code>%x7E</code> - 126，则后续的 2 个字节（16 bit）表示一个16位的无符号数，这个数用来表示数据长度</li>
-<li><code>%x7F</code> - 127，则后续的 8 个字节（64 bit）表示一个64位的无符号数，这个数用来表示数据长度</li>
-</ul>
-</li>
-<li><code>Masking-key</code> - 32 bit，表示用于解码的 key，当只有 MASK 比特位的值为 %x1 时使用</li>
-<li><code>Payload Data</code> - 余下的比特位用于存储具体的数据</li>
-</ul>
-<p>通过分析可知，WebSocket 的最大头部为 14 bytes，要实现 WebSocket，最主要的工作就是实现对数据帧的解析</p>
-<h2 id="WebSocket-协议中的一些算法"><a href="#WebSocket-协议中的一些算法" class="headerlink" title="WebSocket 协议中的一些算法"></a>WebSocket 协议中的一些算法</h2><h3 id="Sec-WebSocket-Accept-的计算"><a href="#Sec-WebSocket-Accept-的计算" class="headerlink" title="Sec-WebSocket-Accept 的计算"></a><code>Sec-WebSocket-Accept</code> 的计算</h3><p><code>Sec-WebSocket-Accept</code> 值的计算方法是通过 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Accept</code> 的值，然后对结果求 SHA1 哈希摘要，最后再转为base64。代码如下</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> keyGUID = []<span class="type">byte</span>(<span class="string">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">computeAcceptKey</span><span class="params">(challengeKey <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    h := sha1.New()</span><br><span class="line">    h.Write([]<span class="type">byte</span>(challengeKey))</span><br><span class="line">    h.Write(keyGUID)</span><br><span class="line">    <span class="keyword">return</span> base64.StdEncoding.EncodeToString(h.Sum(<span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">KEY_GUID = <span class="string">&#x27;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_accept_key</span>(<span class="params">challenge_key: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    m = hashlib.sha1()</span><br><span class="line">    m.update(challenge_key.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    m.update(KEY_GUID.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(m.digest()).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="掩码处理"><a href="#掩码处理" class="headerlink" title="掩码处理"></a>掩码处理</h3><p>如果浏览器发送的数据帧中 <code>MASK</code> 比特位的值为 %x1，那么就需要对数据进行掩码处理</p>
-<p>掩码处理的流程为以下几个步骤</p>
-<ol>
-<li>将数据和 <code>Masking-key</code> 处理按字节处理</li>
-<li>取出数据中的第 <code>i</code> 个字节 <code>item1</code>，</li>
-<li>通过 <code>j = i MOD 4</code> 计算获得 <code>j</code>，从 <code>Masking-key</code> 中取出第 <code>j</code> 个字节的数据 <code>item2</code></li>
-<li>将 <code>item1</code> 与 <code>item2</code> 进行异或得到最后结果</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maskBytes</span><span class="params">(key [4]<span class="type">byte</span>, pos <span class="type">int</span>, b[]<span class="type">byte</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> b &#123;</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mask_bytes</span>(<span class="params">key: <span class="built_in">str</span>, pos: <span class="built_in">int</span>, b: <span class="built_in">list</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(b)):</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<p>注意:</p>
-<ul>
-<li><code>pos &amp; 3</code> 的结果和 <code>pos % 4</code> 的结果是一样的，因为 <code>a % (2^n)</code> 等价于 <code>a &amp; (2^n - 1)</code> ，但是 <code>&amp;</code> 比 <code>%</code> 的效率要高</li>
-<li>此处返回的 <code>pos</code> 是为了下次继续使用，如果数据帧中的数据长度大于 125，那么就需要多次进行掩码处理</li>
-</ul>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>参考 <a href="https://github.com/stolenzc/websocket">websocket</a></p>
-]]></content>
-      <categories>
-        <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>网络</tag>
       </tags>
   </entry>
   <entry>
@@ -6935,6 +6907,122 @@
         <tag>MacOS</tag>
         <tag>Windows</tag>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WebSocket 工作原理</title>
+    <url>/websocket/</url>
+    <content><![CDATA[<h2 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h2><p>WebSocket 握手过程是一个将 HTTP 升级为 WebSocket 的过程</p>
+<ol>
+<li><p>首先由客户端发送一个 GET 请求</p>
+ <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">GET</span> <span class="string">/chat</span> <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="attr">Host:</span> <span class="string">server.example.com</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Key:</span> <span class="string">dGhlIHNhbXBsZSBub25jZQ==</span></span><br><span class="line"><span class="attr">Origin:</span> <span class="string">http://example.com</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat,</span> <span class="string">superchat</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Version:</span> <span class="number">13</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
+<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
+<li><code>Sec-WebSocket-Key</code>: 必需字段，随机字符串</li>
+<li><code>Sec-WebSocket-Protocol</code>: 可选字段，表示应用层的协议</li>
+<li><code>Sec-WebSocket-Version</code>: 必需字段，代表 WebSocket 协议的版本，值必需为13，否则握手失败</li>
+</ul>
+</li>
+<li><p>服务端会返回一个状态码为101的响应</p>
+ <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">HTTP/1.1</span> <span class="number">101</span> <span class="string">Switching</span> <span class="string">Protocols</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Accept:</span> <span class="string">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
+<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
+<li><code>Sec-WebSocket-Accept</code>: 规定必需字段，该字段是通过固定字符串 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Key</code> 值，计算 SHA1 哈希摘要的结果</li>
+<li><code>Sec-WebSocket-Protocol</code>: 对应请求中的 <code>Sec-WebSocket-Protocol</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="WebSocket-协议数据帧"><a href="#WebSocket-协议数据帧" class="headerlink" title="WebSocket 协议数据帧"></a>WebSocket 协议数据帧</h2><p>数据帧的定义如下</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"> <span class="number">0</span>                   <span class="number">1</span>                   <span class="number">2</span>                   <span class="number">3</span></span><br><span class="line"> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+-------------------------------+</span></span><br><span class="line"><span class="string">|F|R|R|R|</span> <span class="string">opcode|M|</span> <span class="string">Payload</span> <span class="string">len</span> <span class="string">|</span>    <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span>    <span class="string">|</span></span><br><span class="line"><span class="string">|I|S|S|S|</span>  <span class="string">(4)</span>  <span class="string">|A|</span>     <span class="string">(7)</span>     <span class="string">|</span>             <span class="string">(16/64)</span>           <span class="string">|</span></span><br><span class="line"><span class="string">|N|V|V|V|</span>       <span class="string">|S|</span>             <span class="string">|</span>   <span class="string">(if</span> <span class="string">payload</span> <span class="string">len==126/127)</span>   <span class="string">|</span></span><br><span class="line"><span class="string">|</span> <span class="string">|1|2|3|</span>       <span class="string">|K|</span>             <span class="string">|</span>                               <span class="string">|</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>     <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span> <span class="string">continued,</span> <span class="string">if</span> <span class="string">payload</span> <span class="string">len</span> <span class="string">==</span> <span class="number">127</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+-------------------------------+</span></span><br><span class="line"><span class="string">|</span>                               <span class="string">|Masking-key,</span> <span class="string">if</span> <span class="string">MASK</span> <span class="string">set</span> <span class="string">to</span> <span class="number">1</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+-------------------------------+-------------------------------+</span></span><br><span class="line"><span class="string">|</span> <span class="string">Masking-key</span> <span class="string">(continued)</span>       <span class="string">|</span>          <span class="string">Payload</span> <span class="string">Data</span>         <span class="string">|</span></span><br><span class="line"><span class="string">+--------------------------------</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">:</span>                     <span class="attr">Payload Data continued ...                :</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>                     <span class="string">Payload</span> <span class="string">Data</span> <span class="string">continued</span> <span class="string">...</span>                <span class="string">|</span></span><br><span class="line"><span class="string">+---------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>以上数据，一行代表 32 bit(位)，也就是 4 bytes，总体包含以上两部分，帧头部和数据内容。每个从 WebSocket 链接中接受到的数据帧，都要按照以上格式进行解析，这样才能知道该数据帧是用于控制的还是用于传送数据的。部分字段解释：</p>
+<ul>
+<li><code>FIN</code>: 1 bit，当该比特位值为 <code>%x0</code> 时，表示后面还有更多的数据帧，<code>%x1</code> 表示为最后一个数据帧</li>
+<li><code>RSV1</code>, <code>RSV2</code>, <code>RSV3</code>: 各占 1 bit，一般全为 0，当客户端和服务端协商采用 WebSocket 扩展时，三个标志位为非 0，且该值由扩展进行定义。如果没有采用 WebSocket 扩展，且为非零时，连接出错</li>
+<li><code>opcode</code> - 4 bit，用于表明数据帧的类型，一共可以表示 16 种帧类型<ul>
+<li><code>%x0</code> - 表示这是一个分片的帧，属于前面帧的后续帧</li>
+<li><code>%x1</code> - 表示数据帧携带的数据类型是文本类型，且编码为 UTF-8</li>
+<li><code>%x2</code> - 表示携带的是二进制数据</li>
+<li><code>%x3-7</code> - 保留未使用</li>
+<li><code>%x8</code> - 表示该帧用于关闭 WebSocket 链接</li>
+<li><code>%x9</code> - 表示该帧代表了 Ping 操作</li>
+<li><code>%xA</code> - 表示该帧代表了 Pong 回应</li>
+<li><code>%xB-F</code> - 保留未使用</li>
+</ul>
+</li>
+<li><code>MASK</code> - 1 bit，<code>%x0</code> 表示数据帧没有经过掩码计算，<code>%x1</code> 表示数据帧经过了掩码计算，需要解码才能得到真正的数据，通常浏览器发送给服务器才会进行掩码计算</li>
+<li><code>Payload len</code> - 7 bit，表示数据帧携带的数据长度，7 bit 代表的最大值为 127，会存在三种情况<ul>
+<li><code>%x0-7D</code> - 0-125，表示数据长度，数据总长度的就是 7 bit 表示的长度</li>
+<li><code>%x7E</code> - 126，则后续的 2 个字节（16 bit）表示一个16位的无符号数，这个数用来表示数据长度</li>
+<li><code>%x7F</code> - 127，则后续的 8 个字节（64 bit）表示一个64位的无符号数，这个数用来表示数据长度</li>
+</ul>
+</li>
+<li><code>Masking-key</code> - 32 bit，表示用于解码的 key，当只有 MASK 比特位的值为 %x1 时使用</li>
+<li><code>Payload Data</code> - 余下的比特位用于存储具体的数据</li>
+</ul>
+<p>通过分析可知，WebSocket 的最大头部为 14 bytes，要实现 WebSocket，最主要的工作就是实现对数据帧的解析</p>
+<h2 id="WebSocket-协议中的一些算法"><a href="#WebSocket-协议中的一些算法" class="headerlink" title="WebSocket 协议中的一些算法"></a>WebSocket 协议中的一些算法</h2><h3 id="Sec-WebSocket-Accept-的计算"><a href="#Sec-WebSocket-Accept-的计算" class="headerlink" title="Sec-WebSocket-Accept 的计算"></a><code>Sec-WebSocket-Accept</code> 的计算</h3><p><code>Sec-WebSocket-Accept</code> 值的计算方法是通过 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Accept</code> 的值，然后对结果求 SHA1 哈希摘要，最后再转为base64。代码如下</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> keyGUID = []<span class="type">byte</span>(<span class="string">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">computeAcceptKey</span><span class="params">(challengeKey <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    h := sha1.New()</span><br><span class="line">    h.Write([]<span class="type">byte</span>(challengeKey))</span><br><span class="line">    h.Write(keyGUID)</span><br><span class="line">    <span class="keyword">return</span> base64.StdEncoding.EncodeToString(h.Sum(<span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">KEY_GUID = <span class="string">&#x27;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_accept_key</span>(<span class="params">challenge_key: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    m = hashlib.sha1()</span><br><span class="line">    m.update(challenge_key.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    m.update(KEY_GUID.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(m.digest()).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="掩码处理"><a href="#掩码处理" class="headerlink" title="掩码处理"></a>掩码处理</h3><p>如果浏览器发送的数据帧中 <code>MASK</code> 比特位的值为 %x1，那么就需要对数据进行掩码处理</p>
+<p>掩码处理的流程为以下几个步骤</p>
+<ol>
+<li>将数据和 <code>Masking-key</code> 处理按字节处理</li>
+<li>取出数据中的第 <code>i</code> 个字节 <code>item1</code>，</li>
+<li>通过 <code>j = i MOD 4</code> 计算获得 <code>j</code>，从 <code>Masking-key</code> 中取出第 <code>j</code> 个字节的数据 <code>item2</code></li>
+<li>将 <code>item1</code> 与 <code>item2</code> 进行异或得到最后结果</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maskBytes</span><span class="params">(key [4]<span class="type">byte</span>, pos <span class="type">int</span>, b[]<span class="type">byte</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> b &#123;</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mask_bytes</span>(<span class="params">key: <span class="built_in">str</span>, pos: <span class="built_in">int</span>, b: <span class="built_in">list</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(b)):</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>注意:</p>
+<ul>
+<li><code>pos &amp; 3</code> 的结果和 <code>pos % 4</code> 的结果是一样的，因为 <code>a % (2^n)</code> 等价于 <code>a &amp; (2^n - 1)</code> ，但是 <code>&amp;</code> 比 <code>%</code> 的效率要高</li>
+<li>此处返回的 <code>pos</code> 是为了下次继续使用，如果数据帧中的数据长度大于 125，那么就需要多次进行掩码处理</li>
+</ul>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>参考 <a href="https://github.com/stolenzc/websocket">websocket</a></p>
+]]></content>
+      <categories>
+        <category>Backend</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Windows10中AMD显卡开机黑屏问题</title>
+    <url>/window_issue/</url>
+    <content><![CDATA[<p>分享一些Windows在使用时遇到的一些问题和一些解决办法，每个方法自己均实验过，确保能用，但不确保是最好的解决办法</p>
+<h2 id="AMD显卡开机黑屏"><a href="#AMD显卡开机黑屏" class="headerlink" title="AMD显卡开机黑屏"></a>AMD显卡开机黑屏</h2><p>升级Windows10后，许多搭载AMD显卡的老机器开机的时候会有一到两分钟的黑屏时间，究其原因就是ulps导致的，一般解决办法有一下两种，一下办法提到的工具打包在<a href="https://stolenzc.lanzoui.com/iwqk9hcxlve">win10-amd_黑屏文件</a>：</p>
+<p>方法一：</p>
+<ol>
+<li>在控制面版中卸载AMD的显卡程序</li>
+<li>卸载完毕后，从win10设置-更新和安全-恢复-高级启动-立即重新启动中进入安全模式</li>
+<li>在安全模式中使用DDU，单机清除并重启（clear and restart）</li>
+<li>开机后，打开wushowhide.diagcab文件，选择hide updatas</li>
+<li>重新安装最新显卡驱动</li>
+</ol>
+<p>方法二：</p>
+<ol>
+<li>运行ULPS中的disable注册表文件</li>
+<li>选择重启（注意：不是关机，是重启）</li>
+<li>在桌面右键-显示卡属性-电源-可切换显示卡全局设置-还有其他省电方法，将前面的勾去掉</li>
+<li>先关机，再开机，在电源设置中将快速启动关闭。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>Issue</tag>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -7093,32 +7181,35 @@
       </tags>
   </entry>
   <entry>
-    <title>Windows10中AMD显卡开机黑屏问题</title>
-    <url>/window_issue/</url>
-    <content><![CDATA[<p>分享一些Windows在使用时遇到的一些问题和一些解决办法，每个方法自己均实验过，确保能用，但不确保是最好的解决办法</p>
-<h2 id="AMD显卡开机黑屏"><a href="#AMD显卡开机黑屏" class="headerlink" title="AMD显卡开机黑屏"></a>AMD显卡开机黑屏</h2><p>升级Windows10后，许多搭载AMD显卡的老机器开机的时候会有一到两分钟的黑屏时间，究其原因就是ulps导致的，一般解决办法有一下两种，一下办法提到的工具打包在<a href="https://stolenzc.lanzoui.com/iwqk9hcxlve">win10-amd_黑屏文件</a>：</p>
-<p>方法一：</p>
-<ol>
-<li>在控制面版中卸载AMD的显卡程序</li>
-<li>卸载完毕后，从win10设置-更新和安全-恢复-高级启动-立即重新启动中进入安全模式</li>
-<li>在安全模式中使用DDU，单机清除并重启（clear and restart）</li>
-<li>开机后，打开wushowhide.diagcab文件，选择hide updatas</li>
-<li>重新安装最新显卡驱动</li>
+    <title>Windows Terminal使用技巧</title>
+    <url>/windows_terminal/</url>
+    <content><![CDATA[<h2 id="配置教程"><a href="#配置教程" class="headerlink" title="配置教程"></a>配置教程</h2><p>详细配置参阅<a href="https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md">Windows Terminal Settings Schema</a></p>
+<p>有关中文翻译参阅<a href="https://www.jianshu.com/p/13e832853926"></a></p>
+<h3 id="Global"><a href="#Global" class="headerlink" title="Global"></a>Global</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 默认的命令行工具</span></span><br><span class="line">    <span class="attr">&quot;defaultProfile&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;&#123;58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 窗口宽度</span></span><br><span class="line">    <span class="attr">&quot;initialCols&quot;</span> <span class="punctuation">:</span> <span class="number">90</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 窗口高度</span></span><br><span class="line">    <span class="attr">&quot;initialRows&quot;</span> <span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 默认主题</span></span><br><span class="line">    <span class="attr">&quot;requestedTheme&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;system&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 快捷键配置</span></span><br><span class="line">    <span class="attr">&quot;keybindings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span></span><br><span class="line">    ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 设置命令行的唯一id</span></span><br><span class="line">    <span class="attr">&quot;guid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;61c54bbd-c2c6-5271-96e7-009a87ff44bf&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行显示的名称</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Windows PowerShell&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行执行时候运行的程序</span></span><br><span class="line">    <span class="attr">&quot;commandline&quot;</span><span class="punctuation">:</span> <span class="string">&quot;powershell.exe&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行的字体</span></span><br><span class="line">    <span class="attr">&quot;fontFace&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Cascadia Code&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行的字体大小</span></span><br><span class="line">    <span class="attr">&quot;fontSize&quot;</span><span class="punctuation">:</span> <span class="number">14</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置是否显示该命令行</span></span><br><span class="line">    <span class="attr">&quot;hidden&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置启动后所在的路径</span></span><br><span class="line">    <span class="attr">&quot;startingDirectory&quot;</span> <span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 使用不透明度</span></span><br><span class="line">    <span class="attr">&quot;useAcrylic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 不透明度</span></span><br><span class="line">    <span class="attr">&quot;acrylicOpacity&quot;</span><span class="punctuation">:</span> <span class="number">0.75</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 退出后关闭</span></span><br><span class="line">    <span class="attr">&quot;closeOnExit&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 颜色主题选择（需要在Schema中配置）</span></span><br><span class="line">    <span class="attr">&quot;colorScheme&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Campbell&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 光标颜色</span></span><br><span class="line">    <span class="attr">&quot;cursorColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FFFFFF&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 光标类型，可选值 &quot;vintage&quot; ( ▃ ), &quot;bar&quot; ( ┃ ), </span></span><br><span class="line">    <span class="comment">// &quot;underscore&quot; ( ▁ ), &quot;filledBox&quot; ( █ ), &quot;emptyBox&quot; ( ▯ )</span></span><br><span class="line">    <span class="attr">&quot;cursorShape&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bar&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 历史大小</span></span><br><span class="line">    <span class="attr">&quot;historySize&quot;</span><span class="punctuation">:</span> <span class="number">9001</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;padding&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0, 0, 0, 0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 嗅探输入</span></span><br><span class="line">    <span class="attr">&quot;snapOnInput&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>如果每个命令行工具的配置相同，可以配置在default中，表示对所有命令行生效</p>
+<p><strong>注意：</strong>如果配置中需要填写路径，用Windows中的<code>\</code>时需要进行转义，可以使用<code>/</code>来表示路径</p>
+<h2 id="在当前目录打开方法"><a href="#在当前目录打开方法" class="headerlink" title="在当前目录打开方法"></a>在当前目录打开方法</h2><ol>
+<li>配置命令行的<code>startingDirectory</code>为null</li>
+<li>在需要打开的目录中按<code>ctrl + L</code>或者光标定位到文件管理器地址栏</li>
+<li>输入wt，按回车，就会从当前目录中打开Windows Terminal默认的命令行工具</li>
 </ol>
-<p>方法二：</p>
-<ol>
-<li>运行ULPS中的disable注册表文件</li>
-<li>选择重启（注意：不是关机，是重启）</li>
-<li>在桌面右键-显示卡属性-电源-可切换显示卡全局设置-还有其他省电方法，将前面的勾去掉</li>
-<li>先关机，再开机，在电源设置中将快速启动关闭。</li>
+<h2 id="配置键盘切换tab页"><a href="#配置键盘切换tab页" class="headerlink" title="配置键盘切换tab页"></a>配置键盘切换tab页</h2><ol>
+<li>在配置中的<code>keybindings</code>中添加<code>&#123; &quot;command&quot;: &#123; &quot;action&quot;: &quot;switchToTab&quot;, &quot;index&quot;: 0&#125;, &quot;keys&quot;: [&quot;ctrl+alt+1&quot;]&#125;,</code></li>
+<li>如果经常打开多个标签页，可以多配置几条信息</li>
+<li>使用<code>ctrl+alt+数字键就可以完成tab页的切换</code></li>
 </ol>
+<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><p><code>shift + alt + =</code> - 横向分屏</p>
+<p><code>shift + alt + -</code> - 竖向分屏</p>
 ]]></content>
       <categories>
         <category>日常软件</category>
       </categories>
       <tags>
-        <tag>Issue</tag>
         <tag>Windows</tag>
+        <tag>Script</tag>
       </tags>
   </entry>
   <entry>
@@ -7169,38 +7260,6 @@
       <tags>
         <tag>Windows</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Windows Terminal使用技巧</title>
-    <url>/windows_terminal/</url>
-    <content><![CDATA[<h2 id="配置教程"><a href="#配置教程" class="headerlink" title="配置教程"></a>配置教程</h2><p>详细配置参阅<a href="https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md">Windows Terminal Settings Schema</a></p>
-<p>有关中文翻译参阅<a href="https://www.jianshu.com/p/13e832853926"></a></p>
-<h3 id="Global"><a href="#Global" class="headerlink" title="Global"></a>Global</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 默认的命令行工具</span></span><br><span class="line">    <span class="attr">&quot;defaultProfile&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;&#123;58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 窗口宽度</span></span><br><span class="line">    <span class="attr">&quot;initialCols&quot;</span> <span class="punctuation">:</span> <span class="number">90</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 窗口高度</span></span><br><span class="line">    <span class="attr">&quot;initialRows&quot;</span> <span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 默认主题</span></span><br><span class="line">    <span class="attr">&quot;requestedTheme&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;system&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 快捷键配置</span></span><br><span class="line">    <span class="attr">&quot;keybindings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span></span><br><span class="line">    ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 设置命令行的唯一id</span></span><br><span class="line">    <span class="attr">&quot;guid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;61c54bbd-c2c6-5271-96e7-009a87ff44bf&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行显示的名称</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Windows PowerShell&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行执行时候运行的程序</span></span><br><span class="line">    <span class="attr">&quot;commandline&quot;</span><span class="punctuation">:</span> <span class="string">&quot;powershell.exe&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行的字体</span></span><br><span class="line">    <span class="attr">&quot;fontFace&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Cascadia Code&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置命令行的字体大小</span></span><br><span class="line">    <span class="attr">&quot;fontSize&quot;</span><span class="punctuation">:</span> <span class="number">14</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置是否显示该命令行</span></span><br><span class="line">    <span class="attr">&quot;hidden&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 设置启动后所在的路径</span></span><br><span class="line">    <span class="attr">&quot;startingDirectory&quot;</span> <span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 使用不透明度</span></span><br><span class="line">    <span class="attr">&quot;useAcrylic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 不透明度</span></span><br><span class="line">    <span class="attr">&quot;acrylicOpacity&quot;</span><span class="punctuation">:</span> <span class="number">0.75</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 退出后关闭</span></span><br><span class="line">    <span class="attr">&quot;closeOnExit&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 颜色主题选择（需要在Schema中配置）</span></span><br><span class="line">    <span class="attr">&quot;colorScheme&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Campbell&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 光标颜色</span></span><br><span class="line">    <span class="attr">&quot;cursorColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FFFFFF&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 光标类型，可选值 &quot;vintage&quot; ( ▃ ), &quot;bar&quot; ( ┃ ), </span></span><br><span class="line">    <span class="comment">// &quot;underscore&quot; ( ▁ ), &quot;filledBox&quot; ( █ ), &quot;emptyBox&quot; ( ▯ )</span></span><br><span class="line">    <span class="attr">&quot;cursorShape&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bar&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 历史大小</span></span><br><span class="line">    <span class="attr">&quot;historySize&quot;</span><span class="punctuation">:</span> <span class="number">9001</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;padding&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0, 0, 0, 0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// 嗅探输入</span></span><br><span class="line">    <span class="attr">&quot;snapOnInput&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>注意：</strong>如果每个命令行工具的配置相同，可以配置在default中，表示对所有命令行生效</p>
-<p><strong>注意：</strong>如果配置中需要填写路径，用Windows中的<code>\</code>时需要进行转义，可以使用<code>/</code>来表示路径</p>
-<h2 id="在当前目录打开方法"><a href="#在当前目录打开方法" class="headerlink" title="在当前目录打开方法"></a>在当前目录打开方法</h2><ol>
-<li>配置命令行的<code>startingDirectory</code>为null</li>
-<li>在需要打开的目录中按<code>ctrl + L</code>或者光标定位到文件管理器地址栏</li>
-<li>输入wt，按回车，就会从当前目录中打开Windows Terminal默认的命令行工具</li>
-</ol>
-<h2 id="配置键盘切换tab页"><a href="#配置键盘切换tab页" class="headerlink" title="配置键盘切换tab页"></a>配置键盘切换tab页</h2><ol>
-<li>在配置中的<code>keybindings</code>中添加<code>&#123; &quot;command&quot;: &#123; &quot;action&quot;: &quot;switchToTab&quot;, &quot;index&quot;: 0&#125;, &quot;keys&quot;: [&quot;ctrl+alt+1&quot;]&#125;,</code></li>
-<li>如果经常打开多个标签页，可以多配置几条信息</li>
-<li>使用<code>ctrl+alt+数字键就可以完成tab页的切换</code></li>
-</ol>
-<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><p><code>shift + alt + =</code> - 横向分屏</p>
-<p><code>shift + alt + -</code> - 竖向分屏</p>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-        <tag>Script</tag>
       </tags>
   </entry>
 </search>
