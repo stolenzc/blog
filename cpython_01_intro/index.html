@@ -28,7 +28,7 @@
 <meta property="og:description" content="CPython 代码源码分析">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-09-24T14:52:44.000Z">
-<meta property="article:modified_time" content="2025-09-24T15:39:36.444Z">
+<meta property="article:modified_time" content="2025-09-25T00:44:32.222Z">
 <meta property="article:author" content="stolen">
 <meta property="article:tag" content="技术原理">
 <meta property="article:tag" content="CPython">
@@ -308,7 +308,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python 3.14（π）即将发布，在此时机，决定从头系统学习 Python 源码，在 2025 年末来完成这个大目标。本系列暂基于 CPython 3.14 rc 版本进行源码分析。后续会随官方更新切换为正式版。</p>
-<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>CPython 源码下载有一下几种渠道</p>
+<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>CPython 源码下载有以下几种渠道</p>
 <ol>
 <li><p><a target="_blank" rel="noopener" href="https://www.python.org/downloads">python 官网下载页</a> 选择需要的版本，进入下载页面后选择 <code>Gzipped source tarball</code> 或者 <code>XZ compressed source tarball</code> 下载源码包。</p>
 </li>
@@ -319,8 +319,7 @@
 <li><p><a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/python-release/">阿里云开源镜像站</a> 提供了 CPython 的各个版本的安装包及其源码下载。</p>
 </li>
 </ol>
-<h2 id="结构介绍"><a href="#结构介绍" class="headerlink" title="结构介绍"></a>结构介绍</h2><p>下载完源码后，解压缩得到的目录结构大致如下：</p>
-<p>注意，本文及其后续 CPython 源码分析均基于 CPython3.13.3 版本(截止到本文编辑时最新的版本)的代码进行</p>
+<h2 id="结构介绍"><a href="#结构介绍" class="headerlink" title="结构介绍"></a>结构介绍</h2><p>下载完源码后，解压缩得到的目录结构大致如下（不同版本可能略有差异）：</p>
 <figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">CPython</span><br><span class="line">.</span><br><span class="line">├── Android</span><br><span class="line">├── Doc</span><br><span class="line">├── Grammar</span><br><span class="line">├── Include</span><br><span class="line">├── InternalDocs</span><br><span class="line">├── LICENSE</span><br><span class="line">├── Lib</span><br><span class="line">├── Mac</span><br><span class="line">├── Makefile.pre.in</span><br><span class="line">├── Misc</span><br><span class="line">├── Modules</span><br><span class="line">├── Objects</span><br><span class="line">├── PC</span><br><span class="line">├── PCbuild</span><br><span class="line">├── Parser</span><br><span class="line">├── Programs</span><br><span class="line">├── Python</span><br><span class="line">├── README.rst</span><br><span class="line">├── Tools</span><br><span class="line">├── aclocal.m4</span><br><span class="line">├── config.guess</span><br><span class="line">├── config.sub</span><br><span class="line">├── configure</span><br><span class="line">├── configure.ac</span><br><span class="line">├── iOS</span><br><span class="line">├── install-sh</span><br><span class="line">└── pyconfig.h.in</span><br></pre></td></tr></table></figure>
 
 <h3 id="Doc"><a href="#Doc" class="headerlink" title="Doc"></a>Doc</h3><p>存放 Python 文档的源文件（.rst），编译之后生成 Python 官方文档</p>
