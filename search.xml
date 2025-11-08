@@ -318,6 +318,122 @@
       </tags>
   </entry>
   <entry>
+    <title>Curl 使用手册</title>
+    <url>/curl/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CURL (Client URL)是一个命令行工具，用于在命令行下发送 HTTP 请求。对于热爱命令行的人来说，这个是必备的工具。</p>
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl https://api.github.com/versions</span><br><span class="line">[</span><br><span class="line">  <span class="string">&quot;2022-11-28&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h2><h3 id="A"><a href="#A" class="headerlink" title="-A"></a>-A</h3><p>设置请求头中的代理头 User-Agent 字段。curl 默认的代理头是 <code>curl/[version]</code></p>
+<p>例如机器内的 curl 版本是 7.64.1，那么默认的 User-Agent 就是 <code>curl/7.64.1</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot;GET /versions HTTP/1.1&quot;</span> 200 250 <span class="string">&quot;-&quot;</span> <span class="string">&quot;curl/7.64.1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们想要自定义 User-Agent，可以使用 <code>-A</code> 参数，以下示例就将请求头改为了 Edge 浏览器的 User-Agent</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -A <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>也可以通过 <code>-H</code> 参数来设置请求头</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="b"><a href="#b" class="headerlink" title="-b"></a>-b</h3><p>设置请求头中的 Cookie 字段</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -b <span class="string">&quot;logged_in=yes;dotcom_user=stolenzc;&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>如果需要读取文件，可以使用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -b cookie.txt https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="c"><a href="#c" class="headerlink" title="-c"></a>-c</h3><p>将服务器返回的响应头中的 Cookie 字段写入文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -c cookie.txt https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="d"><a href="#d" class="headerlink" title="-d"></a>-d</h3><p>发送 POST 请求的请求体数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -d <span class="string">&quot;name=stolenzc&amp;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line">&gt; curl -X POST -d <span class="string">&quot;name=stolenzc&quot;</span> -d <span class="string">&quot;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line">&gt; curl -X POST -d <span class="string">&#x27;@data.json&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>默认的请求头中的 Content-Type 是 <code>application/x-www-form-urlencoded</code>，如果需要发送 JSON 格式的数据，可以使用 <code>-H</code> 参数来设置请求头</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -H <span class="string">&quot;Content-Type: application/json&quot;</span> -d <span class="string">&#x27;&#123;&quot;name&quot;:&quot;stolenzc&quot;,&quot;password&quot;:&quot;123&quot;&#125;&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="–data-urlencode"><a href="#–data-urlencode" class="headerlink" title="–data-urlencode"></a>–data-urlencode</h3><p>发送 POST 请求的请求体数据，会对数据进行 URL 编码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST --data-urlencode <span class="string">&quot;name=stolen zc&amp;password=123&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="e"><a href="#e" class="headerlink" title="-e"></a>-e</h3><p>设置请求头中的 Referer 字段</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -e <span class="string">&quot;https://stolenzc.com&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>也可以通过 <code>-H</code> 参数来设置请求头中的改参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;Referer: https://stolenzc.com&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="F"><a href="#F" class="headerlink" title="-F"></a>-F</h3><p>发送 POST 请求的请求体数据，用于上传二进制文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>该参数会自动设置请求头中的 Content-Type 为 <code>multipart/form-data</code>，</p>
+<p>-F 也可以设置 MIME 类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>-G</p>
+<p>用来构建 GET 请求的请求体数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -G -d <span class="string">&quot;name=stolenzc&quot;</span> -d <span class="string">&quot;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line"></span><br><span class="line">实际请求url为: https://api.github.com/versions?name=stolenzc&amp;password=123</span><br></pre></td></tr></table></figure>
+
+<p>默认会发送一个 GET 请求，如果去掉 <code>-G</code> 参数，那么会发送一个 POST 请求，如果需要对数据进行 URL 编码，可以使用 <code>--data-urlencode</code> 参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -G --data-urlencode <span class="string">&quot;name=stolen zc&amp;password=123&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="H"><a href="#H" class="headerlink" title="-H"></a>-H</h3><p>设置 http 请求头</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;Content-Type: application/json&quot;</span> -d <span class="string">&#x27;&#123;&quot;name&quot;: &quot;stolenzc&quot;, &quot;password&quot;: &quot;123&quot;&#125;&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="i"><a href="#i" class="headerlink" title="-i"></a>-i</h3><p>用于打印出服务器回应的 http 头信息</p>
+<p>会先打印出响应头，然后空一行，然后打印出响应体</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -i https://api.github.com/versions</span><br><span class="line">HTTP/2 200</span><br><span class="line">server: GitHub.com</span><br><span class="line"><span class="built_in">date</span>: Mon, 06 Feb 2023 14:33:56 GMT</span><br><span class="line">content-type: application/json; charset=utf-8</span><br><span class="line">content-length: 19</span><br><span class="line">cache-control: public, max-age=60, s-maxage=60</span><br><span class="line">vary: Accept, Accept-Encoding, Accept, X-Requested-With</span><br><span class="line">etag: <span class="string">&quot;e2ebdf109e4e2a25e3dafbe449a68700db7044ebea246b289a65139cb0a0b333&quot;</span></span><br><span class="line">x-github-media-type: github.v3; format=json</span><br><span class="line">x-github-api-version-selected: 2022-11-28</span><br><span class="line">access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset</span><br><span class="line">access-control-allow-origin: *</span><br><span class="line">strict-transport-security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">x-frame-options: deny</span><br><span class="line">x-content-type-options: nosniff</span><br><span class="line">x-xss-protection: 0</span><br><span class="line">referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin</span><br><span class="line">content-security-policy: default-src <span class="string">&#x27;none&#x27;</span></span><br><span class="line">x-ratelimit-limit: 60</span><br><span class="line">x-ratelimit-remaining: 55</span><br><span class="line">x-ratelimit-reset: 1675694126</span><br><span class="line">x-ratelimit-resource: core</span><br><span class="line">x-ratelimit-used: 5</span><br><span class="line">accept-ranges: bytes</span><br><span class="line">x-github-request-id: 4DB5:16B1:542E0:5CB14:63E10FD4</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">  <span class="string">&quot;2022-11-28&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h3 id="I-–head"><a href="#I-–head" class="headerlink" title="-I&#x2F;–head"></a>-I&#x2F;–head</h3><p>像服务器发送 HEAD 请求，只打印出响应头信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -I https://api.github.com/versions</span><br><span class="line">HTTP/2 200</span><br><span class="line">server: GitHub.com</span><br><span class="line"><span class="built_in">date</span>: Mon, 06 Feb 2023 14:37:00 GMT</span><br><span class="line">content-type: application/json; charset=utf-8</span><br><span class="line">content-length: 19</span><br><span class="line">cache-control: public, max-age=60, s-maxage=60</span><br><span class="line">vary: Accept, Accept-Encoding, Accept, X-Requested-With</span><br><span class="line">etag: <span class="string">&quot;e2ebdf109e4e2a25e3dafbe449a68700db7044ebea246b289a65139cb0a0b333&quot;</span></span><br><span class="line">x-github-media-type: github.v3; format=json</span><br><span class="line">x-github-api-version-selected: 2022-11-28</span><br><span class="line">access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset</span><br><span class="line">access-control-allow-origin: *</span><br><span class="line">strict-transport-security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">x-frame-options: deny</span><br><span class="line">x-content-type-options: nosniff</span><br><span class="line">x-xss-protection: 0</span><br><span class="line">referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin</span><br><span class="line">content-security-policy: default-src <span class="string">&#x27;none&#x27;</span></span><br><span class="line">x-ratelimit-limit: 60</span><br><span class="line">x-ratelimit-remaining: 58</span><br><span class="line">x-ratelimit-reset: 1675697820</span><br><span class="line">x-ratelimit-resource: core</span><br><span class="line">x-ratelimit-used: 2</span><br><span class="line">accept-ranges: bytes</span><br><span class="line">x-github-request-id: 4D93:3C49:65424:6E189:63E1109A</span><br></pre></td></tr></table></figure>
+
+<h3 id="k"><a href="#k" class="headerlink" title="-k"></a>-k</h3><p>忽略 ssl 证书验证</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -k https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="L"><a href="#L" class="headerlink" title="-L"></a>-L</h3><p>让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
+
+<h3 id="limit-rate"><a href="#limit-rate" class="headerlink" title="limit-rate"></a>limit-rate</h3><p>限制传输速度，模拟慢速网络环境</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 1000B https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="o"><a href="#o" class="headerlink" title="-o"></a>-o</h3><p>将服务器响应的内容保存到文件中，类似于 wget 命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -o get_docker.sh https://get.docker.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="O"><a href="#O" class="headerlink" title="-O"></a>-O</h3><p>将服务器响应的内容保存到文件中，文件名从 URL 中获取</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -O https://www.baidu.com/index.html</span><br></pre></td></tr></table></figure>
+
+<p>如果无法从 URL 中获取文件名，下载会失败</p>
+<h3 id="s-–silent"><a href="#s-–silent" class="headerlink" title="-s&#x2F;–silent"></a>-s&#x2F;–silent</h3><p>静默模式，不输出任何错误信息，如果报错，输出为空，如果正常，输出正常的响应内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -s https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="S"><a href="#S" class="headerlink" title="-S"></a>-S</h3><p>指定输出错误信息，通常与 -s 一起使用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -sS https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="u"><a href="#u" class="headerlink" title="-u"></a>-u</h3><p>指定用户名和密码，用于 HTTP 认证</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -u username:password https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>会自动设置 http 请求头中的 <code>Authorization: Basic xxx</code>，其中 xxx 是 base64 编码的用户名和密码</p>
+<p>如果只输入了用户名，没有输入密码，会提示输入密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -u username https://api.github.com/versions</span><br><span class="line">&gt; password</span><br></pre></td></tr></table></figure>
+
+<h3 id="v-–trace"><a href="#v-–trace" class="headerlink" title="-v&#x2F;–trace"></a>-v&#x2F;–trace</h3><p>输出通信过程，用于调试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -v https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<p>–trace 也可以用于调试，还会输出原始的二进制数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl --trace - https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="x"><a href="#x" class="headerlink" title="-x"></a>-x</h3><p>指定代理服务器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -x socks5://127.0.0.1:1080 https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<h3 id="X"><a href="#X" class="headerlink" title="-X"></a>-X</h3><p>指定 HTTP 请求方法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -d <span class="string">&#x27;username=stolenzc&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考自阮一峰老师的网络日志：<a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 命令详解</a>，部分内容有删改</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Script</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker的安装及其日常使用</title>
     <url>/docker/</url>
     <content><![CDATA[<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Ubuntu安装</p>
@@ -481,122 +597,6 @@
 ]]></content>
       <categories>
         <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Curl 使用手册</title>
-    <url>/curl/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CURL (Client URL)是一个命令行工具，用于在命令行下发送 HTTP 请求。对于热爱命令行的人来说，这个是必备的工具。</p>
-<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl https://api.github.com/versions</span><br><span class="line">[</span><br><span class="line">  <span class="string">&quot;2022-11-28&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h2 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h2><h3 id="A"><a href="#A" class="headerlink" title="-A"></a>-A</h3><p>设置请求头中的代理头 User-Agent 字段。curl 默认的代理头是 <code>curl/[version]</code></p>
-<p>例如机器内的 curl 版本是 7.64.1，那么默认的 User-Agent 就是 <code>curl/7.64.1</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot;GET /versions HTTP/1.1&quot;</span> 200 250 <span class="string">&quot;-&quot;</span> <span class="string">&quot;curl/7.64.1&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>如果我们想要自定义 User-Agent，可以使用 <code>-A</code> 参数，以下示例就将请求头改为了 Edge 浏览器的 User-Agent</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -A <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>也可以通过 <code>-H</code> 参数来设置请求头</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="b"><a href="#b" class="headerlink" title="-b"></a>-b</h3><p>设置请求头中的 Cookie 字段</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -b <span class="string">&quot;logged_in=yes;dotcom_user=stolenzc;&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>如果需要读取文件，可以使用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -b cookie.txt https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="c"><a href="#c" class="headerlink" title="-c"></a>-c</h3><p>将服务器返回的响应头中的 Cookie 字段写入文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -c cookie.txt https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="d"><a href="#d" class="headerlink" title="-d"></a>-d</h3><p>发送 POST 请求的请求体数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -d <span class="string">&quot;name=stolenzc&amp;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line">&gt; curl -X POST -d <span class="string">&quot;name=stolenzc&quot;</span> -d <span class="string">&quot;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line">&gt; curl -X POST -d <span class="string">&#x27;@data.json&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>默认的请求头中的 Content-Type 是 <code>application/x-www-form-urlencoded</code>，如果需要发送 JSON 格式的数据，可以使用 <code>-H</code> 参数来设置请求头</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -H <span class="string">&quot;Content-Type: application/json&quot;</span> -d <span class="string">&#x27;&#123;&quot;name&quot;:&quot;stolenzc&quot;,&quot;password&quot;:&quot;123&quot;&#125;&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="–data-urlencode"><a href="#–data-urlencode" class="headerlink" title="–data-urlencode"></a>–data-urlencode</h3><p>发送 POST 请求的请求体数据，会对数据进行 URL 编码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST --data-urlencode <span class="string">&quot;name=stolen zc&amp;password=123&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="e"><a href="#e" class="headerlink" title="-e"></a>-e</h3><p>设置请求头中的 Referer 字段</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -e <span class="string">&quot;https://stolenzc.com&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>也可以通过 <code>-H</code> 参数来设置请求头中的改参数</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;Referer: https://stolenzc.com&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="F"><a href="#F" class="headerlink" title="-F"></a>-F</h3><p>发送 POST 请求的请求体数据，用于上传二进制文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>该参数会自动设置请求头中的 Content-Type 为 <code>multipart/form-data</code>，</p>
-<p>-F 也可以设置 MIME 类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>-G</p>
-<p>用来构建 GET 请求的请求体数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -G -d <span class="string">&quot;name=stolenzc&quot;</span> -d <span class="string">&quot;password=123&quot;</span> https://api.github.com/versions</span><br><span class="line"></span><br><span class="line">实际请求url为: https://api.github.com/versions?name=stolenzc&amp;password=123</span><br></pre></td></tr></table></figure>
-
-<p>默认会发送一个 GET 请求，如果去掉 <code>-G</code> 参数，那么会发送一个 POST 请求，如果需要对数据进行 URL 编码，可以使用 <code>--data-urlencode</code> 参数</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -G --data-urlencode <span class="string">&quot;name=stolen zc&amp;password=123&quot;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="H"><a href="#H" class="headerlink" title="-H"></a>-H</h3><p>设置 http 请求头</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -H <span class="string">&quot;Content-Type: application/json&quot;</span> -d <span class="string">&#x27;&#123;&quot;name&quot;: &quot;stolenzc&quot;, &quot;password&quot;: &quot;123&quot;&#125;&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="i"><a href="#i" class="headerlink" title="-i"></a>-i</h3><p>用于打印出服务器回应的 http 头信息</p>
-<p>会先打印出响应头，然后空一行，然后打印出响应体</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -i https://api.github.com/versions</span><br><span class="line">HTTP/2 200</span><br><span class="line">server: GitHub.com</span><br><span class="line"><span class="built_in">date</span>: Mon, 06 Feb 2023 14:33:56 GMT</span><br><span class="line">content-type: application/json; charset=utf-8</span><br><span class="line">content-length: 19</span><br><span class="line">cache-control: public, max-age=60, s-maxage=60</span><br><span class="line">vary: Accept, Accept-Encoding, Accept, X-Requested-With</span><br><span class="line">etag: <span class="string">&quot;e2ebdf109e4e2a25e3dafbe449a68700db7044ebea246b289a65139cb0a0b333&quot;</span></span><br><span class="line">x-github-media-type: github.v3; format=json</span><br><span class="line">x-github-api-version-selected: 2022-11-28</span><br><span class="line">access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset</span><br><span class="line">access-control-allow-origin: *</span><br><span class="line">strict-transport-security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">x-frame-options: deny</span><br><span class="line">x-content-type-options: nosniff</span><br><span class="line">x-xss-protection: 0</span><br><span class="line">referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin</span><br><span class="line">content-security-policy: default-src <span class="string">&#x27;none&#x27;</span></span><br><span class="line">x-ratelimit-limit: 60</span><br><span class="line">x-ratelimit-remaining: 55</span><br><span class="line">x-ratelimit-reset: 1675694126</span><br><span class="line">x-ratelimit-resource: core</span><br><span class="line">x-ratelimit-used: 5</span><br><span class="line">accept-ranges: bytes</span><br><span class="line">x-github-request-id: 4DB5:16B1:542E0:5CB14:63E10FD4</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">  <span class="string">&quot;2022-11-28&quot;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h3 id="I-–head"><a href="#I-–head" class="headerlink" title="-I&#x2F;–head"></a>-I&#x2F;–head</h3><p>像服务器发送 HEAD 请求，只打印出响应头信息</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -I https://api.github.com/versions</span><br><span class="line">HTTP/2 200</span><br><span class="line">server: GitHub.com</span><br><span class="line"><span class="built_in">date</span>: Mon, 06 Feb 2023 14:37:00 GMT</span><br><span class="line">content-type: application/json; charset=utf-8</span><br><span class="line">content-length: 19</span><br><span class="line">cache-control: public, max-age=60, s-maxage=60</span><br><span class="line">vary: Accept, Accept-Encoding, Accept, X-Requested-With</span><br><span class="line">etag: <span class="string">&quot;e2ebdf109e4e2a25e3dafbe449a68700db7044ebea246b289a65139cb0a0b333&quot;</span></span><br><span class="line">x-github-media-type: github.v3; format=json</span><br><span class="line">x-github-api-version-selected: 2022-11-28</span><br><span class="line">access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset</span><br><span class="line">access-control-allow-origin: *</span><br><span class="line">strict-transport-security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">x-frame-options: deny</span><br><span class="line">x-content-type-options: nosniff</span><br><span class="line">x-xss-protection: 0</span><br><span class="line">referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin</span><br><span class="line">content-security-policy: default-src <span class="string">&#x27;none&#x27;</span></span><br><span class="line">x-ratelimit-limit: 60</span><br><span class="line">x-ratelimit-remaining: 58</span><br><span class="line">x-ratelimit-reset: 1675697820</span><br><span class="line">x-ratelimit-resource: core</span><br><span class="line">x-ratelimit-used: 2</span><br><span class="line">accept-ranges: bytes</span><br><span class="line">x-github-request-id: 4D93:3C49:65424:6E189:63E1109A</span><br></pre></td></tr></table></figure>
-
-<h3 id="k"><a href="#k" class="headerlink" title="-k"></a>-k</h3><p>忽略 ssl 证书验证</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -k https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="L"><a href="#L" class="headerlink" title="-L"></a>-L</h3><p>让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
-
-<h3 id="limit-rate"><a href="#limit-rate" class="headerlink" title="limit-rate"></a>limit-rate</h3><p>限制传输速度，模拟慢速网络环境</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 1000B https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="o"><a href="#o" class="headerlink" title="-o"></a>-o</h3><p>将服务器响应的内容保存到文件中，类似于 wget 命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -o get_docker.sh https://get.docker.com</span><br></pre></td></tr></table></figure>
-
-<h3 id="O"><a href="#O" class="headerlink" title="-O"></a>-O</h3><p>将服务器响应的内容保存到文件中，文件名从 URL 中获取</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -O https://www.baidu.com/index.html</span><br></pre></td></tr></table></figure>
-
-<p>如果无法从 URL 中获取文件名，下载会失败</p>
-<h3 id="s-–silent"><a href="#s-–silent" class="headerlink" title="-s&#x2F;–silent"></a>-s&#x2F;–silent</h3><p>静默模式，不输出任何错误信息，如果报错，输出为空，如果正常，输出正常的响应内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -s https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="S"><a href="#S" class="headerlink" title="-S"></a>-S</h3><p>指定输出错误信息，通常与 -s 一起使用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -sS https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="u"><a href="#u" class="headerlink" title="-u"></a>-u</h3><p>指定用户名和密码，用于 HTTP 认证</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -u username:password https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>会自动设置 http 请求头中的 <code>Authorization: Basic xxx</code>，其中 xxx 是 base64 编码的用户名和密码</p>
-<p>如果只输入了用户名，没有输入密码，会提示输入密码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -u username https://api.github.com/versions</span><br><span class="line">&gt; password</span><br></pre></td></tr></table></figure>
-
-<h3 id="v-–trace"><a href="#v-–trace" class="headerlink" title="-v&#x2F;–trace"></a>-v&#x2F;–trace</h3><p>输出通信过程，用于调试</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -v https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<p>–trace 也可以用于调试，还会输出原始的二进制数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl --trace - https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="x"><a href="#x" class="headerlink" title="-x"></a>-x</h3><p>指定代理服务器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -x socks5://127.0.0.1:1080 https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<h3 id="X"><a href="#X" class="headerlink" title="-X"></a>-X</h3><p>指定 HTTP 请求方法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; curl -X POST -d <span class="string">&#x27;username=stolenzc&#x27;</span> https://api.github.com/versions</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>参考自阮一峰老师的网络日志：<a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 命令详解</a>，部分内容有删改</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Script</category>
       </categories>
       <tags>
         <tag>操作使用</tag>
@@ -1063,6 +1063,85 @@
       </tags>
   </entry>
   <entry>
+    <title>GitHub使用方法</title>
+    <url>/github_use/</url>
+    <content><![CDATA[<h2 id="GitHub加速访问"><a href="#GitHub加速访问" class="headerlink" title="GitHub加速访问"></a>GitHub加速访问</h2><h3 id="1-修改host文件达到加速目的"><a href="#1-修改host文件达到加速目的" class="headerlink" title="1. 修改host文件达到加速目的"></a>1. 修改host文件达到加速目的</h3><p>以下方法被写在一个python文件中，可以直接使用<a href="https://github.com/stolenzc/github_faster">github faster</a>执行python文件进行修改刷新</p>
+<ol>
+<li><p>获取GitHub网站的最快地址，使用<a href="https://www.ipaddress.com/">https://www.ipaddress.com/</a>开获取GitHub的IP地址</p>
+</li>
+<li><p>修改hosts文件，Mac和Linux在<code>/etc/hosts</code>下，Windows在通常在<code>C:\windows\System32\drivers\etc\hosts</code>下，在结尾添加以下地址的IP</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">140.82.114.4 github.com</span><br><span class="line">199.232.69.194 github.global.ssl.fastly.net</span><br><span class="line">64.71.168.201 github.community</span><br><span class="line">199.232.68.133 avatars.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars1.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars2.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133 camo.githubusercontent.com</span><br><span class="line">199.232.68.133 cloud.githubusercontent.com</span><br><span class="line">199.232.68.133 githubusercontent.com</span><br><span class="line">199.232.96.133 user-images.githubusercontent.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>刷新hosts文件，Mac和Linux可以使用<code>sudo killall -HUP mDNSResponder</code>，Windows使用<code>ipconfig /flushdns</code></p>
+</li>
+</ol>
+<p>参考文档：<a href="https://www.jianshu.com/p/238f8242e1a6">Mac 解决GitHub下载速度太慢问题</a></p>
+<h3 id="2-使用加速镜像克隆"><a href="#2-使用加速镜像克隆" class="headerlink" title="2. 使用加速镜像克隆"></a>2. 使用加速镜像克隆</h3><p>该方法只适用与对代码仓库进行克隆，不支持ssh方法</p>
+<p>使用 <code>github.com.cnpmjs.org</code> 来替换原本的网站中的 <code>github.com</code></p>
+<p>如 <code>git clone https://github.com/stolenzc/github_faster.git</code> 替换为 <code>git clone https://github.com.cnpmjs.org/stolenzc/github_faster.git</code></p>
+<h2 id="快速项目检索"><a href="#快速项目检索" class="headerlink" title="快速项目检索"></a>快速项目检索</h2><p>检索方法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">in</span>:name xxx <span class="comment"># 按照项目名/仓库名搜索（大小写不敏感）</span></span><br><span class="line"><span class="keyword">in</span>:readme xxx <span class="comment"># 按照README搜索（大小写不敏感）</span></span><br><span class="line"><span class="keyword">in</span>:description xxx <span class="comment"># 按照description搜索（大小写不敏感）</span></span><br><span class="line">stars:&gt;xxx <span class="comment"># stars数大于xxx</span></span><br><span class="line">forks:&gt;xxx <span class="comment"># forks数大于xxx</span></span><br><span class="line">language:xxx <span class="comment"># 编程语言为xxx</span></span><br><span class="line">pushed:&gt;YYYY-MM-DD <span class="comment"># 最新更新时间晚于YYYY-MM-DD</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>多个条件之间可以使用空格隔开</p>
+<h2 id="Release发包"><a href="#Release发包" class="headerlink" title="Release发包"></a>Release发包</h2><ol>
+<li>在项目的release窗格下，点击<code>Draft a new release</code></li>
+<li>填入Tag版本，描述之类的东西，然后点击或者将文件拖入到<code>Attach binaries by dropping them here or selecting them.</code></li>
+<li>点击<code>Publish release</code>即可完成发包，如果是测试包，可以勾选上<code>this is a pre-release</code></li>
+</ol>
+<h2 id="GitHub-Action"><a href="#GitHub-Action" class="headerlink" title="GitHub Action"></a>GitHub Action</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>GitHub官方action仓库：<a href="https://github.com/marketplace?type=actions">Github Action官方市场</a>，第三方仓库：<a href="https://github.com/sdras/awesome-actions">wesome actions</a></p>
+<p>使用action方式：使用git的指针概念，详情参考<a href="https://docs.github.com/cn/free-pro-team@latest/actions/creating-actions/about-actions">Github Docs</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">actions/setup-node@74bc508</span> <span class="comment"># 指向一个 commit</span></span><br><span class="line"><span class="string">actions/setup-node@v1.0</span>    <span class="comment"># 指向一个标签</span></span><br><span class="line"><span class="string">actions/setup-node@master</span>  <span class="comment"># 指向一个分支</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>在项目根目录下的<code>.github/workflows/</code>下的yml文件</p>
+<p>yml文件配置：</p>
+<ol>
+<li><p>name: workflow的名称，如果未设置默认为yml文件名</p>
+</li>
+<li><p>on: 触发action的条件，可选为<code>on.&lt;push|pull_request&gt;.&lt;tags|branches&gt;</code></p>
+</li>
+<li><p>jobs: workflow的工作主体，表示每一项具体的工作，jobs下面通常需要写清楚job_id，可以自定义。如<code>jobs:build</code>。job_id下面为以下字段：</p>
+<ol>
+<li><p><code>name</code>: 定义字段任务说明</p>
+</li>
+<li><p><code>needs</code>: 表示任务的依赖关系，表示运行该任务之前必须运行什么。</p>
+</li>
+<li><p><code>runs-on</code>: 运行任务需要的虚拟机环境，可选参数为：</p>
+<blockquote>
+<p><code>ubuntu-latest</code>，<code>ubuntu-18.04</code>或<code>ubuntu-16.04</code></p>
+<p><code>windows-latest</code>，<code>windows-2019</code>或<code>windows-2016</code></p>
+<p><code>macOS-latest</code>或<code>macOS-10.14</code></p>
+</blockquote>
+</li>
+<li><p><code>steps</code>: 每个job包含的步骤，可以配置为:</p>
+<blockquote>
+<p><code>name</code>: 步骤名称</p>
+<p><code>uses</code>: 使用的action</p>
+<p><code>with</code>: github action的入参</p>
+<p><code>run</code>: 执行的命令</p>
+<p><code>env</code>: 设置为环境变量</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>hexo项目编译并发送到阿里云ESC的指定目录</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Hexo</span> <span class="string">build</span> <span class="string">and</span> <span class="string">deploy</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span> <span class="comment"># If you&#x27;re using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">persist-credentials:</span> <span class="literal">false</span></span><br><span class="line">        <span class="comment"># checkout到你的hexo代码分支</span></span><br><span class="line">        <span class="attr">ref:</span> <span class="string">master</span></span><br><span class="line">        <span class="comment"># hexo需要加载内部子模块</span></span><br><span class="line">        <span class="attr">submodules:</span> <span class="literal">true</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">and</span> <span class="string">Build</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        npm install</span></span><br><span class="line"><span class="string">        npm run build</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">aliyun</span> <span class="string">server</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">easingthemes/ssh-deploy@v2.0.7</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">SSH_PRIVATE_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ALIYUN_SERVER_ACCESS_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">ARGS:</span> <span class="string">&quot;-avz --delete&quot;</span></span><br><span class="line">        <span class="attr">SOURCE:</span> <span class="string">&quot;public/&quot;</span></span><br><span class="line">        <span class="attr">REMOTE_HOST:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ALIYUN_SERVER_HOST</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">REMOTE_USER:</span> <span class="string">&quot;root&quot;</span></span><br><span class="line">        <span class="attr">TARGET:</span> <span class="string">&quot;/home/blog/&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>该配置需要在secret里面配置阿里云的私钥，然后将阿里云的公钥添加到阿里云的<code>~/.ssh/authorized_keys</code>文件中添加阿里云中生成的公钥</p>
+<p>该配置表示直接将hexo编译后的deploy下的文件拷贝到&#x2F;blog&#x2F;下，没有二级目录。</p>
+</blockquote>
+<p>参考内容：<a href="http://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html">阮一峰博客</a>， <a href="https://didiheng.com/front/2019-12-11.html#github-action%E5%8F%91%E5%B8%83%E9%98%BF%E9%87%8C%E4%BA%91ecs">Github Action发布阿里云ECS</a></p>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+        <tag>开发软件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git gitignore 技术细节</title>
     <url>/gitignore/</url>
     <content><![CDATA[<p>官方原文地址 <a href="https://git-scm.com/docs/gitignore/zh_HANS-CN">gitignore</a></p>
@@ -1140,85 +1219,6 @@
       </categories>
       <tags>
         <tag>翻译</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GitHub使用方法</title>
-    <url>/github_use/</url>
-    <content><![CDATA[<h2 id="GitHub加速访问"><a href="#GitHub加速访问" class="headerlink" title="GitHub加速访问"></a>GitHub加速访问</h2><h3 id="1-修改host文件达到加速目的"><a href="#1-修改host文件达到加速目的" class="headerlink" title="1. 修改host文件达到加速目的"></a>1. 修改host文件达到加速目的</h3><p>以下方法被写在一个python文件中，可以直接使用<a href="https://github.com/stolenzc/github_faster">github faster</a>执行python文件进行修改刷新</p>
-<ol>
-<li><p>获取GitHub网站的最快地址，使用<a href="https://www.ipaddress.com/">https://www.ipaddress.com/</a>开获取GitHub的IP地址</p>
-</li>
-<li><p>修改hosts文件，Mac和Linux在<code>/etc/hosts</code>下，Windows在通常在<code>C:\windows\System32\drivers\etc\hosts</code>下，在结尾添加以下地址的IP</p>
- <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">140.82.114.4 github.com</span><br><span class="line">199.232.69.194 github.global.ssl.fastly.net</span><br><span class="line">64.71.168.201 github.community</span><br><span class="line">199.232.68.133 avatars.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars1.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars2.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133 avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133 camo.githubusercontent.com</span><br><span class="line">199.232.68.133 cloud.githubusercontent.com</span><br><span class="line">199.232.68.133 githubusercontent.com</span><br><span class="line">199.232.96.133 user-images.githubusercontent.com</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>刷新hosts文件，Mac和Linux可以使用<code>sudo killall -HUP mDNSResponder</code>，Windows使用<code>ipconfig /flushdns</code></p>
-</li>
-</ol>
-<p>参考文档：<a href="https://www.jianshu.com/p/238f8242e1a6">Mac 解决GitHub下载速度太慢问题</a></p>
-<h3 id="2-使用加速镜像克隆"><a href="#2-使用加速镜像克隆" class="headerlink" title="2. 使用加速镜像克隆"></a>2. 使用加速镜像克隆</h3><p>该方法只适用与对代码仓库进行克隆，不支持ssh方法</p>
-<p>使用 <code>github.com.cnpmjs.org</code> 来替换原本的网站中的 <code>github.com</code></p>
-<p>如 <code>git clone https://github.com/stolenzc/github_faster.git</code> 替换为 <code>git clone https://github.com.cnpmjs.org/stolenzc/github_faster.git</code></p>
-<h2 id="快速项目检索"><a href="#快速项目检索" class="headerlink" title="快速项目检索"></a>快速项目检索</h2><p>检索方法：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">in</span>:name xxx <span class="comment"># 按照项目名/仓库名搜索（大小写不敏感）</span></span><br><span class="line"><span class="keyword">in</span>:readme xxx <span class="comment"># 按照README搜索（大小写不敏感）</span></span><br><span class="line"><span class="keyword">in</span>:description xxx <span class="comment"># 按照description搜索（大小写不敏感）</span></span><br><span class="line">stars:&gt;xxx <span class="comment"># stars数大于xxx</span></span><br><span class="line">forks:&gt;xxx <span class="comment"># forks数大于xxx</span></span><br><span class="line">language:xxx <span class="comment"># 编程语言为xxx</span></span><br><span class="line">pushed:&gt;YYYY-MM-DD <span class="comment"># 最新更新时间晚于YYYY-MM-DD</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>注意：</strong>多个条件之间可以使用空格隔开</p>
-<h2 id="Release发包"><a href="#Release发包" class="headerlink" title="Release发包"></a>Release发包</h2><ol>
-<li>在项目的release窗格下，点击<code>Draft a new release</code></li>
-<li>填入Tag版本，描述之类的东西，然后点击或者将文件拖入到<code>Attach binaries by dropping them here or selecting them.</code></li>
-<li>点击<code>Publish release</code>即可完成发包，如果是测试包，可以勾选上<code>this is a pre-release</code></li>
-</ol>
-<h2 id="GitHub-Action"><a href="#GitHub-Action" class="headerlink" title="GitHub Action"></a>GitHub Action</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>GitHub官方action仓库：<a href="https://github.com/marketplace?type=actions">Github Action官方市场</a>，第三方仓库：<a href="https://github.com/sdras/awesome-actions">wesome actions</a></p>
-<p>使用action方式：使用git的指针概念，详情参考<a href="https://docs.github.com/cn/free-pro-team@latest/actions/creating-actions/about-actions">Github Docs</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">actions/setup-node@74bc508</span> <span class="comment"># 指向一个 commit</span></span><br><span class="line"><span class="string">actions/setup-node@v1.0</span>    <span class="comment"># 指向一个标签</span></span><br><span class="line"><span class="string">actions/setup-node@master</span>  <span class="comment"># 指向一个分支</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>在项目根目录下的<code>.github/workflows/</code>下的yml文件</p>
-<p>yml文件配置：</p>
-<ol>
-<li><p>name: workflow的名称，如果未设置默认为yml文件名</p>
-</li>
-<li><p>on: 触发action的条件，可选为<code>on.&lt;push|pull_request&gt;.&lt;tags|branches&gt;</code></p>
-</li>
-<li><p>jobs: workflow的工作主体，表示每一项具体的工作，jobs下面通常需要写清楚job_id，可以自定义。如<code>jobs:build</code>。job_id下面为以下字段：</p>
-<ol>
-<li><p><code>name</code>: 定义字段任务说明</p>
-</li>
-<li><p><code>needs</code>: 表示任务的依赖关系，表示运行该任务之前必须运行什么。</p>
-</li>
-<li><p><code>runs-on</code>: 运行任务需要的虚拟机环境，可选参数为：</p>
-<blockquote>
-<p><code>ubuntu-latest</code>，<code>ubuntu-18.04</code>或<code>ubuntu-16.04</code></p>
-<p><code>windows-latest</code>，<code>windows-2019</code>或<code>windows-2016</code></p>
-<p><code>macOS-latest</code>或<code>macOS-10.14</code></p>
-</blockquote>
-</li>
-<li><p><code>steps</code>: 每个job包含的步骤，可以配置为:</p>
-<blockquote>
-<p><code>name</code>: 步骤名称</p>
-<p><code>uses</code>: 使用的action</p>
-<p><code>with</code>: github action的入参</p>
-<p><code>run</code>: 执行的命令</p>
-<p><code>env</code>: 设置为环境变量</p>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>hexo项目编译并发送到阿里云ESC的指定目录</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Hexo</span> <span class="string">build</span> <span class="string">and</span> <span class="string">deploy</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span> <span class="comment"># If you&#x27;re using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">persist-credentials:</span> <span class="literal">false</span></span><br><span class="line">        <span class="comment"># checkout到你的hexo代码分支</span></span><br><span class="line">        <span class="attr">ref:</span> <span class="string">master</span></span><br><span class="line">        <span class="comment"># hexo需要加载内部子模块</span></span><br><span class="line">        <span class="attr">submodules:</span> <span class="literal">true</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">and</span> <span class="string">Build</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        npm install</span></span><br><span class="line"><span class="string">        npm run build</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">aliyun</span> <span class="string">server</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">easingthemes/ssh-deploy@v2.0.7</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">SSH_PRIVATE_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ALIYUN_SERVER_ACCESS_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">ARGS:</span> <span class="string">&quot;-avz --delete&quot;</span></span><br><span class="line">        <span class="attr">SOURCE:</span> <span class="string">&quot;public/&quot;</span></span><br><span class="line">        <span class="attr">REMOTE_HOST:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ALIYUN_SERVER_HOST</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">REMOTE_USER:</span> <span class="string">&quot;root&quot;</span></span><br><span class="line">        <span class="attr">TARGET:</span> <span class="string">&quot;/home/blog/&quot;</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>该配置需要在secret里面配置阿里云的私钥，然后将阿里云的公钥添加到阿里云的<code>~/.ssh/authorized_keys</code>文件中添加阿里云中生成的公钥</p>
-<p>该配置表示直接将hexo编译后的deploy下的文件拷贝到&#x2F;blog&#x2F;下，没有二级目录。</p>
-</blockquote>
-<p>参考内容：<a href="http://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html">阮一峰博客</a>， <a href="https://didiheng.com/front/2019-12-11.html#github-action%E5%8F%91%E5%B8%83%E9%98%BF%E9%87%8C%E4%BA%91ecs">Github Action发布阿里云ECS</a></p>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-        <tag>开发软件</tag>
       </tags>
   </entry>
   <entry>
@@ -2268,7 +2268,7 @@
     <title>个人文件Pass</title>
     <url>/myfile_pass/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="2fadf67321fad13d1973f57d6e3c7156a139bd36943c8488a75ecbc6c313214d">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943e705ae542b416c7f1fbbbb135c8bc0eb633bc6b1d97ac203d354883d9ba048bc6e8a49bc506fc26167b37556d1de43ce468469966fc029de780a9a13a2c87eeb4ce294878892e2c4fe1034d0f8b14933b3f2e4f59dc865ccf69348d1538658125a7d7a0d924eeaec3b1fcfde6b147b1da075a7db59ae953160d3f15af68beef50017b96b058f34d84fc809d799eaf2b0593c4a69903a467eecfeef6e6b2108a44dbbf452d07db1bc1a36622367d42ef8d4e5468b75a85bcc292d507031f7f501a8684b5e885dcaf2db806bf722b9de9ddbd53a6327a75956e4944f0db204a3f14892983f1106e7631288c2fb9f852401014db062c3fd5d60c089201584ac7f9e44a9b7e10a4fef7c06f2ab6f4dca538444ca0f2462dcbf165a57fb8d1c9794d96f494678875cebc91e58791cd9bf9cdc49cc5a5a5c3894a9f3c66c05a9b438496ff1cd44ff92dda7f54f780302761a9f6d744e4313e6e96a25944c57e38228039d7cbd2c4928273c89ffa55676c213c56882d931d4bbb0d2954c8fdf7aa8ea6941870054d99ae1f1168a6a404e0e4fd79f48a28701829908a720cfa854cd9fd2152803de3f4788bbd51be1f419e525737d8f3db7cfcf4c373f4e87cc0a03a55b18760cc492ef9ead39d3d3f3da75d54931d39089cee7d6bf540f8cbfb9922adf2f2f4eedb73788c8830eea132fb0c56a5673326d108c30ce7490199942713faf40b2d5cade47ab0346e99d033a6c86a114d6fd495eeb7f40129a6e46ceb3ca78ed665548468e09fe6f49717d57118bfeb403de0849e5d4d94479cfe43134e1a51f3f620af20cff23b86d8ca675f229dd34eb7cc792e3bc5d34bb046893d47555d021cb1ea9fe5b6073cc02a9ba76c8f0065cb22297e6c9eddd2d34be100c703556decca3397456bf114130db5d2e5b2ade01f020e14533ed8243e106200b2eca0ca10528d6c3bc67939f41ceabb5f913b6941afdaf7ba6f1c704dac9d6dcfb11785099d8fef96c1115cfaa5812b3c17b4b7df94fce3e9d6d629d0bbe82231a866799ed43cff89be00a848c9c5bcef863ba7a6edb648378bd6fd3519f992c7c2330c2fe47cfb0e1a173a130b7f2edb30c4cb9912d2a93937dce4753832cdcb110945ba633a7acfaa182fea33af4264b41aadb5b0d48a1a9ebed64416cd7f9b789a150fb2279f0e4b84c5104e9be20ad4102bed08b38758952b9296a4de0e3572b2a16a2f0451a3500a4723330d9c7f084310f7fa3c23cad7944e484d853f3e2d67262ec2604346c86ff87a05dfd9031eb4404cc4c8fe853dca9aeb666513ce6b814537a368ad0b9bf4373061a80189c7781430db49ee3200f07d0f85d76c1b3832f7896a80fa07d24338a1e33a61c532a7c2cdd78377a858b919b5f5e2445344dbbb73eeb20554f1f25e5292425b32d61a4a7bd831d6ebd15163c1ec06a22393f409dc017f3d695f701ff5ccf369110aaa0e148ad43a7d36a8cf5dc2562844083f53fd9e16d028c786ccf0ff657690cda3beb3f9195b0976d607789ac2cfc2e6c221388014d51dec78c382cc81450bff0b5414d7cb2c9edd7e80e726d8481bcaa80347399e2a4e8509eb4c59e34e742bbad54c7337d618cb3a6edaf93e5b6478be93cbd2d04b83ba4e01667f7f490d061354fac871bdf75de9d3fbed2b52f9562c6dbe2a1056a3f9ce595454046c1da1040817b6cd2ad4e2243d11eda37aef610e90abd2e61c4baf99a7b7fa50c26b532ba7f5560a18fa01669ae3c4bea35d9d847a59cebe3e2d3b3a4aa1f4c4209577c7d7465b09b9cfba913513560e4eaafd1a3998ff0d342d85dc958fd1422952da8286aa06c11e90a23df6277d4457cd371275c79c0383c6c362545b243216e8c71cdf7b05f54cc16a9c7404a439853bb81012216c387c45d0666b92c96f0def425c8b8fd717eb31599ce30da6a6f15ecf6c4f3faf1e85eeecdb25bdae76f7ad038aa33f1969681a639e5236eaae08fb61ee059d3f62ed4b122ac7f78683d57bc157dff122d128d6cafd52502d5f2b5dff3d06af4d06fa7ab84f9d129df39cf037fc0a0eda1a42cd0ef9ae75e271331913403af2494afef2d3339e7ca89ea2decbb9ca2fb8986d631896b871ef61f4465cd9d2f2a3d2d4f518d3419722a0716d897b13aa5ca681ddacd968e1145e739c174409122d42c315b3ceb33d983937005c849fef3d71164d0900416488e1b66482b0f4609f31856fa3c895ba432699c3b27d14772757ef39d022e0a950c99d9bbf8978a2c588a2f07a888f4d12e61deef06538ebacf173dca35d39e0158a6635c4a2cc72f9668a8ae8a87e8f998a94fef8255870a559f3b2b2567726305b6bc29c28a790b52c23ee41b277c143df84490a6a26bbbf538964441f60e0027a9c33dcb50f3a0bda095cbabb1dbfc7604eab0dc2a8e861d6dbf370675801cbeff8cd8d29d65292ab38a92956c433719b8932e47e9d309c68732c0744243711515b26b4d4ed404bf1b91df09332d4c37c6f26af23fc2585f8f1f071555f874c69b18ed194b832278cf903b9634528fd82a9d86a4d0c2dd9e4a08d4d54ec0d7a70bca7cfa0df9e3280da6ffc95b0950a196bf8d00ee4d249746f4f56b5c0ed76865e17cc4fd8810f04dd695556551e6ceaf5beda31968c84fadfdf6e9cd0d45581ee0180b7ed9fc78d376ceb885536b380cd249a852d2a68af4971391364a43c50e3aebe7d83bb38608192c22e023bbcd99e131f966879cf7f97ba455cca96faf987ee48f6897cf1aeabbfa74471f6f95c7e1529285279daa7219134bed1ddd62cf43e30518c9250434b44f655f9e2c226cc65fb046674655b7246caaf54de15a844f1bd6e15fdbe917dec472c5fc0688a040228b8a411c1ee8e4a2aa8a73c9a67f290d70a39c52f11e1b06664bc905e67d810f4afa0785a372b34ac84e52dd1f2c08d3966ba7210ad5cfc4455e85d03758f134670483de7661b14a69c6b6bd1681462c21a3347cea6db983fdef72fb662a9e5596f764e431e7697096e4a6063fda9694b6fb4d105eca8cebadabefa7fc887cf925ae154941fb819a933bd5905a4cedb7884d1f5ddf621ac0b1b1a0f17a46797cc0f10867711b3feffa424741f7fbbcd101295e0b39b2e82b94ec87124677d2ed6dede6608af78ed4d466de724ed1a2f0117a31915d7f60d30a50dd37a089933b2d4e81c5f322d71fcaa63c66e433edff361d3fb3e2d2cd6c07da743b3fad2fab4ea151949b55aff80c821d3fa1716ddf4c7a14402f0ae0ce6a447b471dd7528ca600a3a98e0f07da9088e52b8d5f83156180d55b679549c79e05b541fe424696dbbb5a4261ae759e7af5e562dbaa132e884e91e15e2ea26239c9555d798e2f6880261c24545e25964880dc3596e0ad60d3b4ab013ff689d31f7c6801ffd8f5d8b4872e262a05a548e546241e2d82d110a2c49183145c539056a8599416f7490aefb6a03b41098c1a806674a31e83b6d4dcfcf4dd5cbe54fd9940dc24605839ea2eefa94f70743ec59db7c5678676c4c9968d0a6941ce6404665f6c05e9046816c59e5be627437b8275e081bd1d8520da1105172bf537982149e44958f7ddd332a300b411509b37faca908b3733fff5a7cbf400cf1397ed58a9f6c079bce1b6937a053679afd6aeb34f5cf5b5d3f0a62e42737c608b47d75225211d901c91f23d3fce0830062a1fd0fa13986d14ca2df36066931dbdec1e4200c4eec0348e5ef997f38fbb4edd3da4da135e71131183389b1798d2294436b6c187c618ee0135c7fde4dd1be125689971c8cdf6cdddb3af194d25094b7ce348fed5ba133e4cbee62196146576e5b8d867b5db9cd74593a7c90e058f54ca0536098eb07ad1e698d8e3730e0ad6608faec6248cd5157595e8c90a62c68ac521b282e3b79eb7102af922bb89c06ccd01779239861da1c51625f5a2177c40f8557d3fc696c42ff9f17e215c4fb792b1dd92ad492521c8d4b3b0f4be980a5451e37620baff9f0ca4d863eeabe1c4723f4536c664993242e2fa7a31d6c0bc251f2d45818bc6ff8cea23bb1844647e83d80da7126ba8a94bd06d5c8efaf36293aabe8b9950da4948c0cc4912362a61371b104a83451c6509b20e870c68762a61ba6639357b705c27703e6999fea4f508dc9d8b158061592314ac964c4aaf43def065dd66b339bc8f3cd83157e837877e973f623892b573164fa45b58a0002e7ae482d3cfbbbc8c223b586b0cce4d6926333341fb1061a38ffa5e8904e45e526b93aaa3a5e475e1bfb1bdf1f9d7153423e458d7dc1522d80f89a4b171eb008444f40d8f21270bed1db3315e9d3758576ef0aaaaf4608a969b1773e35437b682e5fdb1235d48c26ec95ac35088a9ccd543eec8f30242116764d6461666e49cf0a13bea4d5ff6bd9bd588fb1fbcb4004f587a0a543d0096ad9f66e563cfecea0cbca867b73b8469c71f31ab4e734df916f311a9b14032b7260243f5d20a8882a3f56f1fac30b25ad473a2cc84cfdfa6ccc6bb6f1db0964b044f584efee89bf68a887a71005aa095b7c8c41d99adf136acb059cc2ff61bafc0636ed3abcff0749ec3c95c908ec99439a364ed7a83f0456506b64e0f316cd067696fca48cd61a7490e89fad7ce86bec09e8db8b144f48a7326728f5d675838740eff693767806374f201f9e7501c68b77798497846b5663107c0e14509c21421b5a986f0a36ccfedb348f4287df870c207c1c7d71563bbaf99849426a263cc0ca83691c40da14245bda62318b5cdcfeac69323fd6e0264a61fc22dc70749731348ea1554ffc4f96b6ec6d33279ebe4a8ac4a1167ca9874b6d04c2145804aa44ce67caeede200e932c8635f593293649ce5183f03ad3a71d7c900b0fa920817b8d0b3adb561d35ab1a2aef484f47b603c56e0a0ddf965cbdc9334c3723d72568ed2a0dc30cd0ba0bd3f3383b5880833d477df9d20e152d64417b960d95a671950055f88518a4d75695847977fda755c986808e67b8a75bafa1e1f0184f4ab61e723ca9959fc05c8de9fe00109aac49efb8d5c6afb22996edff0036814e4c1aebce1689bd5c775d6bf85f04c4e319b2263d9bb616e98</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="2b4beb35f10303c85445c5570f7bdb42fe785e57092bc9b14a71c4a387d22d4b">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943b76d0bf56f17f5495a4a0d920589b7df3f70f6430631c1999840581883e4ff8b9e55bcc7240e69d7b739cd88c80e2c58ac9e5bf57f7a148b8003ede65dcdc9e70b4003829771469822591282243511b2a48a30634ce107913f598be1b11198fbd55c45e4cee4a6e8ab35492b86592b9eded14867d823f8ee1e353ce03a253d0278d7b3e56c59d2fbc450774004664105feead52465418f8485c991e35ebb8561990698c07198dcade3f232e9ec09f5fdbd471e2b2afa021fd8a1c4e63b0c7dd4c72e087c6d24cae0333a5c7e2b26f2f4191a5c72e9f26f35a4245155e1969d1ed4b2040fb7563719a7b6b2dc4f5fa54d6bc132c144a8e02f6e194424704a9b515d8405ca101e3512a299e799a6d81235c5db604bc76bad5639fe1cc180ac2c7f9c424dd3be05c057ef0266f50b1e0a65d4411196014994fbf45499f6d80f625fe819577262c47b6cd5a0c02ef7b4fecb5765566a7837a8a43a24bdd97fcc613da0c2f9ccc22fa92c0b6ef52c25cda5b95d0b4b10021e8696f00542efde61ea2b6f1a9c8ed9ca85513b22c2c62f35aea16b00beee0e1bd64bdc8dd9d2c1daaa4dc3ac19f4bc99ca93857e88726d7b40642c34b931f7fbb6bca832dbf509978a1e80d3bfe9d973a196c9afead049b24ca961f61e92a10d384e7edab52397b9dfc33ffc6be593d19a871f65ffc49f339dbe511cfa901424df9d5f338b546dd869deec3baf797c6d8e9dd25f416351d8fcd3aaf5c539d5b044c030fe8b9b03d141524c8f3069b0b22e5ec36464591083ce28de2e2d4c6a3e02aba51a10461fb16286e05ebf2ed10471a11fe77d5dd90185c92ec853af76975a9aa32e9315c3be2fc5e18ca894f4a7c099cc1d78a2b399ff8464012dbc89eeee23cb754768c5d31976147d70bfdfae261b7bbb7e5a4ae5aa98ede761748f0ff1eb55a3823222f88a43ff5e5269afcdfd92e5ff6bff1ee0869084fd3908d55f4e7c8f361eb162cd9e1f5e4df5a5cc4039c1a4e57fdd7aa3f289cf6c717c7f5b5ee83a9a4d79925bfaddcea030c80b592fba4796b274f00b7c1adc9ea1e22281ea3e42e479c31859902ae9a2ab7ff64ba07135512b3e9955bbcc2596110d2e42db2461a9b7ced5102e7e82e7457feebc8ba444d3088234a9923fbc2f00074e2183affd2ea61124470178ac6dd96706813fad5d168500ba5d9a4d0c50a083ba5699f4451ede0ae88205361e418db0c59417a16f65ffd842c22c8ece831fb0d8f328f2ab805ece7713aaf51a4a10810f5ff2eb3ce8cee66d677dd4255fd772df28eadd03259880f0dc00a3e7296f2cc0e91a3b4f96cd4224256c1ab04fc64856ffb4eeb3641191f5a63f173daa9f9e3ad5c8a67c1e090a719a197b745a777dbc45b78c61e6c092e5703639cc66e9ec55573b81d9942dfc5d8550bf1285b1c73c5c0e03292b138f2d4cb92da14570896dc2bcb9f6cb95aa572d33b2849ebe7c3e7fcb5396000df0e1f27554755c0854d07edeba865bc92a2fc2ccc40a4231a1f63ffc5f504c653865c865bba9ce0a1c3ea22dd4a851f3291fd52dad065e014f4000be0ad5037317fcd92f2ea2582be2f86657503bb0fdfbf86b75aeb260d1aa0cbf4fe0e64a7351f728bd24ac83cc5420533ac600920adf841fadb5f119f242d93bd900ac25964664bf5c7ce392472ecd4e02be6364a035c4feb1b1f7f034542bd13a21ea201415c82083d358c1f6c57b3ce630f3a5371314cd9277785a4c97d346d6451bf5ed691e85c631357fae7688e794dfb110c77b15812865336df99f11ffb0d48c8612115c2ce4861c1cb601a1eff1c61a3698e7bc9a8dac95a4b8e3f1c989fab53538cbc9d32ba074cbdf170588ef2177ec415cf23bc60dd150e07c11543e0b470111cfa09950ac2b94c1ec1b6889ce0a83934482aecceba8aebea8169c48fc1d9d42cfbc7cd654434974237b892f6d6fffdb0c69b17ec5d1313c51ada4ca4dfdfb9d9d5d7b509dc644ba30f9fae04ca63dd65d1245b2215a96f53dcf665f26d6987bb66cb2a500e0c83d2c1b7cbcd2ff8007dc53b4cf85c86cbc1aee1946c1aa20c352c7c61f052fa207f5344a64ef80b26150734bfb3b434f67535d0f8f05fdd2083d3dd0ee12e4317fadfc8baec8f5f3811251312bd4d7d3cc11e6d983691f1afcc0c50c95e55095f8e01231e6cceafa55d43b416fd8118b4e98d172468eed13c3fcb6fcc587d027e001bdff8c0842c888cc85055cf5f6ecf5f9af3668562ecde7266497f3c540242ce39c34e2cc93ac1182c68c90dae271f4ca18146f9f93c289081fcb3477309d4b1d5738d77e691c5b7ca29c81454916dc6c90f286e65b655675704475de46fa0a2339c21888a52d537916dd89ba6109977874811f71672172529412749e20e44025e98d04170b33f4f1383ab1c75eefcc67490f898d35ada5ad1a6e6a415177c967ed6bdd21d670a33d09a83c2665daa5eb08816fb336bf131b7e948e0fbc9e23505c77a6fab6d90344fc8a2179accb89c2addcd0e98003678d0c65660a2414be6cc29a9bb6d742655c8b549d960f96c04d61c2c343bb9ae2901679ae7ce32db759efd4d85eb022dda06f82013c7b6f64c493cc0b20681a664be8c47232bd3f8661e7cc2d458a059d636925f51e47b03ff46afe0e9f9a9d038bb48732aa06be4d345278dda876bcfffc47465ebb8bed9b76b8604824585b1fe65de418c127e9f716eb013b667fe061e468ce60f68f2470a54792f8d462e0da143349306dac3e0fb5f8cca268ee002d660a3380acdcc4f557b83096e18437ce81216f9400f967040cb576ee331401948c164681554ba0d5212d952a19fda8383fb22569ee330aac76eec84754cb0b962159c0dca7bca4e791d434669f57dceb5b938429ef8441a81b143401b23005db53a67ac6b7fbea6c8af6f0b4d79afcc7619102d53512bf6c16991df1f8ee6ce6daf45dcc236b1510232845f988deaff3d868cab354fe9ed75a63282f2886e393c8e0858a84b143aa377b4b1887d46c5593aca2ddef4ce55cefa315feb9ea24b4537f91f86ee29db21aa9653915a11710cc0af4dd395b151c8cbbd1a0b4ef005fb8213a8e104c312acc9d0fe3ab8797408f238b536c5c4873e69ee24e7708802e2e11482ddd7a5150ee0f1982498b74f51f662ccc1749f23e6017dd1d64af925721a9dba44548fc950d50d22deae9c5ad93c0cc6c05ba93dfe60a2802c6ee877865e20225868ee2b71585375b176bfd8da123e007578b90fff32f18dea379a25702dad00e59db5315295aa1a07f46d1306f80cc55a9ea82eff6d5c16c96954e8dad9e53eaec113f413f87a0e529bc0c38246916def5a66b749d6ee21a882ba0d1fd003a3f06e482f3a2d8b62e4a2f2d6c0b2ff15d97dff35e02135f1dc7653e137422c0cba48b9fcd798c2e46f5b160bbaae2c0aa5cd4a81ab84898f5586bdf4c2b81a4f9425f52f98ac7394514764730a85e95fb66b69b5543b8b614f2d908fa3ab817d34ec99d702367aa0969bf559f81344dfe7f2661f3f71e9df10e486d2a8ee5845c57104905deb50755215a5215266778fd1601fc92eeb628452c2923d3990cf0ba11790c217e3a2c10662185a50ded08484712ee599bf2c7367ce4ae8d7591bb530619684a799476fefbdcf8cdf9cd9c67dfcf781ef79c99370a69d33195b05c51073a2c4c3b9560dc820b934a17173017eff9f271d3ab9e52620d5fba1a0a273b638de105babdbedd1ddf1340be6cc43fd22da6a78c34c0f8f285adba9997b4ef97869f05b2389a5d1a11c0e124b82904bdfe1e09dd383c16ace7fdb70829fb46a186da2fc0917c5a86f02ca2055985688bac6a0f3f95eb54b6ff8fc2da77ecaa8691938f8ff12d3034618400459890144206351be33a19c967d03b8e70f5a998087d656fd964a3ac39aaba64ff01335297fc6ed8fa92b02fc3437a83d4e937105635cb972289b1627437f8d8e86f9229ee516f186f8ec3d099b56465446b0a9bea54d466f914a84c55e3ecfb05133e0e4782f403ab5a26df84357a8c56e6c0804e78fdbba8e8ba4950eebfc9e11ab644c9b2bcd047b3231c84e5727f58e78cd7fae7bacfc9f6fda8fec0596c7be0704e389c60519c2e88f209ac02cc76920391f35127b9435781a9281929bc5e307d5be604d0e1d2614a75230f9d3663f0bbe30f96798f35251d9a8749913cc619f4384b640b01dbf259a3f066a663270f231ff1ae1b063bf1c816eb011cd8edcd3f8b5f4113e8b2a67f0480d6f63825a4737348783417293c7a7fa036c38a00dc6dfffa52a2a6b31b5846b7a866948f8227732c2eee40fb3583b59380007d4cde574a7f7c5533f1286ee70e0a241c594ca0a285d17993d8a970d5d16c8f754a0c3e6cb36e827ec58278b1d478a0607db1e02ebb4ae753929c5d3286376ce6042dd98f22b134961e2906a7869ac7f1acaebbb65b3b7fcf69fea68a8fcf52ff6aff73d6850d0183ea3ad5099d63ae7f965174bb1d58957b812367714fd5a0dd394368c96056bc6c4e773e3df01411022bb91e035601321eecf5a664a1b51e489a5ffff4dd333e0a81b8d30945ec3b23fb262dfcf0662e6b88b97ed47215874b5d8ae632510a78bffb871487db4b5ec9c37a4e0f33015b966b7843f213eed6c7d23e95235d0f5294bec5834c496dcf3fde7b0814e26961db64681f1fe46a86b9763ea548caa94a710595e08b7b8d81ef14ae2269af7debdadbdeea80aba1d1ea91bbbac6c2d5a0c4cb01b13012252e5c06d28ed096a70c15feedf74fe3922d0633ceabbe2b7fef2550e67a96643b3ca0237a300e58495e6e97deb24d58634071b76f5d65a9a12660c8abbfd4b109a318423ff3202d5e8514951d91b7736e3071b6b4853532f5d521b2f728d48533bf063a6651fa49028ffe30ade06afaea546b96eec8f2767c0a18f1873a2353617b33f062c6d6e03db9c0197962fbc26606962e1e090e36fdc79d947571fad45b6d6a9405d75e69ed541d33dfb70c33af333d24056e83d83b2c0e25a51fbbed058f30626a8126e6af1b83bb98dd1c19b458a9b22db9dcb2d050ca1614cb4ecf9adcd88e3de41e07bd2c9a2a506f2d1697c4efdead227735</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -2328,6 +2328,727 @@
       </categories>
       <tags>
         <tag>私人文件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL 用户权限管理</title>
+    <url>/mysql_auth/</url>
+    <content><![CDATA[
+<style>
+.excalidraw-container {
+  width: 100%;
+  min-height: 300px;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  cursor: default !important;
+}
+
+.excalidraw-container * {
+  cursor: default !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.excalidraw-container .excalidraw {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.excalidraw-container .excalidraw canvas {
+  pointer-events: none !important;
+}
+
+.excalidraw-container .excalidraw .excalidraw-wrapper {
+  height: 100%;
+  pointer-events: none;
+}
+
+.excalidraw-container .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 14px;
+  padding: 20px;
+}
+</style>
+<p>MySQL 用户权限管理是 MySQL 中一个不常能接触的概念，但是当涉及到数据库权限管理时，这一块又非常重要。本文将介绍 MySQL 用户权限管理的基本概念和操作。帮助你更好地理解 MySQL 用户权限管理。</p>
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户管理原理"><a href="#用户管理原理" class="headerlink" title="用户管理原理"></a>用户管理原理</h3><p>MySQL 的用户管理是基于 MySQL 的 <code>user</code> 表进行的。<code>user</code> 表中存储了所有 MySQL 用户的信息。 和用户管理相关的 <code>user</code> 表字段如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Host</td>
+<td>char(60)</td>
+<td>主机名，用于指定用户可以连接的主机，可以为具体的 IP 地址，也可以为通配符 <code>%</code>，表示所有主机</td>
+</tr>
+<tr>
+<td>User</td>
+<td>char(32)</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>plugin</td>
+<td>char(64)</td>
+<td>插件名，用于指定用户使用的插件，用于加密密码</td>
+</tr>
+<tr>
+<td>authentication_string</td>
+<td>text</td>
+<td>加密后的密码</td>
+</tr>
+<tr>
+<td>password_expired</td>
+<td>enum(‘N’,’Y’)</td>
+<td>密码是否过期</td>
+</tr>
+<tr>
+<td>password_last_changed</td>
+<td>timestamp</td>
+<td>密码最后一次修改时间</td>
+</tr>
+<tr>
+<td>password_lifetime</td>
+<td>smallint(5) unsigned</td>
+<td>密码过期时间， NULL 表示由 default_password_lifetime 设置决定，0 表示永不过期，&gt;0 表示过期时间，单位为天</td>
+</tr>
+<tr>
+<td>account_locked</td>
+<td>enum(‘N’,’Y’)</td>
+<td>账户是否被锁定</td>
+</tr>
+</tbody></table>
+<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;username&#x27;</span>@<span class="string">&#x27;host&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;password&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> [IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> resource_option [resource_option] ...]</span><br><span class="line">    [password_option <span class="operator">|</span> lock_option] ...</span><br></pre></td></tr></table></figure>
+
+<p>user: <code>&#39;username&#39;@&#39;host&#39;</code></p>
+<ul>
+<li><code>username</code> - 用户名</li>
+<li><code>host</code> - 主机名，可以是域名，也可以是IP地址，也可以是通配符 <code>%</code>，表示所有主机</li>
+<li>如果省略 <code>@&#39;host&#39;</code>, 等同于 <code>&#39;username&#39;@&#39;%&#39;</code></li>
+</ul>
+<p>auth_option 密码设置，可以用以下任意一种语法</p>
+<ul>
+<li><code>IDENTIFIED BY &#39;auth_string&#39;</code> - 使用明文密码</li>
+<li><code>IDENTIFIED WITH auth_plugin</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED WITH auth_plugin BY &#39;auth_string&#39;</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED WITH auth_plugin AS &#39;auth_string&#39;</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED BY PASSWORD &#39;auth_string&#39;</code> - 使用密码哈希加密密码(MySQL 8.0 中已弃用)</li>
+</ul>
+<p>tls_option: SSL&#x2F;TLS 相关选项</p>
+<ul>
+<li><code>SSL</code> - 使用 SSL 加密连接</li>
+<li><code>X509</code> - 使用 X509 证书加密连接</li>
+<li><code>CIPHER &#39;cipher&#39;</code> - 使用指定加密套件加密连接</li>
+<li><code>ISSUER &#39;issuer&#39;</code> - 使用指定证书颁发机构加密连接</li>
+<li><code>SUBJECT &#39;subject&#39;</code> - 使用指定证书主题加密连接</li>
+</ul>
+<p>resource_option: 资源限制选项</p>
+<ul>
+<li><code>MAX_QUERIES_PER_HOUR count</code> - 每小时最大查询次数</li>
+<li><code>MAX_UPDATES_PER_HOUR count</code> - 每小时最大更新次数</li>
+<li><code>MAX_CONNECTIONS_PER_HOUR count</code> - 每小时最大连接次数</li>
+<li><code>MAX_USER_CONNECTIONS count</code> - 每用户最大连接次数</li>
+</ul>
+<p>password_option: 密码过期选项</p>
+<ul>
+<li><code>PASSWORD EXPIRE</code> - 密码过期</li>
+<li><code>PASSWORD EXPIRE DEFAULT</code> - 密码过期时间由 default_password_lifetime 设置决定</li>
+<li><code>PASSWORD EXPIRE NEVER</code> - 密码永不过期</li>
+<li><code>PASSWORD EXPIRE INTERVAL N DAY</code> - 密码过期时间，单位为天</li>
+</ul>
+<p>lock_option: 锁定选项</p>
+<ul>
+<li><code>ACCOUNT LOCK</code> - 锁定账户</li>
+<li><code>ACCOUNT UNLOCK</code> - 解锁账户</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建多个用户</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> </span><br><span class="line"><span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 限制用户资源</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span></span><br><span class="line"><span class="string">&#x27;test3&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span></span><br><span class="line">MAX_QUERIES_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_UPDATES_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_CONNECTIONS_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_USER_CONNECTIONS <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 密码过期</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test4&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span> PASSWORD EXPIRE;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 锁定账户</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test5&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span> ACCOUNT LOCK;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改用户"><a href="#修改用户" class="headerlink" title="修改用户"></a>修改用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> resource_option [resource_option] ...]</span><br><span class="line">    [password_option <span class="operator">|</span> lock_option] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">USER</span>() IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;auth_string&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>USER()</code> - 函数仅用于修改当前用户密码的语法。</li>
+</ul>
+<p>user&#x2F;auth_option&#x2F;tls_option&#x2F;resource_option&#x2F;password_option&#x2F;lock_option: 同创建用户</p>
+<p>示例</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 修改当前用户密码</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="keyword">USER</span>() IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改用户密码</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除用户"><a href="#删除用户" class="headerlink" title="删除用户"></a>删除用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>] <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br></pre></td></tr></table></figure>
+
+<p>user 参数同创建用户</p>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>, <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><h3 id="权限管理原理"><a href="#权限管理原理" class="headerlink" title="权限管理原理"></a>权限管理原理</h3><p>MySQL 权限分为以下几层：</p>
+<ul>
+<li><code>global</code> - 全局权限 (<code>mysql.user</code>)</li>
+<li><code>database</code> - 数据库权限 (<code>mysql.db</code>)</li>
+<li><code>table</code> - 数据表权限 (<code>mysql.tables_priv</code>)</li>
+<li><code>column</code> - 数据列权限 (<code>mysql.columns_priv</code>)</li>
+<li><code>routine</code> - 存储过程权限 (<code>mysql.procs_priv</code>)</li>
+</ul>
+<p>这些权限的关系如下：</p>
+<div id="excalidraw-q240y9ivd" class="excalidraw-container" data-excalidraw='{&quot;type&quot;:&quot;excalidraw&quot;,&quot;version&quot;:2,&quot;source&quot;:&quot;https://excalidraw.com&quot;,&quot;elements&quot;:[{&quot;id&quot;:&quot;amRv_e2i1okBw_KY22hIS&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:649.1087596187082,&quot;y&quot;:775.2741398743418,&quot;width&quot;:544.9693008191313,&quot;height&quot;:459.1679851781793,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1c&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1684293888,&quot;version&quot;:405,&quot;versionNonce&quot;:607397632,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528645575,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;kJhIgAiu0h2wN-l66kLMG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:789.603520116687,&quot;y&quot;:806.7393102493832,&quot;width&quot;:54.719970703125,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1d&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:1010239744,&quot;version&quot;:111,&quot;versionNonce&quot;:1134536960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528635609,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;global&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;global&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;4RajpVno1KSVLV4m-vZCw&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:674.8115238221424,&quot;y&quot;:843.3967278740383,&quot;width&quot;:494.8371273380469,&quot;height&quot;:333.1590623582967,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1e&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1403127552,&quot;version&quot;:280,&quot;versionNonce&quot;:1463207680,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528630692,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;Nwhtr1HWsYhE_biAm4v7y&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:797.6731693926247,&quot;y&quot;:876.6559983236166,&quot;width&quot;:90.419921875,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1f&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:2070456576,&quot;version&quot;:105,&quot;versionNonce&quot;:388303104,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528633359,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;database&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;database&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;R9J6PfS714qraDE0GNqIP&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:747.5029853167408,&quot;y&quot;:921.9950358004819,&quot;width&quot;:254.59116290769248,&quot;height&quot;:226.99927214272225,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1g&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:277989120,&quot;version&quot;:232,&quot;versionNonce&quot;:1064584960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528547769,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;2MxTqWn2Ckey9V0J83UT0&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:833.4677465153309,&quot;y&quot;:947.789025431435,&quot;width&quot;:48.91996765136719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1h&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:285305088,&quot;version&quot;:26,&quot;versionNonce&quot;:1881344256,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528553710,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;table&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;table&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:805.8416462150412,&quot;y&quot;:998.2480900277951,&quot;width&quot;:155.96507258138274,&quot;height&quot;:125.07766324729437,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1i&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:832063232,&quot;version&quot;:69,&quot;versionNonce&quot;:842000128,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;}],&quot;updated&quot;:1762528565559,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:853.0222215065329,&quot;y&quot;:1048.0652897228777,&quot;width&quot;:61.31996154785156,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1j&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:78850304,&quot;version&quot;:9,&quot;versionNonce&quot;:1494026496,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528569072,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;column&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;originalText&quot;:&quot;column&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:1010.1942059762106,&quot;y&quot;:940.0652725681728,&quot;width&quot;:139.97021428974574,&quot;height&quot;:150.13424733913666,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1k&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1633528064,&quot;version&quot;:52,&quot;versionNonce&quot;:1044178688,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;}],&quot;updated&quot;:1762528584772,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:1045.992395216818,&quot;y&quot;:1002.5519240468201,&quot;width&quot;:68.39994812011719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1l&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:945170688,&quot;version&quot;:10,&quot;versionNonce&quot;:946268416,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528588942,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;routine&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;originalText&quot;:&quot;routine&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25}],&quot;appState&quot;:{&quot;gridSize&quot;:20,&quot;gridStep&quot;:5,&quot;gridModeEnabled&quot;:false,&quot;viewBackgroundColor&quot;:&quot;#ffffff&quot;,&quot;lockedMultiSelections&quot;:{}},&quot;files&quot;:{}}'><div class="loading">加载中...</div></div>
+
+<p>这些权限有不同的规则</p>
+<ul>
+<li>对高层授权，低层会继承高层的权限，比如对 <code>database</code> 授予 <code>SELECT</code> 权限，那么 <code>table</code> 和 <code>column</code> 也会继承 <code>SELECT</code> 权限</li>
+<li>对于某一层级特有的权限，无法在其他层级进行授权</li>
+</ul>
+<p>如下表是各个权限的详细描述</p>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>授权表中的字段名</th>
+<th>权限控制的范围</th>
+<th>可以授权的层级</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ALL [PRIVILEGES]</td>
+<td>所有权限的别名</td>
+<td>服务器管理</td>
+<td>所有层级</td>
+<td>除了 GRANT OPTION 和 PROXY 以外的所有权限</td>
+</tr>
+<tr>
+<td>ALTER</td>
+<td>Alter_priv</td>
+<td>Table</td>
+<td>Global, Database, Table</td>
+<td>用于使用 Alter Table 语句修改表的结构(除此权限外， ALTER TABLE 还需要 CREATE 和 INSERT 权限， ALTER TABLE RENAME 还需要有旧表的 ALTER 、 DROP 权限和新表的 CREATE 和 INSERT 权限)</td>
+</tr>
+<tr>
+<td>ALTER ROUTINE</td>
+<td>Alter_routine_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database, Routine</td>
+<td>允许修改或删除存储过程和存储函数</td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>Create_priv</td>
+<td>数据库, 数据表, 索引</td>
+<td>Global, Database, Table</td>
+<td>允许创建数据库和数据表</td>
+</tr>
+<tr>
+<td>CREATE ROUTINE</td>
+<td>Create_routine_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database</td>
+<td>允许创建存储过程和存储函数</td>
+</tr>
+<tr>
+<td>CREATE TABLESPACE</td>
+<td>Create_tablespace_priv</td>
+<td>表空间</td>
+<td>Global</td>
+<td>启用表空间和日志文件组的创建删除和修改</td>
+</tr>
+<tr>
+<td>CREATE TEMPORARY TABLES</td>
+<td>Create_tmp_table_priv</td>
+<td>临时表</td>
+<td>Global, Database</td>
+<td>允许进行创建临时表</td>
+</tr>
+<tr>
+<td>CREATE USER</td>
+<td>Create_user_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用创建、删除、重命名用户，以及可以 REVOKE ALL PRIVILEGES 权限</td>
+</tr>
+<tr>
+<td>CREATE VIEW</td>
+<td>Create_view_priv</td>
+<td>视图</td>
+<td>Global, Database, Table</td>
+<td>允许创建及修改视图</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>Delete_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许删除数据表中的数据</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td>Drop_priv</td>
+<td>数据库, 数据表, 视图</td>
+<td>Global, Database, Table</td>
+<td>允许删除数据库和数据表，以及视图，同时分区表执行 <code>ALTER TABLE ... DROP PARTITION</code> 也需要该权限， <code>TRUNCATE TABLE</code> 也需要该权限</td>
+</tr>
+<tr>
+<td>EVENT</td>
+<td>Event_priv</td>
+<td>事件</td>
+<td>Global, Database</td>
+<td>允许创建、修改、删除和查看 事件调度器 中的事件</td>
+</tr>
+<tr>
+<td>EXECUTE</td>
+<td>Execute_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database, Routine</td>
+<td>允许执行存储过程和存储函数</td>
+</tr>
+<tr>
+<td>FILE</td>
+<td>File_priv</td>
+<td>文件访问</td>
+<td>Global</td>
+<td>允许使用 LOAD DATA INFILE 和 SELECT … INTO OUTFILE 语句</td>
+</tr>
+<tr>
+<td>GRANT OPTION</td>
+<td>Grant_priv</td>
+<td>数据库, 数据表, 存储过程或存储函数</td>
+<td>Global, Database, Table, Routine, Proxy</td>
+<td>允许对其他用户进行授权或者撤销权限</td>
+</tr>
+<tr>
+<td>INDEX</td>
+<td>Index_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许创建及删除索引</td>
+</tr>
+<tr>
+<td>INSERT</td>
+<td>Insert_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许插入数据到数据表</td>
+</tr>
+<tr>
+<td>LOCK TABLES</td>
+<td>Lock_tables_priv</td>
+<td>数据库</td>
+<td>Global, Database</td>
+<td>允许使用 <code>LOCK TABLES</code> 语句对具有 SELECT 权限的查询进行显式加锁</td>
+</tr>
+<tr>
+<td>PROCESS</td>
+<td>Process_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户使用 <code>SHOW PROCESSLIST</code> 语句查看所有进程，包括其他用户的进程</td>
+</tr>
+<tr>
+<td>PROXY</td>
+<td>proxies_priv table</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户模仿（伪装、代理）另一个用户</td>
+</tr>
+<tr>
+<td>REFERENCES</td>
+<td>References_priv</td>
+<td>数据库, 数据表</td>
+<td>Global, Database, Table, Column</td>
+<td>在创建外键时，需要用户具有父表的 REFERENCES 权限</td>
+</tr>
+<tr>
+<td>RELOAD</td>
+<td>Reload_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用 <code>FLUSH</code> 语句刷新，包括 <code>FLUSH HOSTS</code>、<code>FLUSH LOGS</code>、<code>FLUSH PRIVILEGES</code>、<code>FLUSH STATUS</code>、<code>FLUSH SLOW LOGS</code>、<code>FLUSH TABLES WITH READ LOCK</code> 等</td>
+</tr>
+<tr>
+<td>REPLICATION CLIENT</td>
+<td>Repl_client_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户使用 <code>SHOW MASTER STATUS</code>、<code>SHOW SLAVE STATUS</code>、<code>SHOW BINARY LOGS</code> 等语句查看源与副本的信息</td>
+</tr>
+<tr>
+<td>REPLICATION SLAVE</td>
+<td>Repl_slave_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>该权限主要用于副本服务器访问源服务器的 Binlog 文件权限</td>
+</tr>
+<tr>
+<td>SELECT</td>
+<td>Select_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许使用 <code>SELECT</code> 语句查询数据</td>
+</tr>
+<tr>
+<td>SHOW DATABASES</td>
+<td>Show_db_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用 <code>SHOW DATABASES</code> 语句查看所有数据库</td>
+</tr>
+<tr>
+<td>SHOW VIEW</td>
+<td>Show_view_priv</td>
+<td>视图</td>
+<td>Global, Database, Table</td>
+<td>允许使用 <code>SHOW CREATE VIEW</code> 语句查看视图的创建语句</td>
+</tr>
+<tr>
+<td>SHUTDOWN</td>
+<td>Shutdown_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>用于 <code>SHUTDOWN</code> 语句、 <code>mysqladmin shutdown</code> 语句、<code>mysql_shutdown()</code> 函数</td>
+</tr>
+<tr>
+<td>SUPER</td>
+<td>Super_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>启用其他管理操作的使用，例如 <code>CHANGE MASTER TO</code>、<code>KILL</code>、<code>Purge Binary Logs</code>、<code>SET GLOBAL</code> 和 <code>mysqladmin DEBUG</code> 等命令</td>
+</tr>
+<tr>
+<td>TRIGGER</td>
+<td>Trigger_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许创建及删除触发器</td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td>Update_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许使用 <code>UPDATE</code> 语句更新数据</td>
+</tr>
+<tr>
+<td>USAGE</td>
+<td>Synonym for “no privileges”</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>没有权限，等同于没有权限</td>
+</tr>
+</tbody></table>
+<h3 id="授权语法"><a href="#授权语法" class="headerlink" title="授权语法"></a>授权语法</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">GRANT</span></span><br><span class="line">    priv_type [(column_list)]</span><br><span class="line">      [, priv_type [(column_list)]] ...</span><br><span class="line">    <span class="keyword">ON</span> [object_type] priv_level</span><br><span class="line">    <span class="keyword">TO</span> <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> &#123;<span class="keyword">GRANT</span> OPTION <span class="operator">|</span> resource_option&#125; ...]</span><br><span class="line"></span><br><span class="line"><span class="keyword">GRANT</span> PROXY <span class="keyword">ON</span> <span class="keyword">user</span></span><br><span class="line">    <span class="keyword">TO</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line">    [<span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION]</span><br></pre></td></tr></table></figure>
+
+<p>object_type: 对象类型</p>
+<ul>
+<li><code>TABLE</code> - 数据表</li>
+<li><code>FUNCTION</code> - 函数</li>
+<li><code>PROCEDURE</code> - 存储过程</li>
+</ul>
+<p>priv_level: 权限级别</p>
+<ul>
+<li><code>*</code> - 所有数据库</li>
+<li><code>*.*</code> - 所有数据库的所有数据表</li>
+<li><code>db_name.*</code> - 指定数据库的所有数据表</li>
+<li><code>db_name.tbl_name</code> - 指定数据库的指定数据表</li>
+<li><code>tbl_name</code> - 指定数据表</li>
+<li><code>db_name.routine_name</code> - 指定数据库的指定存储过程或函数</li>
+</ul>
+<p>user、auth_option、tls_option、resource_option: 同创建用户</p>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 授予用户 test1 所有权限，且允许授予其他用户权限</span></span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION;</span><br><span class="line"><span class="comment">-- 授予用户 test2 对数据库 db1 的CRUD权限</span></span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">INSERT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span> <span class="keyword">ON</span> db1.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="撤销授权"><a href="#撤销授权" class="headerlink" title="撤销授权"></a>撤销授权</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">REVOKE</span></span><br><span class="line">    priv_type [(column_list)]</span><br><span class="line">      [, priv_type [(column_list)]] ...</span><br><span class="line">    <span class="keyword">ON</span> [object_type] priv_level</span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> [PRIVILEGES], <span class="keyword">GRANT</span> OPTION</span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">REVOKE</span> PROXY <span class="keyword">ON</span> <span class="keyword">user</span></span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ..</span><br></pre></td></tr></table></figure>
+
+<p>示例</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 撤销用户 test1 的所有权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">FROM</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="comment">-- 撤销用户 test2 在数据库 db1 中的所有权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> db1.<span class="operator">*</span> <span class="keyword">FROM</span> <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="comment">-- 撤销用户 test3 在数据表 test_table 中的增删改权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">INSERT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span> <span class="keyword">ON</span> test_table <span class="keyword">FROM</span> <span class="string">&#x27;test3&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/create-user.html">MySQL 5.7 Reference Manual-CREATE USER Statement</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/alter-user.html">MySQL 5.7 Reference Manual-ALTER USER Statement</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/drop-user.html">MySQL 5.7 Reference Manual-DROP USER Statement</a></li>
+<li><a href="https://yunqi.qq.com/read/27741213/68">千金良方：MySQL性能优化金字塔法则</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html">MySQL 5.7 Reference Manual-Privileges Provided by MySQL</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/grant.html#grant-privileges">MySQL 5.7 Reference Manual-GRANT Statements</a></li>
+<li><a href="http://mysql.taobao.org/monthly/2024/01/02/">数据库内核月报-MySQL 权限管理</a></li>
+<li><a href="http://mysql.taobao.org/monthly/2018/02/03/">数据库内核月报-MySQL MySQL · 源码分析 · 权限浅析</a></li>
+<li><a href="http://mysql.taobao.org/monthly/2019/06/01/">数据库内核月报-MySQL · 引擎特性 · 安全及权限改进相关</a></li>
+</ul>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@excalidraw/excalidraw@0.17.6/dist/excalidraw.production.min.js" crossorigin></script>
+<script>
+(function() {
+  if (window.excalidrawInitialized) return
+  window.excalidrawInitialized = true
+
+  // 等待所有库加载完成
+  function waitForLibraries(callback) {
+    const maxAttempts = 50
+    let attempts = 0
+    
+    const checkInterval = setInterval(() => {
+      attempts++
+      
+      // 检查所有必要的库是否已加载
+      if (window.React && window.ReactDOM) {
+        clearInterval(checkInterval)
+        console.log('React loaded, checking Excalidraw...')
+        
+        // 检查 Excalidraw 的多种可能导出方式
+        if (window.Excalidraw || window.ExcalidrawLib) {
+          callback(null)
+        } else if (attempts < maxAttempts) {
+          // 继续等待 Excalidraw
+          return
+        } else {
+          callback(new Error('Excalidraw 未加载'))
+        }
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval)
+        callback(new Error('React 或 ReactDOM 未加载'))
+      }
+    }, 100)
+  }
+
+  // 初始化渲染
+  function initExcalidraw() {
+    const containers = document.querySelectorAll('.excalidraw-container')
+    if (containers.length === 0) return
+
+    waitForLibraries((err) => {
+      if (err) {
+        console.error('Library loading error:', err)
+        containers.forEach(container => {
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">加载失败: ' + err.message + '</div>'
+        })
+        return
+      }
+
+      // 获取正确的 Excalidraw 组件
+      const ExcalidrawComponent = window.Excalidraw || 
+                                   (window.ExcalidrawLib && window.ExcalidrawLib.Excalidraw) ||
+                                   window.ExcalidrawLib
+
+      console.log('Libraries loaded:', {
+        React: !!window.React,
+        ReactDOM: !!window.ReactDOM,
+        Excalidraw: !!ExcalidrawComponent,
+        ExcalidrawKeys: window.ExcalidrawLib ? Object.keys(window.ExcalidrawLib) : []
+      })
+
+      if (!ExcalidrawComponent) {
+        containers.forEach(container => {
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">Excalidraw 组件未找到</div>'
+        })
+        return
+      }
+
+      containers.forEach(container => {
+        try {
+          const dataAttr = container.getAttribute('data-excalidraw')
+          if (!dataAttr) return
+
+          // 解码 HTML 实体
+          const textarea = document.createElement('textarea')
+          textarea.innerHTML = dataAttr
+          const decodedData = textarea.value
+          const sceneData = JSON.parse(decodedData)
+
+          // 计算元素的边界框以确定合适的容器尺寸
+          const elements = sceneData.elements || []
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+          let hasElements = false
+          
+          elements.forEach(el => {
+            if (el.isDeleted) return // 跳过已删除的元素
+            
+            if (el.x !== undefined && el.y !== undefined) {
+              hasElements = true
+              const elWidth = el.width || 0
+              const elHeight = el.height || 0
+              
+              // 考虑线条的端点
+              if (el.type === 'line' || el.type === 'arrow') {
+                const points = el.points || []
+                points.forEach(point => {
+                  minX = Math.min(minX, el.x + point[0])
+                  minY = Math.min(minY, el.y + point[1])
+                  maxX = Math.max(maxX, el.x + point[0])
+                  maxY = Math.max(maxY, el.y + point[1])
+                })
+              } else {
+                // 普通元素
+                minX = Math.min(minX, el.x)
+                minY = Math.min(minY, el.y)
+                maxX = Math.max(maxX, el.x + elWidth)
+                maxY = Math.max(maxY, el.y + elHeight)
+              }
+              
+              // 考虑描边宽度
+              const strokePadding = (el.strokeWidth || 2) / 2
+              minX -= strokePadding
+              minY -= strokePadding
+              maxX += strokePadding
+              maxY += strokePadding
+            }
+          })
+
+          // 如果没有元素或边界无效，使用默认值
+          if (!hasElements || minX === Infinity) {
+            minX = 0
+            minY = 0
+            maxX = 800
+            maxY = 600
+          }
+
+          // 计算内容的宽高比，添加适当的内边距
+          const padding = 60  // 增加一点内边距
+          const contentWidth = maxX - minX + padding * 2
+          const contentHeight = maxY - minY + padding * 2
+          const aspectRatio = contentHeight / contentWidth
+
+          // 设置容器高度（基于宽度和宽高比）
+          const containerWidth = container.offsetWidth || 800
+          let containerHeight = containerWidth * aspectRatio
+          
+          // 限制高度范围
+          containerHeight = Math.max(300, Math.min(containerHeight, 1000))
+          container.style.height = containerHeight + 'px'
+
+          // 创建渲染容器
+          const renderDiv = document.createElement('div')
+          renderDiv.style.width = '100%'
+          renderDiv.style.height = '100%'
+          container.innerHTML = ''
+          container.appendChild(renderDiv)
+
+          // 计算缩放和偏移，使内容居中且填充容器
+          const scale = Math.min(
+            containerWidth / contentWidth,
+            containerHeight / contentHeight
+          ) * 0.9 // 稍微缩小一点，留出边距
+
+          // 计算内容中心点
+          const contentCenterX = (minX + maxX) / 2
+          const contentCenterY = (minY + maxY) / 2
+          
+          // 计算视口中心点
+          const viewportCenterX = containerWidth / (2 * scale)
+          const viewportCenterY = containerHeight / (2 * scale)
+          
+          // 计算偏移，使内容中心与视口中心对齐
+          const scrollX = viewportCenterX - contentCenterX
+          const scrollY = viewportCenterY - contentCenterY
+
+          // 使用 React 18 的 createRoot API
+          const root = ReactDOM.createRoot(renderDiv)
+          
+          console.log('Excalidraw render info:', {
+            bounds: { minX, minY, maxX, maxY },
+            content: { width: contentWidth, height: contentHeight },
+            container: { width: containerWidth, height: containerHeight },
+            scale: scale,
+            scroll: { x: scrollX, y: scrollY },
+            center: { x: contentCenterX, y: contentCenterY }
+          })
+          
+          root.render(
+            React.createElement(ExcalidrawComponent, {
+              initialData: {
+                elements: sceneData.elements || [],
+                appState: {
+                  viewBackgroundColor: sceneData.appState?.viewBackgroundColor || '#ffffff',
+                  currentItemFontFamily: 1,
+                  gridSize: null,
+                  zenModeEnabled: true,
+                  viewModeEnabled: true,
+                  zoom: {
+                    value: scale
+                  },
+                  scrollX: scrollX,
+                  scrollY: scrollY
+                },
+                files: sceneData.files || {}
+              },
+              viewModeEnabled: true,
+              zenModeEnabled: true,
+              gridModeEnabled: false,
+              // 禁用所有交互
+              handleKeyboardGlobally: false,
+              detectScroll: false,
+              // 添加事件处理来阻止拖动和缩放
+              onPointerUpdate: null,
+              onScrollChange: null
+            })
+          )
+
+          // 禁用容器内的滚动和拖动事件
+          renderDiv.addEventListener('wheel', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }, { passive: false })
+
+          renderDiv.addEventListener('touchmove', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }, { passive: false })
+
+          renderDiv.addEventListener('mousedown', (e) => {
+            // 只允许点击链接等，不允许拖动画布
+            if (e.target.tagName !== 'A') {
+              const startX = e.clientX
+              const startY = e.clientY
+              const mouseMoveHandler = (moveEvent) => {
+                const deltaX = Math.abs(moveEvent.clientX - startX)
+                const deltaY = Math.abs(moveEvent.clientY - startY)
+                if (deltaX > 5 || deltaY > 5) {
+                  moveEvent.preventDefault()
+                  moveEvent.stopPropagation()
+                }
+              }
+              const mouseUpHandler = () => {
+                document.removeEventListener('mousemove', mouseMoveHandler)
+                document.removeEventListener('mouseup', mouseUpHandler)
+              }
+              document.addEventListener('mousemove', mouseMoveHandler)
+              document.addEventListener('mouseup', mouseUpHandler)
+            }
+          })
+
+          // 添加 CSS 样式禁用拖动光标
+          renderDiv.style.cursor = 'default'
+          renderDiv.style.userSelect = 'none'
+        } catch (err) {
+          console.error('Render error:', err)
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">渲染失败: ' + err.message + '</div>'
+        }
+      })
+    })
+  }
+
+  // 等待 DOM 加载完成后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExcalidraw)
+  } else {
+    initExcalidraw()
+  }
+})()
+</script>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>技术原理</tag>
       </tags>
   </entry>
   <entry>
@@ -5763,6 +6484,66 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu使用手册</title>
+    <url>/ubuntu/</url>
+    <content><![CDATA[<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2><h3 id="更新软件源"><a href="#更新软件源" class="headerlink" title="更新软件源"></a>更新软件源</h3><p>管理员权限编辑<code>/etc/apt/sources.list</code></p>
+<p><a href="https://developer.aliyun.com/mirror/">阿里云的源</a>、<a href="https://mirrors.tuna.tsinghua.edu.cn/help/">清华大学的源</a></p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看系统版本和内核版本"><a href="#查看系统版本和内核版本" class="headerlink" title="查看系统版本和内核版本"></a>查看系统版本和内核版本</h3><p><code>cat /proc/version</code> - 查看内核版本，gcc版本，发布时间</p>
+<p><code>uname -a</code> - 查看内核版本，系统是多少位的，x86_64为64位</p>
+<p><code>lsb_release -a</code> - 查看系统的发行版本号和代号</p>
+<h3 id="查看CPU、内存和磁盘"><a href="#查看CPU、内存和磁盘" class="headerlink" title="查看CPU、内存和磁盘"></a>查看CPU、内存和磁盘</h3><p><code>cat /proc/cpuinfo</code> - 查看CPU详细信息</p>
+<p><code>cat /proc/meminfo</code> - 查看内存信息</p>
+<p><code>df</code> - 查看磁盘使用信息</p>
+<h3 id="包管理命令"><a href="#包管理命令" class="headerlink" title="包管理命令"></a>包管理命令</h3><p><code>sudo passwd root</code> - 设置root用户密码</p>
+<p><code>dpkg --list</code> - 显示所有软件</p>
+<p><code>dpkg -i package.deb</code> - 安装deb包命令</p>
+<ul>
+<li><code>-i</code> - 安装deb包</li>
+<li><code>-c</code> - 查看deb包</li>
+<li><code>-r</code> - 卸载deb包</li>
+<li><code>-P</code> - 彻底删除deb软件</li>
+</ul>
+<p><code>apt/apt-get install</code> - 安装软件包</p>
+<ul>
+<li><code>install</code> - 安装软件包</li>
+<li><code>remove</code> - 移除软件包</li>
+<li><code>purge</code> - 移除软件包及配置文件</li>
+<li><code>update</code> - 刷新存储库索引</li>
+<li><code>upgrade</code> - 升级所有可升级的软件包</li>
+<li><code>autoremove</code> - 自动删除不需要的包</li>
+</ul>
+<p><code>apt full-upgrade</code>&#x2F;<code>apt-get dist-upgrade</code> - 在升级软件包时自动处理依赖关系</p>
+<p><code>apt search</code>&#x2F;<code>apt-cache search</code> - 搜索应用程序</p>
+<p><code>apt show</code>&#x2F;<code>apt-cache show</code> - 显示安装细节</p>
+<p><code>do-release-upgrade -d</code> - 升级系统到开发版</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="update失败"><a href="#update失败" class="headerlink" title="update失败"></a>update失败</h3><p>此故障常见于WSL2上的Ubuntu，解决办法通常是编辑<code>/etc/resolv.conf</code>文件中将原来的<code>nameserver</code>修改为如下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nameserver 8.8.8.8</span><br></pre></td></tr></table></figure>
+
+<h3 id="ssh连接无法使用root"><a href="#ssh连接无法使用root" class="headerlink" title="ssh连接无法使用root"></a>ssh连接无法使用root</h3><ol>
+<li>修改<code>/etc/ssh/sshd_config</code>文件把<code>PermitRootLogin Prohibit-password</code>添加<code>#</code>注释掉</li>
+<li>在该文件中新添加<code>PermitRootLogin yes</code></li>
+<li>重启ssh服务<code>/etc/init.d/ssh restart</code></li>
+<li>重新使用root连接即可</li>
+</ol>
+<h3 id="新系统无法搜索到Wi-Fi"><a href="#新系统无法搜索到Wi-Fi" class="headerlink" title="新系统无法搜索到Wi-Fi"></a>新系统无法搜索到Wi-Fi</h3><p>用超级管理员权限编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /etc/NetworkManager/NetworkManager.conf</span><br><span class="line">managed=true</span><br></pre></td></tr></table></figure>
+
+<p>参考文档：<a href="https://www.cnblogs.com/wynter/p/6306774.html">Ubuntu系统搜索不到WiFi，如何解决</a></p>
+<h3 id="设置笔记本关闭盖子不做任何操作"><a href="#设置笔记本关闭盖子不做任何操作" class="headerlink" title="设置笔记本关闭盖子不做任何操作"></a>设置笔记本关闭盖子不做任何操作</h3><p>用超级管理员权限编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /etc/systemd/logind.conf</span><br><span class="line">#HandleLidSwitch=suspend</span><br><span class="line"># 改为</span><br><span class="line">HandleLidSwitch=ignore</span><br></pre></td></tr></table></figure>
+
+<p>参考文档：<a href="https://www.cnblogs.com/yunfeiqi/p/6594156.html">Ubuntu 禁用关闭笔记本盖子自动待机</a></p>
+<h3 id="安装完Ubuntu后内置软件名称"><a href="#安装完Ubuntu后内置软件名称" class="headerlink" title="安装完Ubuntu后内置软件名称"></a>安装完Ubuntu后内置软件名称</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan libreoffice-common</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>TOML 介绍</title>
     <url>/toml/</url>
     <content><![CDATA[<h2 id="TOML-的简介"><a href="#TOML-的简介" class="headerlink" title="TOML 的简介"></a>TOML 的简介</h2><p><a href="http://toml.io/">TOML</a> (Tom’s Obvious Minimal Language) Tom 的（语义）明显、（配置）最小化的语言。</p>
@@ -5849,66 +6630,6 @@
       <tags>
         <tag>操作使用</tag>
         <tag>技术原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu使用手册</title>
-    <url>/ubuntu/</url>
-    <content><![CDATA[<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2><h3 id="更新软件源"><a href="#更新软件源" class="headerlink" title="更新软件源"></a>更新软件源</h3><p>管理员权限编辑<code>/etc/apt/sources.list</code></p>
-<p><a href="https://developer.aliyun.com/mirror/">阿里云的源</a>、<a href="https://mirrors.tuna.tsinghua.edu.cn/help/">清华大学的源</a></p>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看系统版本和内核版本"><a href="#查看系统版本和内核版本" class="headerlink" title="查看系统版本和内核版本"></a>查看系统版本和内核版本</h3><p><code>cat /proc/version</code> - 查看内核版本，gcc版本，发布时间</p>
-<p><code>uname -a</code> - 查看内核版本，系统是多少位的，x86_64为64位</p>
-<p><code>lsb_release -a</code> - 查看系统的发行版本号和代号</p>
-<h3 id="查看CPU、内存和磁盘"><a href="#查看CPU、内存和磁盘" class="headerlink" title="查看CPU、内存和磁盘"></a>查看CPU、内存和磁盘</h3><p><code>cat /proc/cpuinfo</code> - 查看CPU详细信息</p>
-<p><code>cat /proc/meminfo</code> - 查看内存信息</p>
-<p><code>df</code> - 查看磁盘使用信息</p>
-<h3 id="包管理命令"><a href="#包管理命令" class="headerlink" title="包管理命令"></a>包管理命令</h3><p><code>sudo passwd root</code> - 设置root用户密码</p>
-<p><code>dpkg --list</code> - 显示所有软件</p>
-<p><code>dpkg -i package.deb</code> - 安装deb包命令</p>
-<ul>
-<li><code>-i</code> - 安装deb包</li>
-<li><code>-c</code> - 查看deb包</li>
-<li><code>-r</code> - 卸载deb包</li>
-<li><code>-P</code> - 彻底删除deb软件</li>
-</ul>
-<p><code>apt/apt-get install</code> - 安装软件包</p>
-<ul>
-<li><code>install</code> - 安装软件包</li>
-<li><code>remove</code> - 移除软件包</li>
-<li><code>purge</code> - 移除软件包及配置文件</li>
-<li><code>update</code> - 刷新存储库索引</li>
-<li><code>upgrade</code> - 升级所有可升级的软件包</li>
-<li><code>autoremove</code> - 自动删除不需要的包</li>
-</ul>
-<p><code>apt full-upgrade</code>&#x2F;<code>apt-get dist-upgrade</code> - 在升级软件包时自动处理依赖关系</p>
-<p><code>apt search</code>&#x2F;<code>apt-cache search</code> - 搜索应用程序</p>
-<p><code>apt show</code>&#x2F;<code>apt-cache show</code> - 显示安装细节</p>
-<p><code>do-release-upgrade -d</code> - 升级系统到开发版</p>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="update失败"><a href="#update失败" class="headerlink" title="update失败"></a>update失败</h3><p>此故障常见于WSL2上的Ubuntu，解决办法通常是编辑<code>/etc/resolv.conf</code>文件中将原来的<code>nameserver</code>修改为如下内容</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nameserver 8.8.8.8</span><br></pre></td></tr></table></figure>
-
-<h3 id="ssh连接无法使用root"><a href="#ssh连接无法使用root" class="headerlink" title="ssh连接无法使用root"></a>ssh连接无法使用root</h3><ol>
-<li>修改<code>/etc/ssh/sshd_config</code>文件把<code>PermitRootLogin Prohibit-password</code>添加<code>#</code>注释掉</li>
-<li>在该文件中新添加<code>PermitRootLogin yes</code></li>
-<li>重启ssh服务<code>/etc/init.d/ssh restart</code></li>
-<li>重新使用root连接即可</li>
-</ol>
-<h3 id="新系统无法搜索到Wi-Fi"><a href="#新系统无法搜索到Wi-Fi" class="headerlink" title="新系统无法搜索到Wi-Fi"></a>新系统无法搜索到Wi-Fi</h3><p>用超级管理员权限编辑文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /etc/NetworkManager/NetworkManager.conf</span><br><span class="line">managed=true</span><br></pre></td></tr></table></figure>
-
-<p>参考文档：<a href="https://www.cnblogs.com/wynter/p/6306774.html">Ubuntu系统搜索不到WiFi，如何解决</a></p>
-<h3 id="设置笔记本关闭盖子不做任何操作"><a href="#设置笔记本关闭盖子不做任何操作" class="headerlink" title="设置笔记本关闭盖子不做任何操作"></a>设置笔记本关闭盖子不做任何操作</h3><p>用超级管理员权限编辑文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /etc/systemd/logind.conf</span><br><span class="line">#HandleLidSwitch=suspend</span><br><span class="line"># 改为</span><br><span class="line">HandleLidSwitch=ignore</span><br></pre></td></tr></table></figure>
-
-<p>参考文档：<a href="https://www.cnblogs.com/yunfeiqi/p/6594156.html">Ubuntu 禁用关闭笔记本盖子自动待机</a></p>
-<h3 id="安装完Ubuntu后内置软件名称"><a href="#安装完Ubuntu后内置软件名称" class="headerlink" title="安装完Ubuntu后内置软件名称"></a>安装完Ubuntu后内置软件名称</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan libreoffice-common</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -6802,93 +7523,6 @@
       </tags>
   </entry>
   <entry>
-    <title>WebSocket 工作原理</title>
-    <url>/websocket/</url>
-    <content><![CDATA[<h2 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h2><p>WebSocket 握手过程是一个将 HTTP 升级为 WebSocket 的过程</p>
-<ol>
-<li><p>首先由客户端发送一个 GET 请求</p>
- <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">GET</span> <span class="string">/chat</span> <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="attr">Host:</span> <span class="string">server.example.com</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Key:</span> <span class="string">dGhlIHNhbXBsZSBub25jZQ==</span></span><br><span class="line"><span class="attr">Origin:</span> <span class="string">http://example.com</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat,</span> <span class="string">superchat</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Version:</span> <span class="number">13</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
-<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
-<li><code>Sec-WebSocket-Key</code>: 必需字段，随机字符串</li>
-<li><code>Sec-WebSocket-Protocol</code>: 可选字段，表示应用层的协议</li>
-<li><code>Sec-WebSocket-Version</code>: 必需字段，代表 WebSocket 协议的版本，值必需为13，否则握手失败</li>
-</ul>
-</li>
-<li><p>服务端会返回一个状态码为101的响应</p>
- <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">HTTP/1.1</span> <span class="number">101</span> <span class="string">Switching</span> <span class="string">Protocols</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Accept:</span> <span class="string">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
-<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
-<li><code>Sec-WebSocket-Accept</code>: 规定必需字段，该字段是通过固定字符串 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Key</code> 值，计算 SHA1 哈希摘要的结果</li>
-<li><code>Sec-WebSocket-Protocol</code>: 对应请求中的 <code>Sec-WebSocket-Protocol</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="WebSocket-协议数据帧"><a href="#WebSocket-协议数据帧" class="headerlink" title="WebSocket 协议数据帧"></a>WebSocket 协议数据帧</h2><p>数据帧的定义如下</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"> <span class="number">0</span>                   <span class="number">1</span>                   <span class="number">2</span>                   <span class="number">3</span></span><br><span class="line"> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+-------------------------------+</span></span><br><span class="line"><span class="string">|F|R|R|R|</span> <span class="string">opcode|M|</span> <span class="string">Payload</span> <span class="string">len</span> <span class="string">|</span>    <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span>    <span class="string">|</span></span><br><span class="line"><span class="string">|I|S|S|S|</span>  <span class="string">(4)</span>  <span class="string">|A|</span>     <span class="string">(7)</span>     <span class="string">|</span>             <span class="string">(16/64)</span>           <span class="string">|</span></span><br><span class="line"><span class="string">|N|V|V|V|</span>       <span class="string">|S|</span>             <span class="string">|</span>   <span class="string">(if</span> <span class="string">payload</span> <span class="string">len==126/127)</span>   <span class="string">|</span></span><br><span class="line"><span class="string">|</span> <span class="string">|1|2|3|</span>       <span class="string">|K|</span>             <span class="string">|</span>                               <span class="string">|</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>     <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span> <span class="string">continued,</span> <span class="string">if</span> <span class="string">payload</span> <span class="string">len</span> <span class="string">==</span> <span class="number">127</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+-------------------------------+</span></span><br><span class="line"><span class="string">|</span>                               <span class="string">|Masking-key,</span> <span class="string">if</span> <span class="string">MASK</span> <span class="string">set</span> <span class="string">to</span> <span class="number">1</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+-------------------------------+-------------------------------+</span></span><br><span class="line"><span class="string">|</span> <span class="string">Masking-key</span> <span class="string">(continued)</span>       <span class="string">|</span>          <span class="string">Payload</span> <span class="string">Data</span>         <span class="string">|</span></span><br><span class="line"><span class="string">+--------------------------------</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">:</span>                     <span class="attr">Payload Data continued ...                :</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>                     <span class="string">Payload</span> <span class="string">Data</span> <span class="string">continued</span> <span class="string">...</span>                <span class="string">|</span></span><br><span class="line"><span class="string">+---------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>以上数据，一行代表 32 bit(位)，也就是 4 bytes，总体包含以上两部分，帧头部和数据内容。每个从 WebSocket 链接中接受到的数据帧，都要按照以上格式进行解析，这样才能知道该数据帧是用于控制的还是用于传送数据的。部分字段解释：</p>
-<ul>
-<li><code>FIN</code>: 1 bit，当该比特位值为 <code>%x0</code> 时，表示后面还有更多的数据帧，<code>%x1</code> 表示为最后一个数据帧</li>
-<li><code>RSV1</code>, <code>RSV2</code>, <code>RSV3</code>: 各占 1 bit，一般全为 0，当客户端和服务端协商采用 WebSocket 扩展时，三个标志位为非 0，且该值由扩展进行定义。如果没有采用 WebSocket 扩展，且为非零时，连接出错</li>
-<li><code>opcode</code> - 4 bit，用于表明数据帧的类型，一共可以表示 16 种帧类型<ul>
-<li><code>%x0</code> - 表示这是一个分片的帧，属于前面帧的后续帧</li>
-<li><code>%x1</code> - 表示数据帧携带的数据类型是文本类型，且编码为 UTF-8</li>
-<li><code>%x2</code> - 表示携带的是二进制数据</li>
-<li><code>%x3-7</code> - 保留未使用</li>
-<li><code>%x8</code> - 表示该帧用于关闭 WebSocket 链接</li>
-<li><code>%x9</code> - 表示该帧代表了 Ping 操作</li>
-<li><code>%xA</code> - 表示该帧代表了 Pong 回应</li>
-<li><code>%xB-F</code> - 保留未使用</li>
-</ul>
-</li>
-<li><code>MASK</code> - 1 bit，<code>%x0</code> 表示数据帧没有经过掩码计算，<code>%x1</code> 表示数据帧经过了掩码计算，需要解码才能得到真正的数据，通常浏览器发送给服务器才会进行掩码计算</li>
-<li><code>Payload len</code> - 7 bit，表示数据帧携带的数据长度，7 bit 代表的最大值为 127，会存在三种情况<ul>
-<li><code>%x0-7D</code> - 0-125，表示数据长度，数据总长度的就是 7 bit 表示的长度</li>
-<li><code>%x7E</code> - 126，则后续的 2 个字节（16 bit）表示一个16位的无符号数，这个数用来表示数据长度</li>
-<li><code>%x7F</code> - 127，则后续的 8 个字节（64 bit）表示一个64位的无符号数，这个数用来表示数据长度</li>
-</ul>
-</li>
-<li><code>Masking-key</code> - 32 bit，表示用于解码的 key，当只有 MASK 比特位的值为 %x1 时使用</li>
-<li><code>Payload Data</code> - 余下的比特位用于存储具体的数据</li>
-</ul>
-<p>通过分析可知，WebSocket 的最大头部为 14 bytes，要实现 WebSocket，最主要的工作就是实现对数据帧的解析</p>
-<h2 id="WebSocket-协议中的一些算法"><a href="#WebSocket-协议中的一些算法" class="headerlink" title="WebSocket 协议中的一些算法"></a>WebSocket 协议中的一些算法</h2><h3 id="Sec-WebSocket-Accept-的计算"><a href="#Sec-WebSocket-Accept-的计算" class="headerlink" title="Sec-WebSocket-Accept 的计算"></a><code>Sec-WebSocket-Accept</code> 的计算</h3><p><code>Sec-WebSocket-Accept</code> 值的计算方法是通过 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Accept</code> 的值，然后对结果求 SHA1 哈希摘要，最后再转为base64。代码如下</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> keyGUID = []<span class="type">byte</span>(<span class="string">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">computeAcceptKey</span><span class="params">(challengeKey <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    h := sha1.New()</span><br><span class="line">    h.Write([]<span class="type">byte</span>(challengeKey))</span><br><span class="line">    h.Write(keyGUID)</span><br><span class="line">    <span class="keyword">return</span> base64.StdEncoding.EncodeToString(h.Sum(<span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">KEY_GUID = <span class="string">&#x27;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_accept_key</span>(<span class="params">challenge_key: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    m = hashlib.sha1()</span><br><span class="line">    m.update(challenge_key.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    m.update(KEY_GUID.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(m.digest()).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="掩码处理"><a href="#掩码处理" class="headerlink" title="掩码处理"></a>掩码处理</h3><p>如果浏览器发送的数据帧中 <code>MASK</code> 比特位的值为 %x1，那么就需要对数据进行掩码处理</p>
-<p>掩码处理的流程为以下几个步骤</p>
-<ol>
-<li>将数据和 <code>Masking-key</code> 处理按字节处理</li>
-<li>取出数据中的第 <code>i</code> 个字节 <code>item1</code>，</li>
-<li>通过 <code>j = i MOD 4</code> 计算获得 <code>j</code>，从 <code>Masking-key</code> 中取出第 <code>j</code> 个字节的数据 <code>item2</code></li>
-<li>将 <code>item1</code> 与 <code>item2</code> 进行异或得到最后结果</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maskBytes</span><span class="params">(key [4]<span class="type">byte</span>, pos <span class="type">int</span>, b[]<span class="type">byte</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> b &#123;</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mask_bytes</span>(<span class="params">key: <span class="built_in">str</span>, pos: <span class="built_in">int</span>, b: <span class="built_in">list</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(b)):</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<p>注意:</p>
-<ul>
-<li><code>pos &amp; 3</code> 的结果和 <code>pos % 4</code> 的结果是一样的，因为 <code>a % (2^n)</code> 等价于 <code>a &amp; (2^n - 1)</code> ，但是 <code>&amp;</code> 比 <code>%</code> 的效率要高</li>
-<li>此处返回的 <code>pos</code> 是为了下次继续使用，如果数据帧中的数据长度大于 125，那么就需要多次进行掩码处理</li>
-</ul>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>参考 <a href="https://github.com/stolenzc/websocket">websocket</a></p>
-]]></content>
-      <categories>
-        <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VSCode的使用</title>
     <url>/vscode/</url>
     <content><![CDATA[<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><p>settings.json（首选项，打开设置）的配置：</p>
@@ -6993,6 +7627,93 @@
         <tag>MacOS</tag>
         <tag>Windows</tag>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WebSocket 工作原理</title>
+    <url>/websocket/</url>
+    <content><![CDATA[<h2 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h2><p>WebSocket 握手过程是一个将 HTTP 升级为 WebSocket 的过程</p>
+<ol>
+<li><p>首先由客户端发送一个 GET 请求</p>
+ <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">GET</span> <span class="string">/chat</span> <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="attr">Host:</span> <span class="string">server.example.com</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Key:</span> <span class="string">dGhlIHNhbXBsZSBub25jZQ==</span></span><br><span class="line"><span class="attr">Origin:</span> <span class="string">http://example.com</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat,</span> <span class="string">superchat</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Version:</span> <span class="number">13</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
+<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
+<li><code>Sec-WebSocket-Key</code>: 必需字段，随机字符串</li>
+<li><code>Sec-WebSocket-Protocol</code>: 可选字段，表示应用层的协议</li>
+<li><code>Sec-WebSocket-Version</code>: 必需字段，代表 WebSocket 协议的版本，值必需为13，否则握手失败</li>
+</ul>
+</li>
+<li><p>服务端会返回一个状态码为101的响应</p>
+ <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">HTTP/1.1</span> <span class="number">101</span> <span class="string">Switching</span> <span class="string">Protocols</span></span><br><span class="line"><span class="attr">Upgrade:</span> <span class="string">websocket</span></span><br><span class="line"><span class="attr">Connection:</span> <span class="string">Upgrade</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Accept:</span> <span class="string">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span></span><br><span class="line"><span class="attr">Sec-WebSocket-Protocol:</span> <span class="string">chat</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Upgrade</code>: 规定必需字段，值必需为 websocket，如果不是，则握手会失败</li>
+<li><code>Connection</code>: 规定必需字段，值必需为 Upgrade，如果不是，则握手会失败</li>
+<li><code>Sec-WebSocket-Accept</code>: 规定必需字段，该字段是通过固定字符串 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Key</code> 值，计算 SHA1 哈希摘要的结果</li>
+<li><code>Sec-WebSocket-Protocol</code>: 对应请求中的 <code>Sec-WebSocket-Protocol</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="WebSocket-协议数据帧"><a href="#WebSocket-协议数据帧" class="headerlink" title="WebSocket 协议数据帧"></a>WebSocket 协议数据帧</h2><p>数据帧的定义如下</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"> <span class="number">0</span>                   <span class="number">1</span>                   <span class="number">2</span>                   <span class="number">3</span></span><br><span class="line"> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">1</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+-------------------------------+</span></span><br><span class="line"><span class="string">|F|R|R|R|</span> <span class="string">opcode|M|</span> <span class="string">Payload</span> <span class="string">len</span> <span class="string">|</span>    <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span>    <span class="string">|</span></span><br><span class="line"><span class="string">|I|S|S|S|</span>  <span class="string">(4)</span>  <span class="string">|A|</span>     <span class="string">(7)</span>     <span class="string">|</span>             <span class="string">(16/64)</span>           <span class="string">|</span></span><br><span class="line"><span class="string">|N|V|V|V|</span>       <span class="string">|S|</span>             <span class="string">|</span>   <span class="string">(if</span> <span class="string">payload</span> <span class="string">len==126/127)</span>   <span class="string">|</span></span><br><span class="line"><span class="string">|</span> <span class="string">|1|2|3|</span>       <span class="string">|K|</span>             <span class="string">|</span>                               <span class="string">|</span></span><br><span class="line"><span class="string">+-+-+-+-+-------+-+-------------+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>     <span class="string">Extended</span> <span class="string">payload</span> <span class="string">length</span> <span class="string">continued,</span> <span class="string">if</span> <span class="string">payload</span> <span class="string">len</span> <span class="string">==</span> <span class="number">127</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+-------------------------------+</span></span><br><span class="line"><span class="string">|</span>                               <span class="string">|Masking-key,</span> <span class="string">if</span> <span class="string">MASK</span> <span class="string">set</span> <span class="string">to</span> <span class="number">1</span>  <span class="string">|</span></span><br><span class="line"><span class="string">+-------------------------------+-------------------------------+</span></span><br><span class="line"><span class="string">|</span> <span class="string">Masking-key</span> <span class="string">(continued)</span>       <span class="string">|</span>          <span class="string">Payload</span> <span class="string">Data</span>         <span class="string">|</span></span><br><span class="line"><span class="string">+--------------------------------</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">:</span>                     <span class="attr">Payload Data continued ...                :</span></span><br><span class="line"><span class="string">+</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">+</span></span><br><span class="line"><span class="string">|</span>                     <span class="string">Payload</span> <span class="string">Data</span> <span class="string">continued</span> <span class="string">...</span>                <span class="string">|</span></span><br><span class="line"><span class="string">+---------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>以上数据，一行代表 32 bit(位)，也就是 4 bytes，总体包含以上两部分，帧头部和数据内容。每个从 WebSocket 链接中接受到的数据帧，都要按照以上格式进行解析，这样才能知道该数据帧是用于控制的还是用于传送数据的。部分字段解释：</p>
+<ul>
+<li><code>FIN</code>: 1 bit，当该比特位值为 <code>%x0</code> 时，表示后面还有更多的数据帧，<code>%x1</code> 表示为最后一个数据帧</li>
+<li><code>RSV1</code>, <code>RSV2</code>, <code>RSV3</code>: 各占 1 bit，一般全为 0，当客户端和服务端协商采用 WebSocket 扩展时，三个标志位为非 0，且该值由扩展进行定义。如果没有采用 WebSocket 扩展，且为非零时，连接出错</li>
+<li><code>opcode</code> - 4 bit，用于表明数据帧的类型，一共可以表示 16 种帧类型<ul>
+<li><code>%x0</code> - 表示这是一个分片的帧，属于前面帧的后续帧</li>
+<li><code>%x1</code> - 表示数据帧携带的数据类型是文本类型，且编码为 UTF-8</li>
+<li><code>%x2</code> - 表示携带的是二进制数据</li>
+<li><code>%x3-7</code> - 保留未使用</li>
+<li><code>%x8</code> - 表示该帧用于关闭 WebSocket 链接</li>
+<li><code>%x9</code> - 表示该帧代表了 Ping 操作</li>
+<li><code>%xA</code> - 表示该帧代表了 Pong 回应</li>
+<li><code>%xB-F</code> - 保留未使用</li>
+</ul>
+</li>
+<li><code>MASK</code> - 1 bit，<code>%x0</code> 表示数据帧没有经过掩码计算，<code>%x1</code> 表示数据帧经过了掩码计算，需要解码才能得到真正的数据，通常浏览器发送给服务器才会进行掩码计算</li>
+<li><code>Payload len</code> - 7 bit，表示数据帧携带的数据长度，7 bit 代表的最大值为 127，会存在三种情况<ul>
+<li><code>%x0-7D</code> - 0-125，表示数据长度，数据总长度的就是 7 bit 表示的长度</li>
+<li><code>%x7E</code> - 126，则后续的 2 个字节（16 bit）表示一个16位的无符号数，这个数用来表示数据长度</li>
+<li><code>%x7F</code> - 127，则后续的 8 个字节（64 bit）表示一个64位的无符号数，这个数用来表示数据长度</li>
+</ul>
+</li>
+<li><code>Masking-key</code> - 32 bit，表示用于解码的 key，当只有 MASK 比特位的值为 %x1 时使用</li>
+<li><code>Payload Data</code> - 余下的比特位用于存储具体的数据</li>
+</ul>
+<p>通过分析可知，WebSocket 的最大头部为 14 bytes，要实现 WebSocket，最主要的工作就是实现对数据帧的解析</p>
+<h2 id="WebSocket-协议中的一些算法"><a href="#WebSocket-协议中的一些算法" class="headerlink" title="WebSocket 协议中的一些算法"></a>WebSocket 协议中的一些算法</h2><h3 id="Sec-WebSocket-Accept-的计算"><a href="#Sec-WebSocket-Accept-的计算" class="headerlink" title="Sec-WebSocket-Accept 的计算"></a><code>Sec-WebSocket-Accept</code> 的计算</h3><p><code>Sec-WebSocket-Accept</code> 值的计算方法是通过 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> 加上请求中的 <code>Sec-WebSocket-Accept</code> 的值，然后对结果求 SHA1 哈希摘要，最后再转为base64。代码如下</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> keyGUID = []<span class="type">byte</span>(<span class="string">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">computeAcceptKey</span><span class="params">(challengeKey <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    h := sha1.New()</span><br><span class="line">    h.Write([]<span class="type">byte</span>(challengeKey))</span><br><span class="line">    h.Write(keyGUID)</span><br><span class="line">    <span class="keyword">return</span> base64.StdEncoding.EncodeToString(h.Sum(<span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">KEY_GUID = <span class="string">&#x27;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_accept_key</span>(<span class="params">challenge_key: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    m = hashlib.sha1()</span><br><span class="line">    m.update(challenge_key.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    m.update(KEY_GUID.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(m.digest()).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="掩码处理"><a href="#掩码处理" class="headerlink" title="掩码处理"></a>掩码处理</h3><p>如果浏览器发送的数据帧中 <code>MASK</code> 比特位的值为 %x1，那么就需要对数据进行掩码处理</p>
+<p>掩码处理的流程为以下几个步骤</p>
+<ol>
+<li>将数据和 <code>Masking-key</code> 处理按字节处理</li>
+<li>取出数据中的第 <code>i</code> 个字节 <code>item1</code>，</li>
+<li>通过 <code>j = i MOD 4</code> 计算获得 <code>j</code>，从 <code>Masking-key</code> 中取出第 <code>j</code> 个字节的数据 <code>item2</code></li>
+<li>将 <code>item1</code> 与 <code>item2</code> 进行异或得到最后结果</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maskBytes</span><span class="params">(key [4]<span class="type">byte</span>, pos <span class="type">int</span>, b[]<span class="type">byte</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> b &#123;</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mask_bytes</span>(<span class="params">key: <span class="built_in">str</span>, pos: <span class="built_in">int</span>, b: <span class="built_in">list</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(b)):</span><br><span class="line">        b[i] ^= key[pos &amp; <span class="number">3</span>]</span><br><span class="line">        pos += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> pos &amp; <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>注意:</p>
+<ul>
+<li><code>pos &amp; 3</code> 的结果和 <code>pos % 4</code> 的结果是一样的，因为 <code>a % (2^n)</code> 等价于 <code>a &amp; (2^n - 1)</code> ，但是 <code>&amp;</code> 比 <code>%</code> 的效率要高</li>
+<li>此处返回的 <code>pos</code> 是为了下次继续使用，如果数据帧中的数据长度大于 125，那么就需要多次进行掩码处理</li>
+</ul>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>参考 <a href="https://github.com/stolenzc/websocket">websocket</a></p>
+]]></content>
+      <categories>
+        <category>Backend</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
       </tags>
   </entry>
   <entry>

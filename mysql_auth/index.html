@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/blog2_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/blog2_16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.stolenzc.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="MySQL 用户权限管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 用户权限管理">
+<meta property="og:url" content="https://blog.stolenzc.com/mysql_auth/index.html">
+<meta property="og:site_name" content="stolen&#39;s blog">
+<meta property="og:description" content="MySQL 用户权限管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-07T15:05:00.000Z">
+<meta property="article:modified_time" content="2025-11-08T09:01:49.319Z">
+<meta property="article:author" content="stolen">
+<meta property="article:tag" content="技术原理">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.stolenzc.com/mysql_auth/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.stolenzc.com/mysql_auth/","path":"mysql_auth/","title":"MySQL 用户权限管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL 用户权限管理 | stolen's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">stolen's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">逆风的方向，更适合飞翔</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-text">用户管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E5%8E%9F%E7%90%86"><span class="nav-text">用户管理原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7"><span class="nav-text">创建用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7"><span class="nav-text">修改用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="nav-text">删除用户</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E5%8E%9F%E7%90%86"><span class="nav-text">权限管理原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%88%E6%9D%83%E8%AF%AD%E6%B3%95"><span class="nav-text">授权语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E6%8E%88%E6%9D%83"><span class="nav-text">撤销授权</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="stolen"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">stolen</p>
+  <div class="site-description" itemprop="description">一个热爱技术的Python开发者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/stolenzc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;stolenzc" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3333060672" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3333060672" rel="noopener me" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.stolenzc.com/" title="https:&#x2F;&#x2F;www.stolenzc.com" rel="noopener" target="_blank">个人网站</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://tools.stolenzc.com/" title="https:&#x2F;&#x2F;tools.stolenzc.com" rel="noopener" target="_blank">静态工具</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://stolenzc.gitee.io/" title="https:&#x2F;&#x2F;stolenzc.gitee.io" rel="noopener" target="_blank">gitee主页</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.stolenzc.com/mysql_auth/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="stolen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="stolen's blog">
+      <meta itemprop="description" content="一个热爱技术的Python开发者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL 用户权限管理 | stolen's blog">
+      <meta itemprop="description" content="MySQL 用户权限管理">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 用户权限管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-07 23:05:00" itemprop="dateCreated datePublished" datetime="2025-11-07T23:05:00+08:00">2025-11-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.4k</span>
+    </span>
+</div>
+
+            <div class="post-description">MySQL 用户权限管理</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+<style>
+.excalidraw-container {
+  width: 100%;
+  min-height: 300px;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  cursor: default !important;
+}
+
+.excalidraw-container * {
+  cursor: default !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.excalidraw-container .excalidraw {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.excalidraw-container .excalidraw canvas {
+  pointer-events: none !important;
+}
+
+.excalidraw-container .excalidraw .excalidraw-wrapper {
+  height: 100%;
+  pointer-events: none;
+}
+
+.excalidraw-container .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 14px;
+  padding: 20px;
+}
+</style>
+<p>MySQL 用户权限管理是 MySQL 中一个不常能接触的概念，但是当涉及到数据库权限管理时，这一块又非常重要。本文将介绍 MySQL 用户权限管理的基本概念和操作。帮助你更好地理解 MySQL 用户权限管理。</p>
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户管理原理"><a href="#用户管理原理" class="headerlink" title="用户管理原理"></a>用户管理原理</h3><p>MySQL 的用户管理是基于 MySQL 的 <code>user</code> 表进行的。<code>user</code> 表中存储了所有 MySQL 用户的信息。 和用户管理相关的 <code>user</code> 表字段如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Host</td>
+<td>char(60)</td>
+<td>主机名，用于指定用户可以连接的主机，可以为具体的 IP 地址，也可以为通配符 <code>%</code>，表示所有主机</td>
+</tr>
+<tr>
+<td>User</td>
+<td>char(32)</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>plugin</td>
+<td>char(64)</td>
+<td>插件名，用于指定用户使用的插件，用于加密密码</td>
+</tr>
+<tr>
+<td>authentication_string</td>
+<td>text</td>
+<td>加密后的密码</td>
+</tr>
+<tr>
+<td>password_expired</td>
+<td>enum(‘N’,’Y’)</td>
+<td>密码是否过期</td>
+</tr>
+<tr>
+<td>password_last_changed</td>
+<td>timestamp</td>
+<td>密码最后一次修改时间</td>
+</tr>
+<tr>
+<td>password_lifetime</td>
+<td>smallint(5) unsigned</td>
+<td>密码过期时间， NULL 表示由 default_password_lifetime 设置决定，0 表示永不过期，&gt;0 表示过期时间，单位为天</td>
+</tr>
+<tr>
+<td>account_locked</td>
+<td>enum(‘N’,’Y’)</td>
+<td>账户是否被锁定</td>
+</tr>
+</tbody></table>
+<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;username&#x27;</span>@<span class="string">&#x27;host&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;password&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> [IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> resource_option [resource_option] ...]</span><br><span class="line">    [password_option <span class="operator">|</span> lock_option] ...</span><br></pre></td></tr></table></figure>
+
+<p>user: <code>&#39;username&#39;@&#39;host&#39;</code></p>
+<ul>
+<li><code>username</code> - 用户名</li>
+<li><code>host</code> - 主机名，可以是域名，也可以是IP地址，也可以是通配符 <code>%</code>，表示所有主机</li>
+<li>如果省略 <code>@&#39;host&#39;</code>, 等同于 <code>&#39;username&#39;@&#39;%&#39;</code></li>
+</ul>
+<p>auth_option 密码设置，可以用以下任意一种语法</p>
+<ul>
+<li><code>IDENTIFIED BY &#39;auth_string&#39;</code> - 使用明文密码</li>
+<li><code>IDENTIFIED WITH auth_plugin</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED WITH auth_plugin BY &#39;auth_string&#39;</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED WITH auth_plugin AS &#39;auth_string&#39;</code> - 使用插件加密密码</li>
+<li><code>IDENTIFIED BY PASSWORD &#39;auth_string&#39;</code> - 使用密码哈希加密密码(MySQL 8.0 中已弃用)</li>
+</ul>
+<p>tls_option: SSL&#x2F;TLS 相关选项</p>
+<ul>
+<li><code>SSL</code> - 使用 SSL 加密连接</li>
+<li><code>X509</code> - 使用 X509 证书加密连接</li>
+<li><code>CIPHER &#39;cipher&#39;</code> - 使用指定加密套件加密连接</li>
+<li><code>ISSUER &#39;issuer&#39;</code> - 使用指定证书颁发机构加密连接</li>
+<li><code>SUBJECT &#39;subject&#39;</code> - 使用指定证书主题加密连接</li>
+</ul>
+<p>resource_option: 资源限制选项</p>
+<ul>
+<li><code>MAX_QUERIES_PER_HOUR count</code> - 每小时最大查询次数</li>
+<li><code>MAX_UPDATES_PER_HOUR count</code> - 每小时最大更新次数</li>
+<li><code>MAX_CONNECTIONS_PER_HOUR count</code> - 每小时最大连接次数</li>
+<li><code>MAX_USER_CONNECTIONS count</code> - 每用户最大连接次数</li>
+</ul>
+<p>password_option: 密码过期选项</p>
+<ul>
+<li><code>PASSWORD EXPIRE</code> - 密码过期</li>
+<li><code>PASSWORD EXPIRE DEFAULT</code> - 密码过期时间由 default_password_lifetime 设置决定</li>
+<li><code>PASSWORD EXPIRE NEVER</code> - 密码永不过期</li>
+<li><code>PASSWORD EXPIRE INTERVAL N DAY</code> - 密码过期时间，单位为天</li>
+</ul>
+<p>lock_option: 锁定选项</p>
+<ul>
+<li><code>ACCOUNT LOCK</code> - 锁定账户</li>
+<li><code>ACCOUNT UNLOCK</code> - 解锁账户</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建多个用户</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> </span><br><span class="line"><span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 限制用户资源</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span></span><br><span class="line"><span class="string">&#x27;test3&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span></span><br><span class="line">MAX_QUERIES_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_UPDATES_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_CONNECTIONS_PER_HOUR <span class="number">100</span>,</span><br><span class="line">MAX_USER_CONNECTIONS <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 密码过期</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test4&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span> PASSWORD EXPIRE;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 锁定账户</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;test5&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span> ACCOUNT LOCK;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改用户"><a href="#修改用户" class="headerlink" title="修改用户"></a>修改用户</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> resource_option [resource_option] ...]</span><br><span class="line">    [password_option <span class="operator">|</span> lock_option] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>]</span><br><span class="line">    <span class="keyword">USER</span>() IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;auth_string&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>USER()</code> - 函数仅用于修改当前用户密码的语法。</li>
+</ul>
+<p>user&#x2F;auth_option&#x2F;tls_option&#x2F;resource_option&#x2F;password_option&#x2F;lock_option: 同创建用户</p>
+<p>示例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 修改当前用户密码</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="keyword">USER</span>() IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改用户密码</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除用户"><a href="#删除用户" class="headerlink" title="删除用户"></a>删除用户</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> [IF <span class="keyword">EXISTS</span>] <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br></pre></td></tr></table></figure>
+
+<p>user 参数同创建用户</p>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>, <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><h3 id="权限管理原理"><a href="#权限管理原理" class="headerlink" title="权限管理原理"></a>权限管理原理</h3><p>MySQL 权限分为以下几层：</p>
+<ul>
+<li><code>global</code> - 全局权限 (<code>mysql.user</code>)</li>
+<li><code>database</code> - 数据库权限 (<code>mysql.db</code>)</li>
+<li><code>table</code> - 数据表权限 (<code>mysql.tables_priv</code>)</li>
+<li><code>column</code> - 数据列权限 (<code>mysql.columns_priv</code>)</li>
+<li><code>routine</code> - 存储过程权限 (<code>mysql.procs_priv</code>)</li>
+</ul>
+<p>这些权限的关系如下：</p>
+<div id="excalidraw-q240y9ivd" class="excalidraw-container" data-excalidraw='{&quot;type&quot;:&quot;excalidraw&quot;,&quot;version&quot;:2,&quot;source&quot;:&quot;https://excalidraw.com&quot;,&quot;elements&quot;:[{&quot;id&quot;:&quot;amRv_e2i1okBw_KY22hIS&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:649.1087596187082,&quot;y&quot;:775.2741398743418,&quot;width&quot;:544.9693008191313,&quot;height&quot;:459.1679851781793,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1c&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1684293888,&quot;version&quot;:405,&quot;versionNonce&quot;:607397632,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528645575,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;kJhIgAiu0h2wN-l66kLMG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:789.603520116687,&quot;y&quot;:806.7393102493832,&quot;width&quot;:54.719970703125,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1d&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:1010239744,&quot;version&quot;:111,&quot;versionNonce&quot;:1134536960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528635609,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;global&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;global&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;4RajpVno1KSVLV4m-vZCw&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:674.8115238221424,&quot;y&quot;:843.3967278740383,&quot;width&quot;:494.8371273380469,&quot;height&quot;:333.1590623582967,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1e&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1403127552,&quot;version&quot;:280,&quot;versionNonce&quot;:1463207680,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528630692,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;Nwhtr1HWsYhE_biAm4v7y&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:797.6731693926247,&quot;y&quot;:876.6559983236166,&quot;width&quot;:90.419921875,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1f&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:2070456576,&quot;version&quot;:105,&quot;versionNonce&quot;:388303104,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528633359,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;database&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;database&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;R9J6PfS714qraDE0GNqIP&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:747.5029853167408,&quot;y&quot;:921.9950358004819,&quot;width&quot;:254.59116290769248,&quot;height&quot;:226.99927214272225,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1g&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:277989120,&quot;version&quot;:232,&quot;versionNonce&quot;:1064584960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528547769,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;2MxTqWn2Ckey9V0J83UT0&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:833.4677465153309,&quot;y&quot;:947.789025431435,&quot;width&quot;:48.91996765136719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1h&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:285305088,&quot;version&quot;:26,&quot;versionNonce&quot;:1881344256,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528553710,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;table&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;table&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:805.8416462150412,&quot;y&quot;:998.2480900277951,&quot;width&quot;:155.96507258138274,&quot;height&quot;:125.07766324729437,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1i&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:832063232,&quot;version&quot;:69,&quot;versionNonce&quot;:842000128,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;}],&quot;updated&quot;:1762528565559,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:853.0222215065329,&quot;y&quot;:1048.0652897228777,&quot;width&quot;:61.31996154785156,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1j&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:78850304,&quot;version&quot;:9,&quot;versionNonce&quot;:1494026496,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528569072,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;column&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;originalText&quot;:&quot;column&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:1010.1942059762106,&quot;y&quot;:940.0652725681728,&quot;width&quot;:139.97021428974574,&quot;height&quot;:150.13424733913666,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1k&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1633528064,&quot;version&quot;:52,&quot;versionNonce&quot;:1044178688,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;}],&quot;updated&quot;:1762528584772,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:1045.992395216818,&quot;y&quot;:1002.5519240468201,&quot;width&quot;:68.39994812011719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1l&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:945170688,&quot;version&quot;:10,&quot;versionNonce&quot;:946268416,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528588942,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;routine&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;originalText&quot;:&quot;routine&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25}],&quot;appState&quot;:{&quot;gridSize&quot;:20,&quot;gridStep&quot;:5,&quot;gridModeEnabled&quot;:false,&quot;viewBackgroundColor&quot;:&quot;#ffffff&quot;,&quot;lockedMultiSelections&quot;:{}},&quot;files&quot;:{}}'><div class="loading">加载中...</div></div>
+
+<p>这些权限有不同的规则</p>
+<ul>
+<li>对高层授权，低层会继承高层的权限，比如对 <code>database</code> 授予 <code>SELECT</code> 权限，那么 <code>table</code> 和 <code>column</code> 也会继承 <code>SELECT</code> 权限</li>
+<li>对于某一层级特有的权限，无法在其他层级进行授权</li>
+</ul>
+<p>如下表是各个权限的详细描述</p>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>授权表中的字段名</th>
+<th>权限控制的范围</th>
+<th>可以授权的层级</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ALL [PRIVILEGES]</td>
+<td>所有权限的别名</td>
+<td>服务器管理</td>
+<td>所有层级</td>
+<td>除了 GRANT OPTION 和 PROXY 以外的所有权限</td>
+</tr>
+<tr>
+<td>ALTER</td>
+<td>Alter_priv</td>
+<td>Table</td>
+<td>Global, Database, Table</td>
+<td>用于使用 Alter Table 语句修改表的结构(除此权限外， ALTER TABLE 还需要 CREATE 和 INSERT 权限， ALTER TABLE RENAME 还需要有旧表的 ALTER 、 DROP 权限和新表的 CREATE 和 INSERT 权限)</td>
+</tr>
+<tr>
+<td>ALTER ROUTINE</td>
+<td>Alter_routine_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database, Routine</td>
+<td>允许修改或删除存储过程和存储函数</td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>Create_priv</td>
+<td>数据库, 数据表, 索引</td>
+<td>Global, Database, Table</td>
+<td>允许创建数据库和数据表</td>
+</tr>
+<tr>
+<td>CREATE ROUTINE</td>
+<td>Create_routine_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database</td>
+<td>允许创建存储过程和存储函数</td>
+</tr>
+<tr>
+<td>CREATE TABLESPACE</td>
+<td>Create_tablespace_priv</td>
+<td>表空间</td>
+<td>Global</td>
+<td>启用表空间和日志文件组的创建删除和修改</td>
+</tr>
+<tr>
+<td>CREATE TEMPORARY TABLES</td>
+<td>Create_tmp_table_priv</td>
+<td>临时表</td>
+<td>Global, Database</td>
+<td>允许进行创建临时表</td>
+</tr>
+<tr>
+<td>CREATE USER</td>
+<td>Create_user_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用创建、删除、重命名用户，以及可以 REVOKE ALL PRIVILEGES 权限</td>
+</tr>
+<tr>
+<td>CREATE VIEW</td>
+<td>Create_view_priv</td>
+<td>视图</td>
+<td>Global, Database, Table</td>
+<td>允许创建及修改视图</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>Delete_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许删除数据表中的数据</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td>Drop_priv</td>
+<td>数据库, 数据表, 视图</td>
+<td>Global, Database, Table</td>
+<td>允许删除数据库和数据表，以及视图，同时分区表执行 <code>ALTER TABLE ... DROP PARTITION</code> 也需要该权限， <code>TRUNCATE TABLE</code> 也需要该权限</td>
+</tr>
+<tr>
+<td>EVENT</td>
+<td>Event_priv</td>
+<td>事件</td>
+<td>Global, Database</td>
+<td>允许创建、修改、删除和查看 事件调度器 中的事件</td>
+</tr>
+<tr>
+<td>EXECUTE</td>
+<td>Execute_priv</td>
+<td>存储过程或存储函数</td>
+<td>Global, Database, Routine</td>
+<td>允许执行存储过程和存储函数</td>
+</tr>
+<tr>
+<td>FILE</td>
+<td>File_priv</td>
+<td>文件访问</td>
+<td>Global</td>
+<td>允许使用 LOAD DATA INFILE 和 SELECT … INTO OUTFILE 语句</td>
+</tr>
+<tr>
+<td>GRANT OPTION</td>
+<td>Grant_priv</td>
+<td>数据库, 数据表, 存储过程或存储函数</td>
+<td>Global, Database, Table, Routine, Proxy</td>
+<td>允许对其他用户进行授权或者撤销权限</td>
+</tr>
+<tr>
+<td>INDEX</td>
+<td>Index_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许创建及删除索引</td>
+</tr>
+<tr>
+<td>INSERT</td>
+<td>Insert_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许插入数据到数据表</td>
+</tr>
+<tr>
+<td>LOCK TABLES</td>
+<td>Lock_tables_priv</td>
+<td>数据库</td>
+<td>Global, Database</td>
+<td>允许使用 <code>LOCK TABLES</code> 语句对具有 SELECT 权限的查询进行显式加锁</td>
+</tr>
+<tr>
+<td>PROCESS</td>
+<td>Process_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户使用 <code>SHOW PROCESSLIST</code> 语句查看所有进程，包括其他用户的进程</td>
+</tr>
+<tr>
+<td>PROXY</td>
+<td>proxies_priv table</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户模仿（伪装、代理）另一个用户</td>
+</tr>
+<tr>
+<td>REFERENCES</td>
+<td>References_priv</td>
+<td>数据库, 数据表</td>
+<td>Global, Database, Table, Column</td>
+<td>在创建外键时，需要用户具有父表的 REFERENCES 权限</td>
+</tr>
+<tr>
+<td>RELOAD</td>
+<td>Reload_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用 <code>FLUSH</code> 语句刷新，包括 <code>FLUSH HOSTS</code>、<code>FLUSH LOGS</code>、<code>FLUSH PRIVILEGES</code>、<code>FLUSH STATUS</code>、<code>FLUSH SLOW LOGS</code>、<code>FLUSH TABLES WITH READ LOCK</code> 等</td>
+</tr>
+<tr>
+<td>REPLICATION CLIENT</td>
+<td>Repl_client_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许用户使用 <code>SHOW MASTER STATUS</code>、<code>SHOW SLAVE STATUS</code>、<code>SHOW BINARY LOGS</code> 等语句查看源与副本的信息</td>
+</tr>
+<tr>
+<td>REPLICATION SLAVE</td>
+<td>Repl_slave_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>该权限主要用于副本服务器访问源服务器的 Binlog 文件权限</td>
+</tr>
+<tr>
+<td>SELECT</td>
+<td>Select_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许使用 <code>SELECT</code> 语句查询数据</td>
+</tr>
+<tr>
+<td>SHOW DATABASES</td>
+<td>Show_db_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>允许使用 <code>SHOW DATABASES</code> 语句查看所有数据库</td>
+</tr>
+<tr>
+<td>SHOW VIEW</td>
+<td>Show_view_priv</td>
+<td>视图</td>
+<td>Global, Database, Table</td>
+<td>允许使用 <code>SHOW CREATE VIEW</code> 语句查看视图的创建语句</td>
+</tr>
+<tr>
+<td>SHUTDOWN</td>
+<td>Shutdown_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>用于 <code>SHUTDOWN</code> 语句、 <code>mysqladmin shutdown</code> 语句、<code>mysql_shutdown()</code> 函数</td>
+</tr>
+<tr>
+<td>SUPER</td>
+<td>Super_priv</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>启用其他管理操作的使用，例如 <code>CHANGE MASTER TO</code>、<code>KILL</code>、<code>Purge Binary Logs</code>、<code>SET GLOBAL</code> 和 <code>mysqladmin DEBUG</code> 等命令</td>
+</tr>
+<tr>
+<td>TRIGGER</td>
+<td>Trigger_priv</td>
+<td>数据表</td>
+<td>Global, Database, Table</td>
+<td>允许创建及删除触发器</td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td>Update_priv</td>
+<td>数据表, 数据列</td>
+<td>Global, Database, Table, Column</td>
+<td>允许使用 <code>UPDATE</code> 语句更新数据</td>
+</tr>
+<tr>
+<td>USAGE</td>
+<td>Synonym for “no privileges”</td>
+<td>服务器管理</td>
+<td>Global</td>
+<td>没有权限，等同于没有权限</td>
+</tr>
+</tbody></table>
+<h3 id="授权语法"><a href="#授权语法" class="headerlink" title="授权语法"></a>授权语法</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span></span><br><span class="line">    priv_type [(column_list)]</span><br><span class="line">      [, priv_type [(column_list)]] ...</span><br><span class="line">    <span class="keyword">ON</span> [object_type] priv_level</span><br><span class="line">    <span class="keyword">TO</span> <span class="keyword">user</span> [auth_option] [, <span class="keyword">user</span> [auth_option]] ...</span><br><span class="line">    [REQUIRE &#123;<span class="keyword">NONE</span> <span class="operator">|</span> tls_option [[<span class="keyword">AND</span>] tls_option] ...&#125;]</span><br><span class="line">    [<span class="keyword">WITH</span> &#123;<span class="keyword">GRANT</span> OPTION <span class="operator">|</span> resource_option&#125; ...]</span><br><span class="line"></span><br><span class="line"><span class="keyword">GRANT</span> PROXY <span class="keyword">ON</span> <span class="keyword">user</span></span><br><span class="line">    <span class="keyword">TO</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line">    [<span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION]</span><br></pre></td></tr></table></figure>
+
+<p>object_type: 对象类型</p>
+<ul>
+<li><code>TABLE</code> - 数据表</li>
+<li><code>FUNCTION</code> - 函数</li>
+<li><code>PROCEDURE</code> - 存储过程</li>
+</ul>
+<p>priv_level: 权限级别</p>
+<ul>
+<li><code>*</code> - 所有数据库</li>
+<li><code>*.*</code> - 所有数据库的所有数据表</li>
+<li><code>db_name.*</code> - 指定数据库的所有数据表</li>
+<li><code>db_name.tbl_name</code> - 指定数据库的指定数据表</li>
+<li><code>tbl_name</code> - 指定数据表</li>
+<li><code>db_name.routine_name</code> - 指定数据库的指定存储过程或函数</li>
+</ul>
+<p>user、auth_option、tls_option、resource_option: 同创建用户</p>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 授予用户 test1 所有权限，且允许授予其他用户权限</span></span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION;</span><br><span class="line"><span class="comment">-- 授予用户 test2 对数据库 db1 的CRUD权限</span></span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">INSERT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span> <span class="keyword">ON</span> db1.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="撤销授权"><a href="#撤销授权" class="headerlink" title="撤销授权"></a>撤销授权</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">REVOKE</span></span><br><span class="line">    priv_type [(column_list)]</span><br><span class="line">      [, priv_type [(column_list)]] ...</span><br><span class="line">    <span class="keyword">ON</span> [object_type] priv_level</span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> [PRIVILEGES], <span class="keyword">GRANT</span> OPTION</span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">REVOKE</span> PROXY <span class="keyword">ON</span> <span class="keyword">user</span></span><br><span class="line">    <span class="keyword">FROM</span> <span class="keyword">user</span> [, <span class="keyword">user</span>] ..</span><br></pre></td></tr></table></figure>
+
+<p>示例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 撤销用户 test1 的所有权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">FROM</span> <span class="string">&#x27;test1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="comment">-- 撤销用户 test2 在数据库 db1 中的所有权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> db1.<span class="operator">*</span> <span class="keyword">FROM</span> <span class="string">&#x27;test2&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line"><span class="comment">-- 撤销用户 test3 在数据表 test_table 中的增删改权限</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">INSERT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span> <span class="keyword">ON</span> test_table <span class="keyword">FROM</span> <span class="string">&#x27;test3&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/create-user.html">MySQL 5.7 Reference Manual-CREATE USER Statement</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/alter-user.html">MySQL 5.7 Reference Manual-ALTER USER Statement</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/drop-user.html">MySQL 5.7 Reference Manual-DROP USER Statement</a></li>
+<li><a target="_blank" rel="noopener" href="https://yunqi.qq.com/read/27741213/68">千金良方：MySQL性能优化金字塔法则</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html">MySQL 5.7 Reference Manual-Privileges Provided by MySQL</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/grant.html#grant-privileges">MySQL 5.7 Reference Manual-GRANT Statements</a></li>
+<li><a target="_blank" rel="noopener" href="http://mysql.taobao.org/monthly/2024/01/02/">数据库内核月报-MySQL 权限管理</a></li>
+<li><a target="_blank" rel="noopener" href="http://mysql.taobao.org/monthly/2018/02/03/">数据库内核月报-MySQL MySQL · 源码分析 · 权限浅析</a></li>
+<li><a target="_blank" rel="noopener" href="http://mysql.taobao.org/monthly/2019/06/01/">数据库内核月报-MySQL · 引擎特性 · 安全及权限改进相关</a></li>
+</ul>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@excalidraw/excalidraw@0.17.6/dist/excalidraw.production.min.js" crossorigin></script>
+<script>
+(function() {
+  if (window.excalidrawInitialized) return
+  window.excalidrawInitialized = true
+
+  // 等待所有库加载完成
+  function waitForLibraries(callback) {
+    const maxAttempts = 50
+    let attempts = 0
+    
+    const checkInterval = setInterval(() => {
+      attempts++
+      
+      // 检查所有必要的库是否已加载
+      if (window.React && window.ReactDOM) {
+        clearInterval(checkInterval)
+        console.log('React loaded, checking Excalidraw...')
+        
+        // 检查 Excalidraw 的多种可能导出方式
+        if (window.Excalidraw || window.ExcalidrawLib) {
+          callback(null)
+        } else if (attempts < maxAttempts) {
+          // 继续等待 Excalidraw
+          return
+        } else {
+          callback(new Error('Excalidraw 未加载'))
+        }
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval)
+        callback(new Error('React 或 ReactDOM 未加载'))
+      }
+    }, 100)
+  }
+
+  // 初始化渲染
+  function initExcalidraw() {
+    const containers = document.querySelectorAll('.excalidraw-container')
+    if (containers.length === 0) return
+
+    waitForLibraries((err) => {
+      if (err) {
+        console.error('Library loading error:', err)
+        containers.forEach(container => {
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">加载失败: ' + err.message + '</div>'
+        })
+        return
+      }
+
+      // 获取正确的 Excalidraw 组件
+      const ExcalidrawComponent = window.Excalidraw || 
+                                   (window.ExcalidrawLib && window.ExcalidrawLib.Excalidraw) ||
+                                   window.ExcalidrawLib
+
+      console.log('Libraries loaded:', {
+        React: !!window.React,
+        ReactDOM: !!window.ReactDOM,
+        Excalidraw: !!ExcalidrawComponent,
+        ExcalidrawKeys: window.ExcalidrawLib ? Object.keys(window.ExcalidrawLib) : []
+      })
+
+      if (!ExcalidrawComponent) {
+        containers.forEach(container => {
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">Excalidraw 组件未找到</div>'
+        })
+        return
+      }
+
+      containers.forEach(container => {
+        try {
+          const dataAttr = container.getAttribute('data-excalidraw')
+          if (!dataAttr) return
+
+          // 解码 HTML 实体
+          const textarea = document.createElement('textarea')
+          textarea.innerHTML = dataAttr
+          const decodedData = textarea.value
+          const sceneData = JSON.parse(decodedData)
+
+          // 计算元素的边界框以确定合适的容器尺寸
+          const elements = sceneData.elements || []
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+          let hasElements = false
+          
+          elements.forEach(el => {
+            if (el.isDeleted) return // 跳过已删除的元素
+            
+            if (el.x !== undefined && el.y !== undefined) {
+              hasElements = true
+              const elWidth = el.width || 0
+              const elHeight = el.height || 0
+              
+              // 考虑线条的端点
+              if (el.type === 'line' || el.type === 'arrow') {
+                const points = el.points || []
+                points.forEach(point => {
+                  minX = Math.min(minX, el.x + point[0])
+                  minY = Math.min(minY, el.y + point[1])
+                  maxX = Math.max(maxX, el.x + point[0])
+                  maxY = Math.max(maxY, el.y + point[1])
+                })
+              } else {
+                // 普通元素
+                minX = Math.min(minX, el.x)
+                minY = Math.min(minY, el.y)
+                maxX = Math.max(maxX, el.x + elWidth)
+                maxY = Math.max(maxY, el.y + elHeight)
+              }
+              
+              // 考虑描边宽度
+              const strokePadding = (el.strokeWidth || 2) / 2
+              minX -= strokePadding
+              minY -= strokePadding
+              maxX += strokePadding
+              maxY += strokePadding
+            }
+          })
+
+          // 如果没有元素或边界无效，使用默认值
+          if (!hasElements || minX === Infinity) {
+            minX = 0
+            minY = 0
+            maxX = 800
+            maxY = 600
+          }
+
+          // 计算内容的宽高比，添加适当的内边距
+          const padding = 60  // 增加一点内边距
+          const contentWidth = maxX - minX + padding * 2
+          const contentHeight = maxY - minY + padding * 2
+          const aspectRatio = contentHeight / contentWidth
+
+          // 设置容器高度（基于宽度和宽高比）
+          const containerWidth = container.offsetWidth || 800
+          let containerHeight = containerWidth * aspectRatio
+          
+          // 限制高度范围
+          containerHeight = Math.max(300, Math.min(containerHeight, 1000))
+          container.style.height = containerHeight + 'px'
+
+          // 创建渲染容器
+          const renderDiv = document.createElement('div')
+          renderDiv.style.width = '100%'
+          renderDiv.style.height = '100%'
+          container.innerHTML = ''
+          container.appendChild(renderDiv)
+
+          // 计算缩放和偏移，使内容居中且填充容器
+          const scale = Math.min(
+            containerWidth / contentWidth,
+            containerHeight / contentHeight
+          ) * 0.9 // 稍微缩小一点，留出边距
+
+          // 计算内容中心点
+          const contentCenterX = (minX + maxX) / 2
+          const contentCenterY = (minY + maxY) / 2
+          
+          // 计算视口中心点
+          const viewportCenterX = containerWidth / (2 * scale)
+          const viewportCenterY = containerHeight / (2 * scale)
+          
+          // 计算偏移，使内容中心与视口中心对齐
+          const scrollX = viewportCenterX - contentCenterX
+          const scrollY = viewportCenterY - contentCenterY
+
+          // 使用 React 18 的 createRoot API
+          const root = ReactDOM.createRoot(renderDiv)
+          
+          console.log('Excalidraw render info:', {
+            bounds: { minX, minY, maxX, maxY },
+            content: { width: contentWidth, height: contentHeight },
+            container: { width: containerWidth, height: containerHeight },
+            scale: scale,
+            scroll: { x: scrollX, y: scrollY },
+            center: { x: contentCenterX, y: contentCenterY }
+          })
+          
+          root.render(
+            React.createElement(ExcalidrawComponent, {
+              initialData: {
+                elements: sceneData.elements || [],
+                appState: {
+                  viewBackgroundColor: sceneData.appState?.viewBackgroundColor || '#ffffff',
+                  currentItemFontFamily: 1,
+                  gridSize: null,
+                  zenModeEnabled: true,
+                  viewModeEnabled: true,
+                  zoom: {
+                    value: scale
+                  },
+                  scrollX: scrollX,
+                  scrollY: scrollY
+                },
+                files: sceneData.files || {}
+              },
+              viewModeEnabled: true,
+              zenModeEnabled: true,
+              gridModeEnabled: false,
+              // 禁用所有交互
+              handleKeyboardGlobally: false,
+              detectScroll: false,
+              // 添加事件处理来阻止拖动和缩放
+              onPointerUpdate: null,
+              onScrollChange: null
+            })
+          )
+
+          // 禁用容器内的滚动和拖动事件
+          renderDiv.addEventListener('wheel', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }, { passive: false })
+
+          renderDiv.addEventListener('touchmove', (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }, { passive: false })
+
+          renderDiv.addEventListener('mousedown', (e) => {
+            // 只允许点击链接等，不允许拖动画布
+            if (e.target.tagName !== 'A') {
+              const startX = e.clientX
+              const startY = e.clientY
+              const mouseMoveHandler = (moveEvent) => {
+                const deltaX = Math.abs(moveEvent.clientX - startX)
+                const deltaY = Math.abs(moveEvent.clientY - startY)
+                if (deltaX > 5 || deltaY > 5) {
+                  moveEvent.preventDefault()
+                  moveEvent.stopPropagation()
+                }
+              }
+              const mouseUpHandler = () => {
+                document.removeEventListener('mousemove', mouseMoveHandler)
+                document.removeEventListener('mouseup', mouseUpHandler)
+              }
+              document.addEventListener('mousemove', mouseMoveHandler)
+              document.addEventListener('mouseup', mouseUpHandler)
+            }
+          })
+
+          // 添加 CSS 样式禁用拖动光标
+          renderDiv.style.cursor = 'default'
+          renderDiv.style.userSelect = 'none'
+        } catch (err) {
+          console.error('Render error:', err)
+          container.innerHTML = '<div class="loading" style="color: #e74c3c;">渲染失败: ' + err.message + '</div>'
+        }
+      })
+    })
+  }
+
+  // 等待 DOM 加载完成后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExcalidraw)
+  } else {
+    initExcalidraw()
+  }
+})()
+</script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/" rel="tag"># 技术原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/cpython_01_intro/" rel="prev" title="CPython-01 源码解析入门">
+                  <i class="fa fa-angle-left"></i> CPython-01 源码解析入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">stolenzc</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">244k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
