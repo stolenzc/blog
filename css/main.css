@@ -1418,7 +1418,7 @@ pre code {
   transition: all 0.2s ease-in-out;
 }
 .links-of-author a::before {
-  background: #ff6fd6;
+  background: #7affff;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2958,4 +2958,12 @@ header.header {
 }
 .sub-menu .menu-item {
   display: inline-block;
+}
+code {
+  color: #c7254e;
+  background: #f9f2f4;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: consolas, Menlo, monospace;
+  overflow-wrap: break-word;
 }
