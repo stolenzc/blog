@@ -254,7 +254,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/linux_user/" class="post-title-link" itemprop="url">Linux 用户、组与权限管理总结</a>
+          <a href="/linux_user/" class="post-title-link" itemprop="url">Linux 用户、组与权限管理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -283,7 +283,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.6k</span>
+      <span>6.2k</span>
     </span>
 </div>
 
@@ -294,305 +294,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户相关文件"><a href="#用户相关文件" class="headerlink" title="用户相关文件"></a>用户相关文件</h3><table>
-<thead>
-<tr>
-<th>文件</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>/etc/passwd</code></td>
-<td>用户账户信息</td>
-</tr>
-<tr>
-<td><code>/etc/shadow</code></td>
-<td>用户密码（加密）</td>
-</tr>
-<tr>
-<td><code>/etc/group</code></td>
-<td>组信息</td>
-</tr>
-<tr>
-<td><code>/etc/gshadow</code></td>
-<td>组密码</td>
-</tr>
-<tr>
-<td><code>/etc/login.defs</code></td>
-<td>用户账号限制默认值</td>
-</tr>
-<tr>
-<td><code>/etc/default/useradd</code></td>
-<td>用户创建默认配置</td>
-</tr>
-</tbody></table>
-<p><strong>&#x2F;etc&#x2F;passwd 格式</strong>（7 个字段，冒号分隔）:</p>
-<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名：密码占位符：UID:GID: 描述：家目录：登录 shell</span><br></pre></td></tr></table></figure>
-
-<p>示例：<code>root:x:0:0:root:/root:/bin/bash</code></p>
-<p><strong>&#x2F;etc&#x2F;shadow 格式</strong>（9 个字段，冒号分隔）:</p>
-<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名：加密密码：最后修改时间：最小间隔：最大天数：警告天数：宽限天数：失效日期：保留</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本创建（使用默认配置）</span></span><br><span class="line"><span class="built_in">sudo</span> useradd username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定家目录</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -d /home/custom username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 UID</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -u 1001 username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定主组</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -g groupname username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定附加组</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -G group1,group2 username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 shell</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -s /bin/zsh username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建时不创建家目录</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -M username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建系统用户（UID &lt; 1000）</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -r username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建时设置注释信息</span></span><br><span class="line"><span class="built_in">sudo</span> useradd -c <span class="string">&quot;Full Name,Dept&quot;</span> username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 交互式创建（更友好）</span></span><br><span class="line"><span class="built_in">sudo</span> adduser username  <span class="comment"># Debian/Ubuntu</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="修改用户"><a href="#修改用户" class="headerlink" title="修改用户"></a>修改用户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改用户名</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -l newname oldname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 UID</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -u 1002 username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改家目录</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -d /new/home username</span><br><span class="line"><span class="built_in">sudo</span> usermod -d /new/home -m username  <span class="comment"># 同时移动文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改主组</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -g newgroup username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改附加组（覆盖）</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -G group1,group2 username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加附加组（追加）</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -aG groupname username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 shell</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -s /bin/bash username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 锁定用户</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -L username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解锁用户</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -U username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置密码过期</span></span><br><span class="line"><span class="built_in">sudo</span> chage -E 2026-12-31 username  <span class="comment"># 账号过期</span></span><br><span class="line"><span class="built_in">sudo</span> chage -M 90 username          <span class="comment"># 密码 90 天过期</span></span><br><span class="line"><span class="built_in">sudo</span> chage -m 7 username           <span class="comment"># 7 天内不可改密码</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="删除用户"><a href="#删除用户" class="headerlink" title="删除用户"></a>删除用户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除用户（保留家目录）</span></span><br><span class="line"><span class="built_in">sudo</span> userdel username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除用户及家目录</span></span><br><span class="line"><span class="built_in">sudo</span> userdel -r username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制删除用户及家目录</span></span><br><span class="line"><span class="built_in">sudo</span> userdel -r -f username</span><br></pre></td></tr></table></figure>
-
-<h3 id="查看用户信息"><a href="#查看用户信息" class="headerlink" title="查看用户信息"></a>查看用户信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看用户信息</span></span><br><span class="line"><span class="built_in">id</span> username</span><br><span class="line"><span class="built_in">id</span> -u username  <span class="comment"># 仅 UID</span></span><br><span class="line"><span class="built_in">id</span> -g username  <span class="comment"># 仅 GID</span></span><br><span class="line"><span class="built_in">id</span> -G username  <span class="comment"># 所有组</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看用户详细信息</span></span><br><span class="line">finger username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看用户所属组</span></span><br><span class="line"><span class="built_in">groups</span> username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前用户</span></span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">who</span> am i</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看用户密码信息</span></span><br><span class="line"><span class="built_in">sudo</span> grep username /etc/shadow</span><br><span class="line"><span class="built_in">sudo</span> chage -l username  <span class="comment"># 密码过期信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看最后登录</span></span><br><span class="line">last username</span><br><span class="line">lastlog -u username</span><br></pre></td></tr></table></figure>
-
-<h3 id="切换用户"><a href="#切换用户" class="headerlink" title="切换用户"></a>切换用户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换用户</span></span><br><span class="line">su username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换用户并加载环境变量</span></span><br><span class="line">su - username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以 root 执行命令</span></span><br><span class="line">su -c <span class="string">&quot;command&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 退出当前 shell</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="组管理"><a href="#组管理" class="headerlink" title="组管理"></a>组管理</h2><h3 id="创建组"><a href="#创建组" class="headerlink" title="创建组"></a>创建组</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本创建</span></span><br><span class="line"><span class="built_in">sudo</span> groupadd groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 GID</span></span><br><span class="line"><span class="built_in">sudo</span> groupadd -g 1001 groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建系统组</span></span><br><span class="line"><span class="built_in">sudo</span> groupadd -r groupname</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改组"><a href="#修改组" class="headerlink" title="修改组"></a>修改组</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改组名</span></span><br><span class="line"><span class="built_in">sudo</span> groupmod -n newname oldname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 GID</span></span><br><span class="line"><span class="built_in">sudo</span> groupmod -g 1002 groupname</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除组"><a href="#删除组" class="headerlink" title="删除组"></a>删除组</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除组</span></span><br><span class="line"><span class="built_in">sudo</span> groupdel groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制删除（即使为某用户主组）</span></span><br><span class="line"><span class="built_in">sudo</span> groupdel -f groupname</span><br></pre></td></tr></table></figure>
-
-<h3 id="组操作"><a href="#组操作" class="headerlink" title="组操作"></a>组操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加用户到组</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -aG groupname username</span><br><span class="line"><span class="built_in">sudo</span> gpasswd -a username groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从组中移除用户</span></span><br><span class="line"><span class="built_in">sudo</span> gpasswd -d username groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置组管理员</span></span><br><span class="line"><span class="built_in">sudo</span> gpasswd -A user1,user2 groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置组成员（覆盖现有成员）</span></span><br><span class="line"><span class="built_in">sudo</span> gpasswd -M user1,user2,user3 groupname</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看组信息</span></span><br><span class="line">getent group groupname</span><br><span class="line">grep groupname /etc/group</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看组所有成员</span></span><br><span class="line">members groupname  <span class="comment"># 需安装 libnss-extrausers</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h2><h3 id="权限基础"><a href="#权限基础" class="headerlink" title="权限基础"></a>权限基础</h3><p>Linux 权限分为三类用户：</p>
-<ul>
-<li><strong>u (user&#x2F;owner)</strong>: 文件所有者</li>
-<li><strong>g (group)</strong>: 文件所属组</li>
-<li><strong>o (other)</strong>: 其他用户</li>
-</ul>
-<p>三种基本权限：</p>
-<table>
-<thead>
-<tr>
-<th>权限</th>
-<th>字母</th>
-<th>数字</th>
-<th>文件含义</th>
-<th>目录含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>读</td>
-<td>r</td>
-<td>4</td>
-<td>查看内容</td>
-<td>列出目录内容</td>
-</tr>
-<tr>
-<td>写</td>
-<td>w</td>
-<td>2</td>
-<td>修改内容</td>
-<td>创建&#x2F;删除文件</td>
-</tr>
-<tr>
-<td>执行</td>
-<td>x</td>
-<td>1</td>
-<td>执行程序</td>
-<td>进入目录</td>
-</tr>
-</tbody></table>
-<h3 id="查看权限"><a href="#查看权限" class="headerlink" title="查看权限"></a>查看权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 详细列表</span></span><br><span class="line"><span class="built_in">ls</span> -l file</span><br><span class="line"><span class="built_in">ls</span> -la       <span class="comment"># 包含隐藏文件</span></span><br><span class="line"><span class="built_in">ls</span> -ld <span class="built_in">dir</span>   <span class="comment"># 查看目录本身而非内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 权限说明</span></span><br><span class="line"><span class="comment"># -rwxr-xr-- 表示：</span></span><br><span class="line"><span class="comment"># - : 普通文件 (d=目录，l=链接)</span></span><br><span class="line"><span class="comment"># rwx : 所有者权限</span></span><br><span class="line"><span class="comment"># r-x : 组权限</span></span><br><span class="line"><span class="comment"># r-- : 其他用户权限</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="修改权限（chmod）"><a href="#修改权限（chmod）" class="headerlink" title="修改权限（chmod）"></a>修改权限（chmod）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 符号模式</span></span><br><span class="line"><span class="built_in">chmod</span> u+x file          <span class="comment"># 给所有者添加执行权限</span></span><br><span class="line"><span class="built_in">chmod</span> g-w file          <span class="comment"># 移除组写权限</span></span><br><span class="line"><span class="built_in">chmod</span> o=r file          <span class="comment"># 设置其他用户只有读权限</span></span><br><span class="line"><span class="built_in">chmod</span> a+x file          <span class="comment"># 给所有人添加执行权限</span></span><br><span class="line"><span class="built_in">chmod</span> u+x,g+rx,o+r file <span class="comment"># 组合设置</span></span><br><span class="line"><span class="built_in">chmod</span> -R u+rwx <span class="built_in">dir</span>      <span class="comment"># 递归设置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数字模式</span></span><br><span class="line"><span class="built_in">chmod</span> 755 file          <span class="comment"># rwxr-xr-x</span></span><br><span class="line"><span class="built_in">chmod</span> 644 file          <span class="comment"># rw-r--r--</span></span><br><span class="line"><span class="built_in">chmod</span> 700 file          <span class="comment"># rwx------</span></span><br><span class="line"><span class="built_in">chmod</span> 4755 file         <span class="comment"># 带 setuid</span></span><br><span class="line"><span class="built_in">chmod</span> 6755 file         <span class="comment"># 带 setuid+setgid</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="修改所有者（chown）"><a href="#修改所有者（chown）" class="headerlink" title="修改所有者（chown）"></a>修改所有者（chown）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改所有者</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> username file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有者和组</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> username:groupname file</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> username:group file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 仅修改组</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chgrp</span> groupname file</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> :groupname file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 递归修改</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R username:group <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="常用权限组合"><a href="#常用权限组合" class="headerlink" title="常用权限组合"></a>常用权限组合</h3><table>
-<thead>
-<tr>
-<th>场景</th>
-<th>权限</th>
-<th>命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>私钥文件</td>
-<td>600</td>
-<td><code>chmod 600 id_rsa</code></td>
-</tr>
-<tr>
-<td>公钥&#x2F;脚本</td>
-<td>644&#x2F;755</td>
-<td><code>chmod 644 file</code></td>
-</tr>
-<tr>
-<td>网站目录</td>
-<td>755&#x2F;644</td>
-<td><code>chmod -R 755 /var/www</code></td>
-</tr>
-<tr>
-<td>上传目录</td>
-<td>777</td>
-<td><code>chmod 777 uploads</code></td>
-</tr>
-<tr>
-<td>家目录</td>
-<td>700</td>
-<td><code>chmod 700 ~</code></td>
-</tr>
-<tr>
-<td>敏感配置</td>
-<td>600</td>
-<td><code>chmod 600 .ssh/config</code></td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h2><h3 id="SUID-Set-UID"><a href="#SUID-Set-UID" class="headerlink" title="SUID (Set UID)"></a>SUID (Set UID)</h3><p>当可执行文件设置了 SUID 位时，用户执行该文件时将以文件所有者的身份运行。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 SUID 文件</span></span><br><span class="line">find / -perm -4000 2&gt;/dev/null</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 SUID</span></span><br><span class="line"><span class="built_in">chmod</span> u+s file</span><br><span class="line"><span class="built_in">chmod</span> 4755 file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除 SUID</span></span><br><span class="line"><span class="built_in">chmod</span> u-s file</span><br><span class="line"><span class="built_in">chmod</span> 0755 file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 常见 SUID 程序</span></span><br><span class="line">/usr/bin/passwd</span><br><span class="line">/usr/bin/sudo</span><br><span class="line">/usr/bin/su</span><br></pre></td></tr></table></figure>
-
-<h3 id="SGID-Set-GID"><a href="#SGID-Set-GID" class="headerlink" title="SGID (Set GID)"></a>SGID (Set GID)</h3><ul>
-<li><strong>对文件</strong>：执行时以文件所属组身份运行</li>
-<li><strong>对目录</strong>：目录中创建的文件继承目录的组</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 SGID 文件</span></span><br><span class="line">find / -perm -2000 2&gt;/dev/null</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 SGID</span></span><br><span class="line"><span class="built_in">chmod</span> g+s file</span><br><span class="line"><span class="built_in">chmod</span> 2755 file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录 SGID（协作目录）</span></span><br><span class="line"><span class="built_in">mkdir</span> /shared</span><br><span class="line"><span class="built_in">chmod</span> 2775 /shared</span><br><span class="line"><span class="comment"># 在此目录创建的文件自动继承 shared 组</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Sticky-Bit-粘滞位"><a href="#Sticky-Bit-粘滞位" class="headerlink" title="Sticky Bit (粘滞位)"></a>Sticky Bit (粘滞位)</h3><p>通常用于公共目录，用户只能删除自己创建的文件。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看粘滞位目录</span></span><br><span class="line"><span class="built_in">ls</span> -ld /tmp</span><br><span class="line"><span class="comment"># drwxrwxrwt ... /tmp</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置粘滞位</span></span><br><span class="line"><span class="built_in">chmod</span> +t <span class="built_in">dir</span></span><br><span class="line"><span class="built_in">chmod</span> 1777 <span class="built_in">dir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除粘滞位</span></span><br><span class="line"><span class="built_in">chmod</span> -t <span class="built_in">dir</span></span><br><span class="line"><span class="built_in">chmod</span> 0777 <span class="built_in">dir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 典型应用：/tmp 目录</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="特殊权限速查"><a href="#特殊权限速查" class="headerlink" title="特殊权限速查"></a>特殊权限速查</h3><table>
-<thead>
-<tr>
-<th>权限</th>
-<th>符号</th>
-<th>数字位</th>
-<th>设置命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SUID</td>
-<td>s&#x2F;S</td>
-<td>4</td>
-<td><code>chmod u+s</code> &#x2F; <code>chmod 4xxx</code></td>
-</tr>
-<tr>
-<td>SGID</td>
-<td>s&#x2F;S</td>
-<td>2</td>
-<td><code>chmod g+s</code> &#x2F; <code>chmod 2xxx</code></td>
-</tr>
-<tr>
-<td>Sticky</td>
-<td>t&#x2F;T</td>
-<td>1</td>
-<td><code>chmod +t</code> &#x2F; <code>chmod 1xxx</code></td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>注意：小写 s&#x2F;t 表示有执行权限，大写 S&#x2F;T 表示无执行权限</p>
-</blockquote>
-<hr>
-<h2 id="访问控制列表-ACL"><a href="#访问控制列表-ACL" class="headerlink" title="访问控制列表 ACL"></a>访问控制列表 ACL</h2><p>ACL 提供更细粒度的权限控制，可针对特定用户&#x2F;组设置权限。</p>
-<h3 id="ACL-基本操作"><a href="#ACL-基本操作" class="headerlink" title="ACL 基本操作"></a>ACL 基本操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 ACL</span></span><br><span class="line">getfacl file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置用户 ACL</span></span><br><span class="line">setfacl -m u:username:rw file</span><br><span class="line">setfacl -m u:username:rwx file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置组 ACL</span></span><br><span class="line">setfacl -m g:groupname:rx file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置默认 ACL（目录中新文件继承）</span></span><br><span class="line">setfacl -d -m u:username:rw <span class="built_in">dir</span></span><br><span class="line">setfacl -d -m g:groupname:rx <span class="built_in">dir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除 ACL</span></span><br><span class="line">setfacl -x u:username file</span><br><span class="line">setfacl -b file  <span class="comment"># 删除所有 ACL</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 递归设置</span></span><br><span class="line">setfacl -R -m u:username:rw <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="ACL-权限掩码"><a href="#ACL-权限掩码" class="headerlink" title="ACL 权限掩码"></a>ACL 权限掩码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置掩码（限制最大权限）</span></span><br><span class="line">setfacl -m m::rx file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看有效权限</span></span><br><span class="line">getfacl file | grep mask</span><br></pre></td></tr></table></figure>
-
-<h3 id="ACL-示例"><a href="#ACL-示例" class="headerlink" title="ACL 示例"></a>ACL 示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 项目协作目录</span></span><br><span class="line"><span class="built_in">mkdir</span> /project</span><br><span class="line">setfacl -m g:devteam:rwx /project</span><br><span class="line">setfacl -m u:manager:rwx /project</span><br><span class="line">setfacl -d -m g:devteam:rx /project</span><br><span class="line">setfacl -d -m u:manager:rw /project</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="sudo-权限配置"><a href="#sudo-权限配置" class="headerlink" title="sudo 权限配置"></a>sudo 权限配置</h2><h3 id="sudoers-文件"><a href="#sudoers-文件" class="headerlink" title="sudoers 文件"></a>sudoers 文件</h3><p><code>/etc/sudoers</code> 文件控制 sudo 权限，<strong>必须使用 visudo 编辑</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安全编辑</span></span><br><span class="line"><span class="built_in">sudo</span> visudo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用指定编辑器</span></span><br><span class="line"><span class="built_in">sudo</span> EDITOR=vim visudo</span><br></pre></td></tr></table></figure>
-
-<h3 id="sudoers-语法"><a href="#sudoers-语法" class="headerlink" title="sudoers 语法"></a>sudoers 语法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式</span></span><br><span class="line">用户名/组 主机=(目标用户) 命令</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许用户执行所有命令</span></span><br><span class="line">username ALL=(ALL) ALL</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许组执行所有命令</span></span><br><span class="line">%groupname ALL=(ALL) ALL</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许执行特定命令</span></span><br><span class="line">username ALL=(ALL) /usr/bin/systemctl, /usr/bin/journalctl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许无密码执行</span></span><br><span class="line">username ALL=(ALL) NOPASSWD: ALL</span><br><span class="line">username ALL=(ALL) NOPASSWD: /usr/bin/apt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制命令参数</span></span><br><span class="line">username ALL=(ALL) /usr/bin/docker <span class="built_in">exec</span> mycontainer *</span><br><span class="line"></span><br><span class="line"><span class="comment"># 别名定义</span></span><br><span class="line">User_Alias ADMINS = alice, bob</span><br><span class="line">Cmnd_Alias SERVICES = /usr/bin/systemctl, /usr/bin/service</span><br><span class="line">ADMINS ALL=(ALL) SERVICES</span><br></pre></td></tr></table></figure>
-
-<h3 id="常用配置示例"><a href="#常用配置示例" class="headerlink" title="常用配置示例"></a>常用配置示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/sudoers.d/deploy</span></span><br><span class="line"><span class="comment"># 部署用户可重启服务</span></span><br><span class="line">deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx</span><br><span class="line">deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开发团队可查看所有日志</span></span><br><span class="line">%developers ALL=(ALL) NOPASSWD: /usr/bin/journalctl</span><br><span class="line"></span><br><span class="line"><span class="comment"># DBA 可操作数据库</span></span><br><span class="line">%dba ALL=(ALL) NOPASSWD: /usr/bin/mysql, /usr/bin/mysqldump</span><br></pre></td></tr></table></figure>
-
-<h3 id="sudo-使用"><a href="#sudo-使用" class="headerlink" title="sudo 使用"></a>sudo 使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以 root 执行</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 以指定用户执行</span></span><br><span class="line"><span class="built_in">sudo</span> -u username <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取 root shell</span></span><br><span class="line"><span class="built_in">sudo</span> -i</span><br><span class="line"><span class="built_in">sudo</span> -s</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 sudo 权限</span></span><br><span class="line"><span class="built_in">sudo</span> -l</span><br><span class="line"><span class="built_in">sudo</span> -l -U username</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清除凭证缓存</span></span><br><span class="line"><span class="built_in">sudo</span> -k</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="用户环境配置"><a href="#用户环境配置" class="headerlink" title="用户环境配置"></a>用户环境配置</h2><h3 id="家目录结构"><a href="#家目录结构" class="headerlink" title="家目录结构"></a>家目录结构</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/home/username/</span><br><span class="line">├── .bashrc          <span class="comment"># bash 配置</span></span><br><span class="line">├── .bash_profile    <span class="comment"># bash 登录配置</span></span><br><span class="line">├── .profile         <span class="comment"># 通用登录配置</span></span><br><span class="line">├── .zshrc          <span class="comment"># zsh 配置</span></span><br><span class="line">├── .ssh/           <span class="comment"># SSH 密钥和配置</span></span><br><span class="line">├── .config/        <span class="comment"># 应用程序配置</span></span><br><span class="line">└── ...</span><br></pre></td></tr></table></figure>
-
-<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 系统级环境变量</span></span><br><span class="line">/etc/profile</span><br><span class="line">/etc/environment</span><br><span class="line">/etc/profile.d/*.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户级环境变量</span></span><br><span class="line">~/.bashrc</span><br><span class="line">~/.bash_profile</span><br><span class="line">~/.profile</span><br><span class="line">~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看环境变量</span></span><br><span class="line"><span class="built_in">env</span></span><br><span class="line"><span class="built_in">printenv</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="用户限制"><a href="#用户限制" class="headerlink" title="用户限制"></a>用户限制</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/security/limits.conf</span></span><br><span class="line"><span class="comment"># 格式：域名 类型 项目 值</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制最大进程数</span></span><br><span class="line">username hard <span class="built_in">nproc</span> 100</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制最大打开文件数</span></span><br><span class="line">username hard nofile 65535</span><br><span class="line">username soft nofile 65535</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制内存使用</span></span><br><span class="line">username hard as 2097152</span><br><span class="line"></span><br><span class="line"><span class="comment"># 组限制</span></span><br><span class="line">@developers hard <span class="built_in">nproc</span> 200</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前限制</span></span><br><span class="line"><span class="built_in">ulimit</span> -a</span><br><span class="line"><span class="built_in">ulimit</span> -n  <span class="comment"># 文件描述符</span></span><br><span class="line"><span class="built_in">ulimit</span> -u  <span class="comment"># 进程数</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="PAM-配置"><a href="#PAM-配置" class="headerlink" title="PAM 配置"></a>PAM 配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># PAM 配置文件位置</span></span><br><span class="line">/etc/pam.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 常用模块</span></span><br><span class="line">pam_limits.so      <span class="comment"># 资源限制</span></span><br><span class="line">pam_access.so      <span class="comment"># 访问控制</span></span><br><span class="line">pam_time.so        <span class="comment"># 时间限制</span></span><br><span class="line">pam_listfile.so    <span class="comment"># 列表检查</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/pam.d/sshd 示例</span></span><br><span class="line">auth required pam_nologin.so</span><br><span class="line">auth required pam_env.so</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="实用命令速查"><a href="#实用命令速查" class="headerlink" title="实用命令速查"></a>实用命令速查</h2><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>id</code></td>
-<td>显示用户&#x2F;组 ID</td>
-</tr>
-<tr>
-<td><code>whoami</code></td>
-<td>显示当前用户名</td>
-</tr>
-<tr>
-<td><code>users</code></td>
-<td>显示登录用户</td>
-</tr>
-<tr>
-<td><code>w</code></td>
-<td>显示登录用户及活动</td>
-</tr>
-<tr>
-<td><code>last</code></td>
-<td>显示最后登录记录</td>
-</tr>
-<tr>
-<td><code>lastlog</code></td>
-<td>显示所有用户最后登录</td>
-</tr>
-<tr>
-<td><code>passwd</code></td>
-<td>修改密码</td>
-</tr>
-<tr>
-<td><code>chage</code></td>
-<td>修改密码过期策略</td>
-</tr>
-<tr>
-<td><code>sudo</code></td>
-<td>以其他用户执行命令</td>
-</tr>
-<tr>
-<td><code>su</code></td>
-<td>切换用户</td>
-</tr>
-<tr>
-<td><code>useradd/userdel/usermod</code></td>
-<td>用户管理</td>
-</tr>
-<tr>
-<td><code>groupadd/groupdel/groupmod</code></td>
-<td>组管理</td>
-</tr>
-<tr>
-<td><code>chmod</code></td>
-<td>修改权限</td>
-</tr>
-<tr>
-<td><code>chown</code></td>
-<td>修改所有者</td>
-</tr>
-<tr>
-<td><code>chgrp</code></td>
-<td>修改组</td>
-</tr>
-<tr>
-<td><code>getfacl/setfacl</code></td>
-<td>ACL 管理</td>
-</tr>
-<tr>
-<td><code>visudo</code></td>
-<td>编辑 sudoers</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="安全建议"><a href="#安全建议" class="headerlink" title="安全建议"></a>安全建议</h2><ol>
-<li><strong>最小权限原则</strong>：只授予必要的权限</li>
-<li><strong>定期审计</strong>：检查 SUID&#x2F;SGID 文件和高权限账户</li>
-<li><strong>禁用 root 登录</strong>：使用 sudo 代替直接 root 登录</li>
-<li><strong>密码策略</strong>：设置合理的密码复杂度要求和过期策略</li>
-<li><strong>监控日志</strong>：关注 <code>/var/log/auth.log</code> 或 <code>/var/log/secure</code></li>
-<li><strong>及时清理</strong>：删除不需要的用户账户</li>
-</ol>
-
+          <p>Linux 用户、组与权限管理使用方法总结</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/linux_user/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1461,7 +1171,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">254k</span>
+    <span title="站点总字数">253k</span>
   </span>
 </div>
 <div class="busuanzi-count">
