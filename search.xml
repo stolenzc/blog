@@ -1063,51 +1063,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Git gitignore 技术细节</title>
-    <url>/gitignore/</url>
-    <content><![CDATA[<p>官方原文地址 <a href="https://git-scm.com/docs/gitignore/zh_HANS-CN">gitignore</a></p>
-<p>gitignore 指定了 Git 追踪时应忽略的文件。 已被 Git 追踪的文件不受影响</p>
-<p>git 会读取多个配置，并综合起来决定最后需要忽略哪些文件。</p>
-<h2 id="git-ignore-优先级"><a href="#git-ignore-优先级" class="headerlink" title="git ignore 优先级"></a>git ignore 优先级</h2><p>读取的 ignore 按照以下优先级进行应用</p>
-<ul>
-<li>从支持的命令行中读取应用（如 git ls-files 和 git read-tree 命令，支持选项指定使用的 gitignore 模式）</li>
-<li>查找文件所在目录的 .gitignore 及其父文件夹的.gitignore 文件，直到工作目录的根目录</li>
-<li>从 $GIT_DIR&#x2F;info&#x2F;exclude 中读取（$GIT_DIR 通常为工作目录根目录的 .git 目录）</li>
-<li>从 git 从配置文件中 core.excludesFile 配置读取到的值（该配置的位置或查找规则按照 git 配置文件的查找规则和优先级进行确定）</li>
-</ul>
-<h2 id="gitignore-匹配规则"><a href="#gitignore-匹配规则" class="headerlink" title=".gitignore 匹配规则"></a>.gitignore 匹配规则</h2><ul>
-<li>空号不进行任何匹配，因此可以用添加空行来对规则进行分块</li>
-<li>以 # 开头的一行为注释( # 必须是第一个字符，前面不能有空格）</li>
-<li>除非进行转义，否则行末的空格会被忽略</li>
-<li>! 表示否定，用于将前面已经添加忽略的文件或目录重新纳入 git 版本跟踪。但如果文件父目录已经被排除跟踪了，! 无法生效。如果文件名中存在以 ! 开头的文件需要在gitignore中被排除，需要使用 ! 来对 ! 进行转义</li>
-<li>&#x2F; 用作目录的分隔符，当 &#x2F; 出现在开头或中间（或都存在）时，只能从 .gitignore 文件所在目录开始匹配，如果 &#x2F; 出现在末尾，则只能匹配目录</li>
-<li><ul>
-<li>匹配除 &#x2F; 外的任意多个任意字符，? 匹配除 &#x2F; 外的一个字符</li>
-</ul>
-</li>
-<li><strong>&#x2F; 表示在所有目录中匹配，&#x2F;</strong> 表示匹配目录下的所有文件， &#x2F;**&#x2F; 表示匹配零个或多个目录</li>
-</ul>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>示例文件结构</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── .gitignore</span><br><span class="line">├── a</span><br><span class="line">│   ├── a</span><br><span class="line">│   │   ├── a.txt</span><br><span class="line">│   │   └── b</span><br><span class="line">│   ├── a.txt</span><br><span class="line">│   ├── a1.txt</span><br><span class="line">│   └── b</span><br><span class="line">├── a.txt</span><br><span class="line">└── b</span><br><span class="line">    ├── a</span><br><span class="line">    │   ├── a</span><br><span class="line">    │   │   ├── a.txt</span><br><span class="line">    │   │   └── b</span><br><span class="line">    │   ├── a.txt</span><br><span class="line">    │   ├── a1.txt</span><br><span class="line">    │   └── b</span><br><span class="line">    └── b</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>a/</code> - 忽略 a&#x2F; 下的所有文件和 b&#x2F;a 下的所有文件（满足&#x2F;在末尾，匹配任意位置的a目录下的所有文件）</li>
-<li><code>/a</code> - 忽略 a&#x2F; 下的所有文件，b 目录中文件不受影响（满足 &#x2F; 在开头，会从根目录进行完全匹配）</li>
-<li><code>a/b</code> - 忽略掉了 a&#x2F;b 文件，b&#x2F;a&#x2F;b 文件不受影响（满足 &#x2F; 在中间，会从根目录进行完全匹配）</li>
-<li><code>*.txt</code> - 忽略掉了所有的 a.txt 和 a1.txt 文件（满足 * 可以匹配多个字符）</li>
-<li><code>?.txt</code> - 忽略掉了所有的 a.txt 文件， a1.txt 文件不受影响（满足？可以匹配一个字符）</li>
-<li><code>*/b</code> - 忽略掉了a&#x2F;b 和 b&#x2F;b 文件（满足*匹配了除&#x2F;外的任意个字符）</li>
-<li><code>**/b</code> - 忽略掉了 b 目录、a&#x2F;b 文件及 a&#x2F;a&#x2F;b 文件（满足**）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>技术工具</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GitHub使用方法</title>
     <url>/github_use/</url>
     <content><![CDATA[<h2 id="GitHub加速访问"><a href="#GitHub加速访问" class="headerlink" title="GitHub加速访问"></a>GitHub加速访问</h2><h3 id="1-修改host文件达到加速目的"><a href="#1-修改host文件达到加速目的" class="headerlink" title="1. 修改host文件达到加速目的"></a>1. 修改host文件达到加速目的</h3><p>以下方法被写在一个python文件中，可以直接使用<a href="https://github.com/stolenzc/github_faster">github faster</a>执行python文件进行修改刷新</p>
@@ -1184,6 +1139,51 @@
       <tags>
         <tag>操作使用</tag>
         <tag>开发软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git gitignore 技术细节</title>
+    <url>/gitignore/</url>
+    <content><![CDATA[<p>官方原文地址 <a href="https://git-scm.com/docs/gitignore/zh_HANS-CN">gitignore</a></p>
+<p>gitignore 指定了 Git 追踪时应忽略的文件。 已被 Git 追踪的文件不受影响</p>
+<p>git 会读取多个配置，并综合起来决定最后需要忽略哪些文件。</p>
+<h2 id="git-ignore-优先级"><a href="#git-ignore-优先级" class="headerlink" title="git ignore 优先级"></a>git ignore 优先级</h2><p>读取的 ignore 按照以下优先级进行应用</p>
+<ul>
+<li>从支持的命令行中读取应用（如 git ls-files 和 git read-tree 命令，支持选项指定使用的 gitignore 模式）</li>
+<li>查找文件所在目录的 .gitignore 及其父文件夹的.gitignore 文件，直到工作目录的根目录</li>
+<li>从 $GIT_DIR&#x2F;info&#x2F;exclude 中读取（$GIT_DIR 通常为工作目录根目录的 .git 目录）</li>
+<li>从 git 从配置文件中 core.excludesFile 配置读取到的值（该配置的位置或查找规则按照 git 配置文件的查找规则和优先级进行确定）</li>
+</ul>
+<h2 id="gitignore-匹配规则"><a href="#gitignore-匹配规则" class="headerlink" title=".gitignore 匹配规则"></a>.gitignore 匹配规则</h2><ul>
+<li>空号不进行任何匹配，因此可以用添加空行来对规则进行分块</li>
+<li>以 # 开头的一行为注释( # 必须是第一个字符，前面不能有空格）</li>
+<li>除非进行转义，否则行末的空格会被忽略</li>
+<li>! 表示否定，用于将前面已经添加忽略的文件或目录重新纳入 git 版本跟踪。但如果文件父目录已经被排除跟踪了，! 无法生效。如果文件名中存在以 ! 开头的文件需要在gitignore中被排除，需要使用 ! 来对 ! 进行转义</li>
+<li>&#x2F; 用作目录的分隔符，当 &#x2F; 出现在开头或中间（或都存在）时，只能从 .gitignore 文件所在目录开始匹配，如果 &#x2F; 出现在末尾，则只能匹配目录</li>
+<li><ul>
+<li>匹配除 &#x2F; 外的任意多个任意字符，? 匹配除 &#x2F; 外的一个字符</li>
+</ul>
+</li>
+<li><strong>&#x2F; 表示在所有目录中匹配，&#x2F;</strong> 表示匹配目录下的所有文件， &#x2F;**&#x2F; 表示匹配零个或多个目录</li>
+</ul>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>示例文件结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── .gitignore</span><br><span class="line">├── a</span><br><span class="line">│   ├── a</span><br><span class="line">│   │   ├── a.txt</span><br><span class="line">│   │   └── b</span><br><span class="line">│   ├── a.txt</span><br><span class="line">│   ├── a1.txt</span><br><span class="line">│   └── b</span><br><span class="line">├── a.txt</span><br><span class="line">└── b</span><br><span class="line">    ├── a</span><br><span class="line">    │   ├── a</span><br><span class="line">    │   │   ├── a.txt</span><br><span class="line">    │   │   └── b</span><br><span class="line">    │   ├── a.txt</span><br><span class="line">    │   ├── a1.txt</span><br><span class="line">    │   └── b</span><br><span class="line">    └── b</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>a/</code> - 忽略 a&#x2F; 下的所有文件和 b&#x2F;a 下的所有文件（满足&#x2F;在末尾，匹配任意位置的a目录下的所有文件）</li>
+<li><code>/a</code> - 忽略 a&#x2F; 下的所有文件，b 目录中文件不受影响（满足 &#x2F; 在开头，会从根目录进行完全匹配）</li>
+<li><code>a/b</code> - 忽略掉了 a&#x2F;b 文件，b&#x2F;a&#x2F;b 文件不受影响（满足 &#x2F; 在中间，会从根目录进行完全匹配）</li>
+<li><code>*.txt</code> - 忽略掉了所有的 a.txt 和 a1.txt 文件（满足 * 可以匹配多个字符）</li>
+<li><code>?.txt</code> - 忽略掉了所有的 a.txt 文件， a1.txt 文件不受影响（满足？可以匹配一个字符）</li>
+<li><code>*/b</code> - 忽略掉了a&#x2F;b 和 b&#x2F;b 文件（满足*匹配了除&#x2F;外的任意个字符）</li>
+<li><code>**/b</code> - 忽略掉了 b 目录、a&#x2F;b 文件及 a&#x2F;a&#x2F;b 文件（满足**）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术工具</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -1881,6 +1881,260 @@
       </tags>
   </entry>
   <entry>
+    <title>MacOS使用</title>
+    <url>/mac/</url>
+    <content><![CDATA[<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><table>
+<thead>
+<tr>
+<th>按键</th>
+<th>行为</th>
+<th>按键</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>command + shift + 3</code></td>
+<td>系统截屏，并保存到桌面</td>
+<td><code>command + control + a</code></td>
+<td>微信截屏（需要设置）</td>
+</tr>
+<tr>
+<td><code>command + fn + F3</code></td>
+<td>显示桌面</td>
+<td><code>command + tab</code></td>
+<td>快速切换应用</td>
+</tr>
+<tr>
+<td><code>command + tab + alt + enter</code></td>
+<td>打开最小化的应用</td>
+<td><code>command + M</code></td>
+<td>最小化应用</td>
+</tr>
+<tr>
+<td><code>command + left</code></td>
+<td>回到开始，Home</td>
+<td><code>command + right</code></td>
+<td>到最后，End</td>
+</tr>
+<tr>
+<td><code>option + left</code></td>
+<td>到上一个单词开头</td>
+<td><code>option + right</code></td>
+<td>到下一个单词结尾</td>
+</tr>
+<tr>
+<td><code>control + left</code></td>
+<td>到上一个桌面</td>
+<td><code>control + right</code></td>
+<td>到下一个桌面</td>
+</tr>
+<tr>
+<td><code>fn + left</code></td>
+<td>跳到文章开头</td>
+<td><code>fn + right</code></td>
+<td>跳到文章结尾</td>
+</tr>
+<tr>
+<td><code>fn + up</code></td>
+<td>到上一页</td>
+<td><code>fn + down</code></td>
+<td>到下一页</td>
+</tr>
+<tr>
+<td><code>command + s</code></td>
+<td>保存文件</td>
+<td><code>command + c</code></td>
+<td>复制</td>
+</tr>
+<tr>
+<td><code>command + v</code></td>
+<td>粘贴</td>
+<td><code>command + x</code></td>
+<td>剪切</td>
+</tr>
+<tr>
+<td><code>command + space</code></td>
+<td>聚焦搜索，全局搜索软件或文件</td>
+<td><code>control + command + Q</code></td>
+<td>快捷锁屏，和QQ快捷键冲突</td>
+</tr>
+<tr>
+<td><code>control + a</code></td>
+<td>转到行首（命令行下）</td>
+<td><code>control + e</code></td>
+<td>转到行尾（命令行下）</td>
+</tr>
+<tr>
+<td><code>command + Q</code></td>
+<td>关闭活动程序</td>
+<td><code>command + W</code></td>
+<td>关闭活动窗口</td>
+</tr>
+</tbody></table>
+<h2 id="触控板"><a href="#触控板" class="headerlink" title="触控板"></a>触控板</h2><table>
+<thead>
+<tr>
+<th>动作</th>
+<th>行为</th>
+<th>动作</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>双指左右滑动</code></td>
+<td>切换页面</td>
+<td><code>双指从右边缘向左滑动</code></td>
+<td>唤出通知中心</td>
+</tr>
+<tr>
+<td><code>三只下划</code></td>
+<td>聚焦当前应用</td>
+<td><code>三指上划</code></td>
+<td>平铺打开的应用</td>
+</tr>
+<tr>
+<td><code>四指内合</code></td>
+<td>调出启动台</td>
+<td><code>四指张开</code></td>
+<td>显示桌面（在非全屏状态下）</td>
+</tr>
+<tr>
+<td><code>三指左右滑动</code></td>
+<td>切换页面</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="Brew命令"><a href="#Brew命令" class="headerlink" title="Brew命令"></a>Brew命令</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>brew ls</code></td>
+<td>查看本地安装的软件</td>
+</tr>
+<tr>
+<td><code>brew search</code></td>
+<td>搜索软件</td>
+</tr>
+<tr>
+<td><code>brew -v</code></td>
+<td>查看brew的版本</td>
+</tr>
+<tr>
+<td><code>brew update</code></td>
+<td>升级brew</td>
+</tr>
+<tr>
+<td><code>brew install 软件名</code></td>
+<td>安装软件</td>
+</tr>
+<tr>
+<td><code>brew remove 软件名</code></td>
+<td>卸载软件</td>
+</tr>
+</tbody></table>
+<p>brew 彻底卸载软件方法</p>
+<ul>
+<li><code>brew tap beeftornado/rmtree</code> - 安装rmtree</li>
+<li><code>brew rmtree 软件名</code> - 删除软件</li>
+<li><code>brew cleanup</code> - 清理缓存</li>
+</ul>
+<h2 id="必备软件"><a href="#必备软件" class="headerlink" title="必备软件"></a>必备软件</h2><h3 id="scroll-reverser"><a href="#scroll-reverser" class="headerlink" title="scroll reverser"></a>scroll reverser</h3><p>解决鼠标滑动方向是反着的问题，下载地址：<a href="https://pilotmoon.com/scrollreverser/">scroll reverser官网</a></p>
+<h3 id="Trojan-X"><a href="#Trojan-X" class="headerlink" title="Trojan X"></a>Trojan X</h3><p>Mac 下科学上网软件，好用方便，下载地址：<a href="https://github.com/JimLee1996/TrojanX/releases">JimLee1996的github</a></p>
+<h3 id="sequel-pro"><a href="#sequel-pro" class="headerlink" title="sequel pro"></a>sequel pro</h3><p>Mac 下免费的MySQL数据库图形化软件，下载地址：<a href="http://www.sequelpro.com/">sequel pro 官网</a></p>
+<h2 id="软件技巧"><a href="#软件技巧" class="headerlink" title="软件技巧"></a>软件技巧</h2><h3 id="添加快捷键输出当前时间"><a href="#添加快捷键输出当前时间" class="headerlink" title="添加快捷键输出当前时间"></a>添加快捷键输出当前时间</h3><ol>
+<li>自动操作 -&gt; 新建文稿 -&gt; 快速操作 -&gt; 实用工具 -&gt; 允许shell脚本 -&gt; 选择（没有输入、位于任何应用程序、用输出内容替换所选文本）</li>
+<li>脚本内容填写 <code>date &quot;+%Y-%m-%d %H:%M:%S&quot;</code></li>
+<li>保存 -&gt; 设置快捷键</li>
+</ol>
+<h3 id="最小化软件和恢复最小化软件"><a href="#最小化软件和恢复最小化软件" class="headerlink" title="最小化软件和恢复最小化软件"></a>最小化软件和恢复最小化软件</h3><p><code>command m</code> - 最小化当前窗口</p>
+<p><code>command option m</code> - 最小化当前软件所有窗口</p>
+<p><code>command Tab</code> 选中软件后松开 <code>Tab</code> 按键，再按 <code>option</code> 按键，松开 <code>command</code> 按键即可恢复最小化软件</p>
+<p><code>command Tab</code> 选中软件后松开 <code>Tab</code> 按键，再按 <code>option</code> 按键后再按 <code>enter</code> 按键即可恢复最小化软件</p>
+<h3 id="Finder-显示隐藏文件"><a href="#Finder-显示隐藏文件" class="headerlink" title="Finder 显示隐藏文件"></a>Finder 显示隐藏文件</h3><p><code>command + shift + .</code> - 显示所有文件</p>
+<h2 id="使用问题"><a href="#使用问题" class="headerlink" title="使用问题"></a>使用问题</h2><h3 id="鼠标滚轮方向反着"><a href="#鼠标滚轮方向反着" class="headerlink" title="鼠标滚轮方向反着"></a>鼠标滚轮方向反着</h3><p>将<code>系统偏好设置&gt;鼠标&gt;滚动方向</code>前面的勾去掉即可，该操作会影响触控板的划动方向，替代方式可以使用scroll reverser软件</p>
+<h3 id="Finder进入根目录"><a href="#Finder进入根目录" class="headerlink" title="Finder进入根目录"></a>Finder进入根目录</h3><p>进入<code>访达&gt;偏好设置&gt;边栏</code>中，将硬盘前面选择为勾即可</p>
+<h3 id="安装HomeBrew"><a href="#安装HomeBrew" class="headerlink" title="安装HomeBrew"></a>安装HomeBrew</h3><p>本命令中使用到的镜像源全部为国内的镜像源</p>
+<p>命令行输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/bin/zsh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>参考文档：<a href="https://www.zhihu.com/question/35928898?sort=created">mac安装homebrew失败怎么办？</a></p>
+<h3 id="关闭浏览器快速前进和后退"><a href="#关闭浏览器快速前进和后退" class="headerlink" title="关闭浏览器快速前进和后退"></a>关闭浏览器快速前进和后退</h3><p>Edge：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.microsoft.edgemac AppleEnableSwipeNavigateWithScrolls -bool <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>Chrome</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="安装mysqlclient遇到lssl等错误"><a href="#安装mysqlclient遇到lssl等错误" class="headerlink" title="安装mysqlclient遇到lssl等错误"></a>安装mysqlclient遇到lssl等错误</h3><p><code>env LDFLAGS=&quot;-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib&quot; pip --no-cache install mysqlclient==1.4.6 -i https://mirrors.aliyun.com/pypi/simple</code></p>
+<p>参考自：<a href="https://www.jianshu.com/p/de943de33896">Macos安装报错 ld: library not found for -lssl</a></p>
+<h3 id="mac下网络冲突的问题"><a href="#mac下网络冲突的问题" class="headerlink" title="mac下网络冲突的问题"></a>mac下网络冲突的问题</h3><p>在配置文件中添加:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;default-address-pools&quot;:</span> [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">&quot;base&quot;:</span> <span class="string">&quot;172.31.0.0/16&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;size&quot;:</span> <span class="number">24</span></span><br><span class="line">  &#125;</span><br><span class="line">]<span class="string">,</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="禁止-DS-Store文件生成"><a href="#禁止-DS-Store文件生成" class="headerlink" title="禁止.DS_Store文件生成"></a>禁止.DS_Store文件生成</h3><p>禁止生成</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE</span><br></pre></td></tr></table></figure>
+
+<p>恢复生成</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults delete com.apple.desktopservices DSDontWriteNetworkStores</span><br></pre></td></tr></table></figure>
+
+<h3 id="隐藏和显示以点开头的文件"><a href="#隐藏和显示以点开头的文件" class="headerlink" title="隐藏和显示以点开头的文件"></a>隐藏和显示以点开头的文件</h3><p>隐藏</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.Finder AppleShowAllFiles YES</span><br><span class="line">killall Finder</span><br></pre></td></tr></table></figure>
+
+<p>显示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.Finder AppleShowAllFiles NO</span><br><span class="line">killall Finder</span><br></pre></td></tr></table></figure>
+
+<h3 id="xcode命令报错"><a href="#xcode命令报错" class="headerlink" title="xcode命令报错"></a>xcode命令报错</h3><p>现象：报错<code>gyp: No Xcode or CLT version detected!</code></p>
+<p>解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> -rf $(xcode-select -print-path)</span><br><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
+
+<p>在执行<code>xcode-select --install</code>时，可能会报错：不能安装该软件，因为当前无法从软件更新服务器获得。</p>
+<p>解决：在<a href="https://developer.apple.com/download/more/">apple develop</a>搜索 command line tools下载安装即可</p>
+<h3 id="mac不支持小于4位的密码"><a href="#mac不支持小于4位的密码" class="headerlink" title="mac不支持小于4位的密码"></a>mac不支持小于4位的密码</h3><p><code>pwpolicy -clearaccountpolicies</code> - 关闭密码安全检查</p>
+<p><code>passwd</code> - 命令行修改密码</p>
+<h3 id="长按组合键不能持续输入"><a href="#长按组合键不能持续输入" class="headerlink" title="长按组合键不能持续输入"></a>长按组合键不能持续输入</h3><p>使用一下命令后然后重启即可</p>
+<p><code>defaults write NSGlobalDomain ApplePressAndHoldEnabled -boolean false</code></p>
+<p><code>defaults write -g ApplePressAndHoldEnabled -bool false</code></p>
+<h3 id="ssl-证书问题"><a href="#ssl-证书问题" class="headerlink" title="ssl 证书问题"></a>ssl 证书问题</h3><p>开发过程中突然遇到如下问题：</p>
+<p><code>certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)&#39;)]</code></p>
+<p>解决办法：</p>
+<ul>
+<li>finder 中搜索 <code>Install Certificates.command</code></li>
+<li>用终端运行，安装完成即可</li>
+</ul>
+<h2 id="terminal命令"><a href="#terminal命令" class="headerlink" title="terminal命令"></a>terminal命令</h2><p><code>traceroute 192.168.1.1</code> - 查看网络请求的具体访问过的地址</p>
+<p><code>lsof -i tcp:3306</code> - 查看端口占用</p>
+<p><code>lsof -i -n -P</code> - 查看所有端口占用</p>
+<p><code>open -n /Applications/WeChat.app/Contents/MacOS/WeChat</code> - 实现双开微信</p>
+<p><code>brew cask install qlcolorcode</code> - quicklook支持预览代码</p>
+<p><code>brew cask install qlmarkdown</code> - quicklook支持预览markdown</p>
+<h2 id="右键添加-vscode-打开文件夹或文件"><a href="#右键添加-vscode-打开文件夹或文件" class="headerlink" title="右键添加 vscode 打开文件夹或文件"></a>右键添加 vscode 打开文件夹或文件</h2><ol>
+<li><p>打开 <code>自动操作.app</code></p>
+</li>
+<li><p><code>command + N</code> 新建文稿，类型选择快速操作</p>
+</li>
+<li><p>分别选择 <code>实用工具</code> -&gt; <code>运行shell脚本</code> -&gt; <code>工作流程收到当前文件或文件夹 位于 Finder.app</code> -&gt; <code>传递输入作为自变量</code></p>
+</li>
+<li><p>贴入代码</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    open -a <span class="string">&quot;Visual Studio Code&quot;</span> <span class="string">&quot;<span class="variable">$f</span>&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>command + s</code> 保存为 <code>用 VSCode 打开</code></p>
+</li>
+</ol>
+<p>编辑该脚本:</p>
+<p><code>文件</code> - <code>打开</code> - <code>~/资源库 / Services / 用 VSCode 打开.workflow</code></p>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+        <tag>MacOS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 用户、组与权限管理</title>
     <url>/linux_user/</url>
     <content><![CDATA[<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户相关文件"><a href="#用户相关文件" class="headerlink" title="用户相关文件"></a>用户相关文件</h3><table>
@@ -2283,260 +2537,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MacOS使用</title>
-    <url>/mac/</url>
-    <content><![CDATA[<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><table>
-<thead>
-<tr>
-<th>按键</th>
-<th>行为</th>
-<th>按键</th>
-<th>行为</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>command + shift + 3</code></td>
-<td>系统截屏，并保存到桌面</td>
-<td><code>command + control + a</code></td>
-<td>微信截屏（需要设置）</td>
-</tr>
-<tr>
-<td><code>command + fn + F3</code></td>
-<td>显示桌面</td>
-<td><code>command + tab</code></td>
-<td>快速切换应用</td>
-</tr>
-<tr>
-<td><code>command + tab + alt + enter</code></td>
-<td>打开最小化的应用</td>
-<td><code>command + M</code></td>
-<td>最小化应用</td>
-</tr>
-<tr>
-<td><code>command + left</code></td>
-<td>回到开始，Home</td>
-<td><code>command + right</code></td>
-<td>到最后，End</td>
-</tr>
-<tr>
-<td><code>option + left</code></td>
-<td>到上一个单词开头</td>
-<td><code>option + right</code></td>
-<td>到下一个单词结尾</td>
-</tr>
-<tr>
-<td><code>control + left</code></td>
-<td>到上一个桌面</td>
-<td><code>control + right</code></td>
-<td>到下一个桌面</td>
-</tr>
-<tr>
-<td><code>fn + left</code></td>
-<td>跳到文章开头</td>
-<td><code>fn + right</code></td>
-<td>跳到文章结尾</td>
-</tr>
-<tr>
-<td><code>fn + up</code></td>
-<td>到上一页</td>
-<td><code>fn + down</code></td>
-<td>到下一页</td>
-</tr>
-<tr>
-<td><code>command + s</code></td>
-<td>保存文件</td>
-<td><code>command + c</code></td>
-<td>复制</td>
-</tr>
-<tr>
-<td><code>command + v</code></td>
-<td>粘贴</td>
-<td><code>command + x</code></td>
-<td>剪切</td>
-</tr>
-<tr>
-<td><code>command + space</code></td>
-<td>聚焦搜索，全局搜索软件或文件</td>
-<td><code>control + command + Q</code></td>
-<td>快捷锁屏，和QQ快捷键冲突</td>
-</tr>
-<tr>
-<td><code>control + a</code></td>
-<td>转到行首（命令行下）</td>
-<td><code>control + e</code></td>
-<td>转到行尾（命令行下）</td>
-</tr>
-<tr>
-<td><code>command + Q</code></td>
-<td>关闭活动程序</td>
-<td><code>command + W</code></td>
-<td>关闭活动窗口</td>
-</tr>
-</tbody></table>
-<h2 id="触控板"><a href="#触控板" class="headerlink" title="触控板"></a>触控板</h2><table>
-<thead>
-<tr>
-<th>动作</th>
-<th>行为</th>
-<th>动作</th>
-<th>行为</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>双指左右滑动</code></td>
-<td>切换页面</td>
-<td><code>双指从右边缘向左滑动</code></td>
-<td>唤出通知中心</td>
-</tr>
-<tr>
-<td><code>三只下划</code></td>
-<td>聚焦当前应用</td>
-<td><code>三指上划</code></td>
-<td>平铺打开的应用</td>
-</tr>
-<tr>
-<td><code>四指内合</code></td>
-<td>调出启动台</td>
-<td><code>四指张开</code></td>
-<td>显示桌面（在非全屏状态下）</td>
-</tr>
-<tr>
-<td><code>三指左右滑动</code></td>
-<td>切换页面</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h2 id="Brew命令"><a href="#Brew命令" class="headerlink" title="Brew命令"></a>Brew命令</h2><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>brew ls</code></td>
-<td>查看本地安装的软件</td>
-</tr>
-<tr>
-<td><code>brew search</code></td>
-<td>搜索软件</td>
-</tr>
-<tr>
-<td><code>brew -v</code></td>
-<td>查看brew的版本</td>
-</tr>
-<tr>
-<td><code>brew update</code></td>
-<td>升级brew</td>
-</tr>
-<tr>
-<td><code>brew install 软件名</code></td>
-<td>安装软件</td>
-</tr>
-<tr>
-<td><code>brew remove 软件名</code></td>
-<td>卸载软件</td>
-</tr>
-</tbody></table>
-<p>brew 彻底卸载软件方法</p>
-<ul>
-<li><code>brew tap beeftornado/rmtree</code> - 安装rmtree</li>
-<li><code>brew rmtree 软件名</code> - 删除软件</li>
-<li><code>brew cleanup</code> - 清理缓存</li>
-</ul>
-<h2 id="必备软件"><a href="#必备软件" class="headerlink" title="必备软件"></a>必备软件</h2><h3 id="scroll-reverser"><a href="#scroll-reverser" class="headerlink" title="scroll reverser"></a>scroll reverser</h3><p>解决鼠标滑动方向是反着的问题，下载地址：<a href="https://pilotmoon.com/scrollreverser/">scroll reverser官网</a></p>
-<h3 id="Trojan-X"><a href="#Trojan-X" class="headerlink" title="Trojan X"></a>Trojan X</h3><p>Mac 下科学上网软件，好用方便，下载地址：<a href="https://github.com/JimLee1996/TrojanX/releases">JimLee1996的github</a></p>
-<h3 id="sequel-pro"><a href="#sequel-pro" class="headerlink" title="sequel pro"></a>sequel pro</h3><p>Mac 下免费的MySQL数据库图形化软件，下载地址：<a href="http://www.sequelpro.com/">sequel pro 官网</a></p>
-<h2 id="软件技巧"><a href="#软件技巧" class="headerlink" title="软件技巧"></a>软件技巧</h2><h3 id="添加快捷键输出当前时间"><a href="#添加快捷键输出当前时间" class="headerlink" title="添加快捷键输出当前时间"></a>添加快捷键输出当前时间</h3><ol>
-<li>自动操作 -&gt; 新建文稿 -&gt; 快速操作 -&gt; 实用工具 -&gt; 允许shell脚本 -&gt; 选择（没有输入、位于任何应用程序、用输出内容替换所选文本）</li>
-<li>脚本内容填写 <code>date &quot;+%Y-%m-%d %H:%M:%S&quot;</code></li>
-<li>保存 -&gt; 设置快捷键</li>
-</ol>
-<h3 id="最小化软件和恢复最小化软件"><a href="#最小化软件和恢复最小化软件" class="headerlink" title="最小化软件和恢复最小化软件"></a>最小化软件和恢复最小化软件</h3><p><code>command m</code> - 最小化当前窗口</p>
-<p><code>command option m</code> - 最小化当前软件所有窗口</p>
-<p><code>command Tab</code> 选中软件后松开 <code>Tab</code> 按键，再按 <code>option</code> 按键，松开 <code>command</code> 按键即可恢复最小化软件</p>
-<p><code>command Tab</code> 选中软件后松开 <code>Tab</code> 按键，再按 <code>option</code> 按键后再按 <code>enter</code> 按键即可恢复最小化软件</p>
-<h3 id="Finder-显示隐藏文件"><a href="#Finder-显示隐藏文件" class="headerlink" title="Finder 显示隐藏文件"></a>Finder 显示隐藏文件</h3><p><code>command + shift + .</code> - 显示所有文件</p>
-<h2 id="使用问题"><a href="#使用问题" class="headerlink" title="使用问题"></a>使用问题</h2><h3 id="鼠标滚轮方向反着"><a href="#鼠标滚轮方向反着" class="headerlink" title="鼠标滚轮方向反着"></a>鼠标滚轮方向反着</h3><p>将<code>系统偏好设置&gt;鼠标&gt;滚动方向</code>前面的勾去掉即可，该操作会影响触控板的划动方向，替代方式可以使用scroll reverser软件</p>
-<h3 id="Finder进入根目录"><a href="#Finder进入根目录" class="headerlink" title="Finder进入根目录"></a>Finder进入根目录</h3><p>进入<code>访达&gt;偏好设置&gt;边栏</code>中，将硬盘前面选择为勾即可</p>
-<h3 id="安装HomeBrew"><a href="#安装HomeBrew" class="headerlink" title="安装HomeBrew"></a>安装HomeBrew</h3><p>本命令中使用到的镜像源全部为国内的镜像源</p>
-<p>命令行输入：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/bin/zsh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>参考文档：<a href="https://www.zhihu.com/question/35928898?sort=created">mac安装homebrew失败怎么办？</a></p>
-<h3 id="关闭浏览器快速前进和后退"><a href="#关闭浏览器快速前进和后退" class="headerlink" title="关闭浏览器快速前进和后退"></a>关闭浏览器快速前进和后退</h3><p>Edge：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.microsoft.edgemac AppleEnableSwipeNavigateWithScrolls -bool <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<p>Chrome</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="安装mysqlclient遇到lssl等错误"><a href="#安装mysqlclient遇到lssl等错误" class="headerlink" title="安装mysqlclient遇到lssl等错误"></a>安装mysqlclient遇到lssl等错误</h3><p><code>env LDFLAGS=&quot;-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib&quot; pip --no-cache install mysqlclient==1.4.6 -i https://mirrors.aliyun.com/pypi/simple</code></p>
-<p>参考自：<a href="https://www.jianshu.com/p/de943de33896">Macos安装报错 ld: library not found for -lssl</a></p>
-<h3 id="mac下网络冲突的问题"><a href="#mac下网络冲突的问题" class="headerlink" title="mac下网络冲突的问题"></a>mac下网络冲突的问题</h3><p>在配置文件中添加:</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;default-address-pools&quot;:</span> [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">&quot;base&quot;:</span> <span class="string">&quot;172.31.0.0/16&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;size&quot;:</span> <span class="number">24</span></span><br><span class="line">  &#125;</span><br><span class="line">]<span class="string">,</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="禁止-DS-Store文件生成"><a href="#禁止-DS-Store文件生成" class="headerlink" title="禁止.DS_Store文件生成"></a>禁止.DS_Store文件生成</h3><p>禁止生成</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE</span><br></pre></td></tr></table></figure>
-
-<p>恢复生成</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults delete com.apple.desktopservices DSDontWriteNetworkStores</span><br></pre></td></tr></table></figure>
-
-<h3 id="隐藏和显示以点开头的文件"><a href="#隐藏和显示以点开头的文件" class="headerlink" title="隐藏和显示以点开头的文件"></a>隐藏和显示以点开头的文件</h3><p>隐藏</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.Finder AppleShowAllFiles YES</span><br><span class="line">killall Finder</span><br></pre></td></tr></table></figure>
-
-<p>显示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">defaults write com.apple.Finder AppleShowAllFiles NO</span><br><span class="line">killall Finder</span><br></pre></td></tr></table></figure>
-
-<h3 id="xcode命令报错"><a href="#xcode命令报错" class="headerlink" title="xcode命令报错"></a>xcode命令报错</h3><p>现象：报错<code>gyp: No Xcode or CLT version detected!</code></p>
-<p>解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> -rf $(xcode-select -print-path)</span><br><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
-
-<p>在执行<code>xcode-select --install</code>时，可能会报错：不能安装该软件，因为当前无法从软件更新服务器获得。</p>
-<p>解决：在<a href="https://developer.apple.com/download/more/">apple develop</a>搜索 command line tools下载安装即可</p>
-<h3 id="mac不支持小于4位的密码"><a href="#mac不支持小于4位的密码" class="headerlink" title="mac不支持小于4位的密码"></a>mac不支持小于4位的密码</h3><p><code>pwpolicy -clearaccountpolicies</code> - 关闭密码安全检查</p>
-<p><code>passwd</code> - 命令行修改密码</p>
-<h3 id="长按组合键不能持续输入"><a href="#长按组合键不能持续输入" class="headerlink" title="长按组合键不能持续输入"></a>长按组合键不能持续输入</h3><p>使用一下命令后然后重启即可</p>
-<p><code>defaults write NSGlobalDomain ApplePressAndHoldEnabled -boolean false</code></p>
-<p><code>defaults write -g ApplePressAndHoldEnabled -bool false</code></p>
-<h3 id="ssl-证书问题"><a href="#ssl-证书问题" class="headerlink" title="ssl 证书问题"></a>ssl 证书问题</h3><p>开发过程中突然遇到如下问题：</p>
-<p><code>certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)&#39;)]</code></p>
-<p>解决办法：</p>
-<ul>
-<li>finder 中搜索 <code>Install Certificates.command</code></li>
-<li>用终端运行，安装完成即可</li>
-</ul>
-<h2 id="terminal命令"><a href="#terminal命令" class="headerlink" title="terminal命令"></a>terminal命令</h2><p><code>traceroute 192.168.1.1</code> - 查看网络请求的具体访问过的地址</p>
-<p><code>lsof -i tcp:3306</code> - 查看端口占用</p>
-<p><code>lsof -i -n -P</code> - 查看所有端口占用</p>
-<p><code>open -n /Applications/WeChat.app/Contents/MacOS/WeChat</code> - 实现双开微信</p>
-<p><code>brew cask install qlcolorcode</code> - quicklook支持预览代码</p>
-<p><code>brew cask install qlmarkdown</code> - quicklook支持预览markdown</p>
-<h2 id="右键添加-vscode-打开文件夹或文件"><a href="#右键添加-vscode-打开文件夹或文件" class="headerlink" title="右键添加 vscode 打开文件夹或文件"></a>右键添加 vscode 打开文件夹或文件</h2><ol>
-<li><p>打开 <code>自动操作.app</code></p>
-</li>
-<li><p><code>command + N</code> 新建文稿，类型选择快速操作</p>
-</li>
-<li><p>分别选择 <code>实用工具</code> -&gt; <code>运行shell脚本</code> -&gt; <code>工作流程收到当前文件或文件夹 位于 Finder.app</code> -&gt; <code>传递输入作为自变量</code></p>
-</li>
-<li><p>贴入代码</p>
- <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    open -a <span class="string">&quot;Visual Studio Code&quot;</span> <span class="string">&quot;<span class="variable">$f</span>&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>command + s</code> 保存为 <code>用 VSCode 打开</code></p>
-</li>
-</ol>
-<p>编辑该脚本:</p>
-<p><code>文件</code> - <code>打开</code> - <code>~/资源库 / Services / 用 VSCode 打开.workflow</code></p>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-        <tag>MacOS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>macOS 上 hidutil 上重映射按键</title>
     <url>/macos_hidutil/</url>
     <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>最近换了一款 Logi K75m 键盘，但在使用过程中遇到一个痛点：Caps Lock（大写锁定键）反应迟钝。为了防止误触，macOS 对该键设计了一个长按保护机制。在 MacBook 自带键盘上表现尚可，但在一些第三方键盘上，即使是正常的快速点按也经常被识别为“无效”或误触发“长按锁定”。</p>
@@ -2670,28 +2670,6 @@
       </tags>
   </entry>
   <entry>
-    <title>科学上网法</title>
-    <url>/myfile_gwf/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="d4552d90723c5c839286f522fffc49345b62cb53cf311de76a06ef5c21319077">865f2e72ea08bcc61a1dc5a840263739e4b8a7174c6ec8dcd8b4bca836307b927f265efa887d63a78e458c7974aded6133c69536f6993dc9aa938024c3247e64030b8fc153fbf26102871fdfe728197b2ac337bba95ee9cf6e1906a58922ce27f483368dd956ab060cc69a27259babdc3388d33c64ced78c0958a45dee31465f8245652036c1ca15b161542235ee3217d856da162343b1967169bc3cb38d33ea541e745721f3f228edf6887776b85b5f1dbc2982772fd63ab65f5bfca5390fe849dd2a9e22a6f9e330c57819872b7b6b5ad228708261c55e3c9c80d8abec397ff0b0187523d8cb432977ed4fa40734c77f406e3aa732400909f3f5c7cd3d1ee79df153b588e701c3e520642e2cb1b3f947f0b5b418900fd82bc84a8348ebbb932bb2ef0f5cf6e57cfcf4c051b83d414f99af7b2499c99d5456942878a3222a7dca98bf95a16ca5ecdae81a6a9127c9e88c3ffb8bd1de03af834f15fd8c9542fcfdd2b28653bf44242003abcb8ce89d0b032cde766df5c71e7bf74d013f9e627a5086734795174eed45fb84d17295d56f44870a23f2a934e60fd029c21aa3e9913b4c994bc532855af7fc134bd57826b22e0b6bcf234e8347838d7d1560db569b63842f9c38677e5984c09846be0732d8e2869e389021a5f85c48a25bd6ade96ca4c7fe3047c57dc86d26282569b806686d8c5524a3bfce722b4b7cdf0697db92ba86d33e5cdd81afb184adec7719a0819946dff03abc2df95ff1e8d29464e5332373f549a9a1d07f4ab6b94c0500c475366c559315169acb92f344a7c41b2bb8d472763c1aa6d32df44fa87ba5c80898525ec00b39562298e121ce2eb96483086c76c46871461f02b04e05d8bce9ffb88cfd08c4058890b40fb40016ba1a60be318e0f24b0934e8243babcfb57afaf5a4acc610bad54372bc244ee75c1b3825b00bd7e4584a28cdc1580c95068b3769f1ac2616d1312cd9220e3df389127daf8cfad2b8203b4ad712fac519c8b7b3922ec2c772d44f5443433c2031d7842362948c888e75e2327722758a6f4985ae1260e850ebc0c883d0231a15c5695825ac2aa6a268e3de941109e6c0759bb0c7a79b326bc56626fd7ee8842cbfd7e6bd14ee7cdb372f9e4edee3bd7a7eb3653129c80275e1a9e4c70fcb0f35e036b427abc57aec21b55f969f94bb144447b84bac386b8f9d14a983d37e5e9d5f5de62fe826a7224a88359bd3446d5993ec9e72773375ccfd86c7089e1fc304004a16708b02e6ef90253b24c7f5b3e00816f0bc1a0ad7db5f952dd401901ead6f9c7659d194595e5e5428f222607af544bf656b16328157102138c787db69d87286e17193391d78c13a1c9a68612216e3aedd34f88dba8d5d81148019a8777088ced5fb27cd30d5822bdbd148e26b39221dd37dfcc30a57cdcdb33d58069fe0758b39e5f5ffc344319a7f961857653a61343b56c0c9fe9ac01ef0856b7067b425a70e72e3da7a80e9c24ea40af6778d72fc0f41f91aae35eb1425f7335266002b8525b77bcdea9af62e1bb522082a3c585d5b8282c5f4f626e4b338646956b621494c9dc978f2cdb5deae1a1f71bfc5eea5da253497b6f7dfee5f79b62ef4411281bb5d4ed8912161c511df835f1fc8e7d02bcb41ebc3a2a72f47fda447111d8e8d6573e35f99968d479ae2d68d2c8b955485e32294ce0b04a4b13382140cfca447850ee618a04610873da26f4c025e6991488e71cabf05c40967a1f9d7d90256b050120bde0e1eefed194c87b01c5e5ba3ee50b4fc990e92ef60a325e4368124cad59425fdd59531cf6d0e711f5e4f2f84e302a2e5a11a8cca02bc2234d618f0eae3f9af53c44fd55756bb31f2c531644ee290953f8f07540189956ddbe5b548894ecac6eaa2da13a8d7d2d4362b40123afcf854a400324963eab6d2916c979f7a3e34292ce85ca54ebd86e6e15d44ecdf128c813f7a928a320161b0d2ab4fa51f7d99f18baa2044c4fcd26d683cdaa3963d1410f30fd56f363a686b8362362651f2214aac50cb36d4405a4e01875c8883f62a962308b602f99af09b068aab4fc4a1dce4241542b917a99f76da85a3b52a1f92c5d58733fb197ba10c991f6e29d2537690c7ee858d49a17f7e8faa57d96445eed753fd1fc70c44690ca6adac6984699ee6146ed3b2f3e487db5a931daf0552728eebf968eccdfd81352abbde92a5710eb9ca62a353cc180a6fc6c0f62569c183e2dcce8031b2d151eec3e25be898ce571075a94b4bb200b1dcf5a33bb42bd947bf86e082941dae3a9ebd927427a3bd06f86dc5b1b42df0e3762c91ba9a6e18ffa770fffae21e35b4cf1bc2ad9b30b50139480f8ab5e9fb42d2033b90dd8e76e67081e7ceecc1dbe4d1c0424d3a64367d67e627c755e52e61dbc6f86f1c66355b2fb0365980b542533edbcb01974db4aae4cf17e2066522a5126654ea192b2f1070c612651fb3c5e0ba7ecd97373cc2ed627b955b08d8f12bdbfc7d632cd86a691b661236a735d72bc23169d4e90cb5903bd4f26ac1704b6388ec51a2d0f489782ac65dede1a8ae24aea935151f02bc90c9e4fdc869d026ab111e99fe48c0136f6c322b303500e1bbe53c8db1a8e8ebf58952ed4be632c9d3b829686c35a9943be633f39bd08568d70a0c253f55f69ff082d31b107f9b9dbdf74ef88788d7154292b8e1f558d72e577b7da23bc76590a4f02e1fe7b1f71fad04a70bd3a31f414f7555330d6aa300a328d1a3c25cc2931a8fca0c902dac5d486be496519737c98b92d8f1d7271143f0280cde03012105f310391b19ffbc8d2f1d165ab2b32238abaa01889a3cbff1142b465fb81955d5b42343d89fd7783fbab422b2f7d54b7c0a76d42dc0555077feb236df37079c0a4a869532445fb7bb597918be940c28657edf7c0564be953178817940b9548f4e8f9caf5e41c5ebb1957e396ed34416df71015c1d4c605a44eae8a4c0392034962fe04d8db36b66806cc16dbf7d40fda570dd842a0386d3972ade5091f2eca0f485fc92b9d1c652ef9098f878e07fb7060ad3663c3810f3ef418b8f28dcd5c30841bde3efec526f1c3820137646f041934fc064a52eaf53cad5da6bf8fd0298e23983fbd753a822649371147b47a9e6df1026af1d91937b7f0b0a12fd933e8329e2e0ac4e49998f1725dc3a01d8a0d18b7f9d7272b7090508cda764ef07a16942af65618fd1a0c96667824334be9a070e3d5390c641209d37b5d1b1602a756ace6c422f49106b05829779d3bd75b1b806a96187b26f0e4a42931c28aced3ff77a5e77776d9f6e8cc1cdc43f5e5954ae0e7d38594ef8d60e5da904b83261580517153d2b36430b77631eea64d5820bad067b73000eaf17147b65cf47ccde3b7debd03ebb85b68a55307007c242648138584e8a1f71674baff41609f0018091ce319c75c7d91c510f6291e6a30918e3fa6a19884b0e001404139a871db3410757fca15a71d08cdf4a8ccc7705e1c69985189545f9cb4ad1f57f9da523ec9d7b6a68eb90129c6b2c7e9ec69dfd88d740eeab6bc8be9575e3f5aa7d3113b03a1fcd5aa877c481bbbba29dfe9fe203d5f2327394751a694730c83048a992794e204eb1c26b2ef350bfb849610cb902fefb337107192578780c50615726b036594a242253153dc9b39c37cd04f067c9478e0e0b68f8d696aa0e90ebcd854d7bc7487a65809480a305f2669b66c73e453eda13cf9fdb92ecb8fe8226f958742f9d315a6a40c6fb63be7ada02993bb9f52f8aea7af8b98a617ccfaf14dc55f9e213f1f4e79ba3fe531b1e3bb53571a19f9feaa6ae0342746c795eccf47b3b73fec5c0767b24d8b8b06ff88c5b8d6ca44bc286d9d63c766853384097fef4dcbc3f7a652a6c9eb55c8613a145d5d82fd3641ae34ea50875489976b06f00714813db150d8e287968e377bfd6a17b4d5496360c97d61f70987f73c136bac30a8e4bfc56a82b9f8378c50f113d95e92367fc7ccbeac49d0590aa67fb94d0ff8d75279b4a815b38724669a3e5c8d2eb745aa654dc496a880e338cc4bd3881aadadec14e35d9370b8100d7c820386da39537d08a8d8463f23255363a728091dde367423cb09f920aa1c8cacdbd86ed27c0148c27cea5e0bd2e7bdfdd70561adf32385b10065fb21538913d72d1c82ba227923f71fca3c683404d4b44ecfea5dfb5104acea361e85808cb2cd7eb9c89fdc1c7b56c6793beb7152e70cc19c633eb68f8016cd7b07b260e82e4f9ce89fd734b4921fb084cf0be8f5b58745ed4e1fc5f5318b5d42f84a1c51eb5cfd42f8989683c086ce2085a7bcff4f59e150e2faf9d41809abb3f7bf0cef622f9c884658caee5cd179788bb4487afdf7ee0a7293138a97657c8f97f19c3ae02a4776bab22ddc3e5e5f49f4e449e18605e22df6bffbcbf26ab183751135eb51</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好, 这里需要密码.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>加密手册</category>
-      </categories>
-      <tags>
-        <tag>加密手册</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>占卜</title>
     <url>/myfile_divination/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
@@ -2714,10 +2692,32 @@
       </tags>
   </entry>
   <entry>
+    <title>科学上网法</title>
+    <url>/myfile_gwf/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="d4552d90723c5c839286f522fffc49345b62cb53cf311de76a06ef5c21319077">865f2e72ea08bcc61a1dc5a840263739e4b8a7174c6ec8dcd8b4bca836307b927f265efa887d63a78e458c7974aded6133c69536f6993dc9aa938024c3247e64030b8fc153fbf26102871fdfe728197b2ac337bba95ee9cf6e1906a58922ce27f483368dd956ab060cc69a27259babdc3388d33c64ced78c0958a45dee31465f8245652036c1ca15b161542235ee3217d856da162343b1967169bc3cb38d33ea541e745721f3f228edf6887776b85b5f1dbc2982772fd63ab65f5bfca5390fe849dd2a9e22a6f9e330c57819872b7b6b5ad228708261c55e3c9c80d8abec397ff0b0187523d8cb432977ed4fa40734c77f406e3aa732400909f3f5c7cd3d1ee79df153b588e701c3e520642e2cb1b3f947f0b5b418900fd82bc84a8348ebbb932bb2ef0f5cf6e57cfcf4c051b83d414f99af7b2499c99d5456942878a3222a7dca98bf95a16ca5ecdae81a6a9127c9e88c3ffb8bd1de03af834f15fd8c9542fcfdd2b28653bf44242003abcb8ce89d0b032cde766df5c71e7bf74d013f9e627a5086734795174eed45fb84d17295d56f44870a23f2a934e60fd029c21aa3e9913b4c994bc532855af7fc134bd57826b22e0b6bcf234e8347838d7d1560db569b63842f9c38677e5984c09846be0732d8e2869e389021a5f85c48a25bd6ade96ca4c7fe3047c57dc86d26282569b806686d8c5524a3bfce722b4b7cdf0697db92ba86d33e5cdd81afb184adec7719a0819946dff03abc2df95ff1e8d29464e5332373f549a9a1d07f4ab6b94c0500c475366c559315169acb92f344a7c41b2bb8d472763c1aa6d32df44fa87ba5c80898525ec00b39562298e121ce2eb96483086c76c46871461f02b04e05d8bce9ffb88cfd08c4058890b40fb40016ba1a60be318e0f24b0934e8243babcfb57afaf5a4acc610bad54372bc244ee75c1b3825b00bd7e4584a28cdc1580c95068b3769f1ac2616d1312cd9220e3df389127daf8cfad2b8203b4ad712fac519c8b7b3922ec2c772d44f5443433c2031d7842362948c888e75e2327722758a6f4985ae1260e850ebc0c883d0231a15c5695825ac2aa6a268e3de941109e6c0759bb0c7a79b326bc56626fd7ee8842cbfd7e6bd14ee7cdb372f9e4edee3bd7a7eb3653129c80275e1a9e4c70fcb0f35e036b427abc57aec21b55f969f94bb144447b84bac386b8f9d14a983d37e5e9d5f5de62fe826a7224a88359bd3446d5993ec9e72773375ccfd86c7089e1fc304004a16708b02e6ef90253b24c7f5b3e00816f0bc1a0ad7db5f952dd401901ead6f9c7659d194595e5e5428f222607af544bf656b16328157102138c787db69d87286e17193391d78c13a1c9a68612216e3aedd34f88dba8d5d81148019a8777088ced5fb27cd30d5822bdbd148e26b39221dd37dfcc30a57cdcdb33d58069fe0758b39e5f5ffc344319a7f961857653a61343b56c0c9fe9ac01ef0856b7067b425a70e72e3da7a80e9c24ea40af6778d72fc0f41f91aae35eb1425f7335266002b8525b77bcdea9af62e1bb522082a3c585d5b8282c5f4f626e4b338646956b621494c9dc978f2cdb5deae1a1f71bfc5eea5da253497b6f7dfee5f79b62ef4411281bb5d4ed8912161c511df835f1fc8e7d02bcb41ebc3a2a72f47fda447111d8e8d6573e35f99968d479ae2d68d2c8b955485e32294ce0b04a4b13382140cfca447850ee618a04610873da26f4c025e6991488e71cabf05c40967a1f9d7d90256b050120bde0e1eefed194c87b01c5e5ba3ee50b4fc990e92ef60a325e4368124cad59425fdd59531cf6d0e711f5e4f2f84e302a2e5a11a8cca02bc2234d618f0eae3f9af53c44fd55756bb31f2c531644ee290953f8f07540189956ddbe5b548894ecac6eaa2da13a8d7d2d4362b40123afcf854a400324963eab6d2916c979f7a3e34292ce85ca54ebd86e6e15d44ecdf128c813f7a928a320161b0d2ab4fa51f7d99f18baa2044c4fcd26d683cdaa3963d1410f30fd56f363a686b8362362651f2214aac50cb36d4405a4e01875c8883f62a962308b602f99af09b068aab4fc4a1dce4241542b917a99f76da85a3b52a1f92c5d58733fb197ba10c991f6e29d2537690c7ee858d49a17f7e8faa57d96445eed753fd1fc70c44690ca6adac6984699ee6146ed3b2f3e487db5a931daf0552728eebf968eccdfd81352abbde92a5710eb9ca62a353cc180a6fc6c0f62569c183e2dcce8031b2d151eec3e25be898ce571075a94b4bb200b1dcf5a33bb42bd947bf86e082941dae3a9ebd927427a3bd06f86dc5b1b42df0e3762c91ba9a6e18ffa770fffae21e35b4cf1bc2ad9b30b50139480f8ab5e9fb42d2033b90dd8e76e67081e7ceecc1dbe4d1c0424d3a64367d67e627c755e52e61dbc6f86f1c66355b2fb0365980b542533edbcb01974db4aae4cf17e2066522a5126654ea192b2f1070c612651fb3c5e0ba7ecd97373cc2ed627b955b08d8f12bdbfc7d632cd86a691b661236a735d72bc23169d4e90cb5903bd4f26ac1704b6388ec51a2d0f489782ac65dede1a8ae24aea935151f02bc90c9e4fdc869d026ab111e99fe48c0136f6c322b303500e1bbe53c8db1a8e8ebf58952ed4be632c9d3b829686c35a9943be633f39bd08568d70a0c253f55f69ff082d31b107f9b9dbdf74ef88788d7154292b8e1f558d72e577b7da23bc76590a4f02e1fe7b1f71fad04a70bd3a31f414f7555330d6aa300a328d1a3c25cc2931a8fca0c902dac5d486be496519737c98b92d8f1d7271143f0280cde03012105f310391b19ffbc8d2f1d165ab2b32238abaa01889a3cbff1142b465fb81955d5b42343d89fd7783fbab422b2f7d54b7c0a76d42dc0555077feb236df37079c0a4a869532445fb7bb597918be940c28657edf7c0564be953178817940b9548f4e8f9caf5e41c5ebb1957e396ed34416df71015c1d4c605a44eae8a4c0392034962fe04d8db36b66806cc16dbf7d40fda570dd842a0386d3972ade5091f2eca0f485fc92b9d1c652ef9098f878e07fb7060ad3663c3810f3ef418b8f28dcd5c30841bde3efec526f1c3820137646f041934fc064a52eaf53cad5da6bf8fd0298e23983fbd753a822649371147b47a9e6df1026af1d91937b7f0b0a12fd933e8329e2e0ac4e49998f1725dc3a01d8a0d18b7f9d7272b7090508cda764ef07a16942af65618fd1a0c96667824334be9a070e3d5390c641209d37b5d1b1602a756ace6c422f49106b05829779d3bd75b1b806a96187b26f0e4a42931c28aced3ff77a5e77776d9f6e8cc1cdc43f5e5954ae0e7d38594ef8d60e5da904b83261580517153d2b36430b77631eea64d5820bad067b73000eaf17147b65cf47ccde3b7debd03ebb85b68a55307007c242648138584e8a1f71674baff41609f0018091ce319c75c7d91c510f6291e6a30918e3fa6a19884b0e001404139a871db3410757fca15a71d08cdf4a8ccc7705e1c69985189545f9cb4ad1f57f9da523ec9d7b6a68eb90129c6b2c7e9ec69dfd88d740eeab6bc8be9575e3f5aa7d3113b03a1fcd5aa877c481bbbba29dfe9fe203d5f2327394751a694730c83048a992794e204eb1c26b2ef350bfb849610cb902fefb337107192578780c50615726b036594a242253153dc9b39c37cd04f067c9478e0e0b68f8d696aa0e90ebcd854d7bc7487a65809480a305f2669b66c73e453eda13cf9fdb92ecb8fe8226f958742f9d315a6a40c6fb63be7ada02993bb9f52f8aea7af8b98a617ccfaf14dc55f9e213f1f4e79ba3fe531b1e3bb53571a19f9feaa6ae0342746c795eccf47b3b73fec5c0767b24d8b8b06ff88c5b8d6ca44bc286d9d63c766853384097fef4dcbc3f7a652a6c9eb55c8613a145d5d82fd3641ae34ea50875489976b06f00714813db150d8e287968e377bfd6a17b4d5496360c97d61f70987f73c136bac30a8e4bfc56a82b9f8378c50f113d95e92367fc7ccbeac49d0590aa67fb94d0ff8d75279b4a815b38724669a3e5c8d2eb745aa654dc496a880e338cc4bd3881aadadec14e35d9370b8100d7c820386da39537d08a8d8463f23255363a728091dde367423cb09f920aa1c8cacdbd86ed27c0148c27cea5e0bd2e7bdfdd70561adf32385b10065fb21538913d72d1c82ba227923f71fca3c683404d4b44ecfea5dfb5104acea361e85808cb2cd7eb9c89fdc1c7b56c6793beb7152e70cc19c633eb68f8016cd7b07b260e82e4f9ce89fd734b4921fb084cf0be8f5b58745ed4e1fc5f5318b5d42f84a1c51eb5cfd42f8989683c086ce2085a7bcff4f59e150e2faf9d41809abb3f7bf0cef622f9c884658caee5cd179788bb4487afdf7ee0a7293138a97657c8f97f19c3ae02a4776bab22ddc3e5e5f49f4e449e18605e22df6bffbcbf26ab183751135eb51</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好, 这里需要密码.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>加密手册</category>
+      </categories>
+      <tags>
+        <tag>加密手册</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>个人文件Pass</title>
     <url>/myfile_pass/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="4c816ab4d90cff177d33ae654af072290e5586a7d05b680476414c474acce3dc">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c94337810ac37d1fd66b12045036b569b666a8c9105d7e590c9bea7310e1e4b850c0df47b196f3d142088dd525c4258637568074b5059a55f1433a4625c99c62c38570cf988167f53d666f45f3c3faeb1d52ba8a86a8de47e96414c5a408bcf67f1c4a763697b9191ce0f20671fd5a12533c59b39cfb1b52490eeb8abc8087880299bf8cdd618f4dfabbc7a81b0a78ccf0a41d80695103c24fe50fa5d2983232ab2d9eb6926776db39adc9ed7380ed6ec70848a5a0495d2fcae49e91cc3374dde233b81fa273a34af3a3c12626530a96fd4387866846906135a51e0cd12670bd8ff0e9a744be03ef5ac0a1a0361aa1869212834741645f88e919ba30514b31f1b41a0f63eab7fc2ba0933f3b4b2a3505bd841c9b6021186a1f6c92e5ba364e746a45c347e828c84210b809d08847402c84347fc0828816b0d1500a1e50d8ae3a609b052052e5ba0be756eed6c293cc66e9358e04b1f60b6f36cfaa181768d646142a1b93275fe3ad2fd16e137ee4753b05b1422adb7182ef420ae603dc005c9690e1f8e84556f182476546a94e2e15605dd39b779b31f147b7b2943a4a01626d99168fd9ccc386a575a6f73c54595aef3d84f208248808125b8eebeef4a7788f96b3662af5677c66e6906297816ac8ae85a69ee9f9dff900e705919a28620bd156c39ef7e5d10c4497767422cd2b6f4b63e4a7d2aa54219d30f0025bf6098e645ce0adff6f5d66e272bf73bb448e6a071bcd5b02e8e87ba626c31d86e223c7ab9beb12a519a56e0129f7585f883db76d8c10b5bda38e5e888da6ba0fdcbf4f5cbb44ab1cf467ce96ee1d5dd04f08867a74af542a8528bd892aa124a201b08b42e07adcaddf26300297c3a6b1cfea1f003ab09d1f5803e2d363812ef8ad5c1279ec20bfe31d6ff26442a0fe528db3ab6f26457399774dd7fb753deb3cd1571fa2bc4a0fd70216ecc12d433b5af4d281615c4987429c37f5cc4ee03ad849f9020ba5fa9b17dd6277e8c2a2af8764cf68f416f0333909ea074862925d0e8c19a74059fc5a3d692e29efcb497e5e90644a0b0306db346f8ea2d20f53dfc3cce62794c0dd153f1110cadd1d6e1fa4cee1dbe6938b8b9be88697ca8d5a07de7404fffcfb4268e018f6aa246c690dce4be1283820147d42a4d4bb35e959726523f71399f35f8b13db92925a53b8984a96fd42a25790508d527e88d392819a57ab8f9bd4a76d824dd6e20e681f848b8a2e9727cfd641e877f861de25ad9fe96ea5c8514e75d956ee3d78c186c6643848dd5c3531b78afadc8e3878fd93e414c9b73f811c69a23242ce501671728f89da270259951775e9e7eebf53987402bb50d110bbec6e6cd6039fbb32cf7e88d1de7019c6143477a8b81bedfdfb169711e2a58c02e7943ba79e87c8fed6b94f4ea15ef4fa024049a816fbd391bc561076440b1c3c4bf7230ebc7d3c6e98065f920dd3504302d2d31cdbc064ed192701158c118fc2b846e61a3a8b94dbb17f11803d26c4306eda94ae599eec1fa4f6d661f8f21a3281351e1f5aff066b684817879ffdfb8be3ee3c2def9809ebe33e4ecc6309f88cb60fcc79c85786a9585a542e760563549ec027d121f174f4e5686921c99e9743bf7e082c8f5eeefb6cfa5750610150539e94a00d599b764a3d9ea5f6a87f8f22a78ad2ddd0b7a2e86b710899b8d5ad28141ee4240d253a760cda073e1ce1d7ec4c108330efbc3ee2162ffcbc500585a87f5cd604ec3564a89c054d333a39bae23f9360c1d267cd75eddd0da9c0f713fb5e7fa5d9ab2117c117fafee9ba643d421ca4f3f95132592c094e43b41efd06ea4330e24c82c6e20d5f74c8fb311521c192b65be7c87155bbed4186e16bb61c7c9f126520b9d85bf146681a63e8494e93b187f996761ccf4acf8dc1784b8ed01700e4b95fb4a109b31f06d6ac98e34eb8596007badb509a968b9a6324243ed693711393a20411f5d2e00c53482216f9e3df1d8fccd4d47bc50850421508080d5575211da441f79d1729c8bb6666b65ad2250a528946fcb296738498c84610ece62f16acbbc83de6dfd3fd84a5ab9d76bdd12a3f6e8a6cd9bbef60cd7251cce969bed37a5a2b6bcd693c27ef1268fec7f772c6094624765007bf01aa26dcb5aac9c10e827bc5f0cdf1caa4061102b287850779da636de8b17942d768eef40e4065ea9a7bfa2068340845f996a9c305e70996d8156972c37b8911411e6dde72a23266bcb8c7ec29b1a84fac06b2a768c59d744fb349a22f9382c2109bda5f1540269d60cbe1462bd2003f3cd6139ff63335d1ca5e15a7f767b6e0c8162ead14b15676bca8ec5ebec89fd17d7cd124e52235b47c2bdc3eacdcf1f6f5e6d8baa329ce6ef3a1f21a7b95e9fbc1355e66ec707b400808bae808a264fd13ee6d9646599e49131ed23f7f7504d4bfbf4658ba9ef70de20b1a92923fec00713274083970eb2eaf61587c1f914d2b40f573b74db031b6f938b08f025460af31fe94af2d0c3df3b3e2c5d6f60e189c9d7f114be4bbf4924fc1850a8b299bc1abc611df2c55596460fc2a98d1f50ef7170af0ee173835ae30dc228c4d2606138362e7e01a839f6e0341b1c8c91c96563e0bcf3d7f0704f342460b6bd8f43ebd200c931a8e6e328fe6d8d5e545d007a9b4c4baa4759382033c478508bd2bcff341ab3ff35a149cff0ad7f36472e10359683cf935904aa0480edd0febc1c0e0acd604068fe4d671015de97e65af635a11a2c3f346b95b91c4ee7b58444524ea5241c835b466a1a2670945657d662a2276b722c632b100e20e33291db52e79aaa397d74fb8ee66a3bf22b14e7a8a225ef2710260dade3e3eca269c16ee0a196223d3eb721254f57e7ca3dd206caad3f4acaa3dc718e2a4e7b1cee51262d194d46126326a2e3925ade003815b53d8e2e130a7aa3a9800a751986c104b8ee43edaf769c97e965b1ae54f43b06afde1849c9446fc68fea44f4f74caeca688421758d6cd945885a13518ad1590a9ffa05135b6b3eb5ba63026fd1c1865fe9812ed51b8386779ca1ba6e6d26126d05c5eab866c0a46ffb66e17f0b685fb8840aa6ab170a9382839d7297951c4e16064a9ebf9bfced53927913f084ec8080ef565cebc2415b61962f25059558aedc0f65fed79f59127366af62c417244d544c3e16b7fe1ce64504e5d0fe7f531a49690111ae7667bbb0913beb26ba5b95de1a84cb4d87f028d5e609ae713b921d8b682c03cf8d99b04612284d92a111313c1c1bf5eb1e75b152cce4913f870543e66d61bafaff53a559eafd4cfdf7723e27dfc1f811422c17e40be535aa6df0b380c2a0537f8d22900325b41209b8af8f8039747f042663c073f0b711f61fe2b354aa7f45b536bcb3e4eb443a82fab9ebe5f7705ac2f0de8a9c45a5f767aab0b8ab84f28597faa91ec6273af6ca7bfbc523dcc7a187e93e2c1c384e51331fba2e7f9161a97771f9384eeac4ee02259c24ed4e29ef52c3633a48fc7f2ca0f852dd03d37ae2c25b84127d1bd7fa6d91a4f4b14828446308a9bdd621d03fb149b4ddef72c75b0d8a4416247f20c8bca5345b086b6193322b0f3ffb9c708de32b8d97d2342f100b760a6280b97f71017a50b7463311be2152e705c502248d1aaae7339c77b54fec273bf8455c7b2cc9b2643de022062aeee798cdf9ff1e6163b79ef26e5ef007328ad9fc796c175bde50cda3fedee7f8f732d62fe9ea3226a1b07a488cde5804bdffb6c81a18dce4a333040d05bb4aa93a0a7c78ede6e37934b1fe2ae80480d7e63642d14f3709bb3a9ab56019920845b6f5fe83846db1724c659d2e7faa46fa5d766124fcdf0da801e351d82225e8bf7af065c16b331b48ad668ca85fff76e0f619adce039cbcfec56335b8b2a92aeb8941dcde3fed0ab3e6898b9b364c7d0945ee14d8fa442a9c540cf58f995ee720f20a3d012bc552698deebc6ebc1fdc55705dd72570f9c4d8b5f8c6eb860061e5c7dadd51e6446b747ca4772f9f9a14038d715e08092ba249da944082984efc9536086027153caace486ccdc7573434b40888f2edd1201da9ddfca0aecbc13124464aa862b57679511b089eb4c921881321e7c6c374d2e37ac32285167b3ed08b5583bab8b29adb60cc4e46854e399e12b77a96fc8b5d3eadd24493aee83b2687b3209b2f5b4822a81d72cc6e78b18807dfd19c48251a61e07c867b8e2d8bb3710cb49e144c68f1e4acfa17e7db1a675828d8d40b168728fface2045334ac82cdc226a97738ee16585b15d49423bcf553e524458c559a95b86a62358d0db736a789f672fcf16464f21091e50bb8cefd37c30b8ae4387bdcff9458a8e0e5078bec522c2747ae44fc830f0e720bdd328645476492c92dfcaf7c817298a0de773e4530499b519166e87e80727b3f1003b071b745b05d505c83bbc5dbc303591d0c8a9b28045e058f3b6d8d7d7d1aca45330c2e67f64906fbff83cc4201b24cc178b9db5dbe1e9fc1f05f3437c7729d0b48ba21f3424e88c8f61ac253a0c859f70fd446286a1bf5e86c6a6965ea1d99c666d621f99c026d95898d7c55aa2cf814b5d7325593c291f574cb5419862b41a3c93b099dfd0160694c9d70253e9bf7d17b9e8b2a93107638c7d4e1e169b39bdc716a20ed457aba035e5ca79d79dc64fa17549a39f843698d80836eb59b8a3f5772136f64cbd3e9ded1c7817b3a1f075d80d42450aaeaca1537280d45d1e9e5026eb26b540a705f4b1ee2d33e633ce70747c377a0d185b30906475bf2102ea7168cb0a992a45b6c50fbc84221f9eb4837880f6c200c18fa9fbce8e6dfdb254de570551c62ba193e48ffe9db22f9bdfebf5ecad84940bd703f07e103d3a6fdbaeb3d2738bde331d0021b1d16c48f675aa5927b5b2af3c1f7af2e30e36fa2dad18e48269e4d02d0955a430f3abfe0e55b595fe3472adcc740d70fc5cf6793608d6a74bee0454977c00a51bbcdffb3d68e614c0ad1706f95058c99714d36c59e33ad1e4f6aaea362e3028774a8b1c5f573200d40805eac89f135c3f03099d6b8258710ac23003cd346aa8589d04e3a2261cb593d891c099f2cfadea0fe91d7bfc</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="66af3fb7b6c0880cbaf56141039c3eb87413d6261fc42f09664671c6ce60b21d">5b958215de3474a7467406f9b308a4ea1b68040e000451bd137996c40bccea1dae9279c2570f73b7ad931c3ffa97fa2bbc649caebe4efa89f6cb921adbd2df8f0774a39b5828038fc23490edf0478b35274a397226914ecde181cc1547c09a0c79a078dc49312a061fafe6dfe4226c2fb0057d30e5dec21c353af66948582c3831b7e3d35a9dfbf57607b0d4e544c943680b588cade17235aa27ece64e799431500abd25ddd8b5a8b9d790dbdc53e63c07eef8ac2d54e1eae8bfc481cdb263847ea94164d59129e901259dd91b061f8d04933ebaea8fdb8594f55a93ad1caf3f9c9ba8e794ecb1a642b03853e6c797048a987c2c935d65d71bdb580594439911fa2acb43d1b2d3e5af5277264e2c27fa29589111ef2c4805874467db23678b231a236e30226d47062c6c79b87525ee3377c609e9f11ab4908706885378890750ca7c275f8fb5910c4c6800bb59d3471c5a9a4d473416a05ffb76215d5e080762059731769a2a055fd6c3332b89445b1fadf1d391cc275c1109797f6d9a98bec54fffeb454dd18b897a6ebab1ee686905d01400d668afb82b602ca3bc4f597f4c552554ae74f87902f7edd795f2510888182dd2ed57d995af144c833fb14e75373a2008c13b74575d9aa657ef4e153f0fcc49ccc22bdfd697f63b3241eac62e56db11288b235ece88b46dd89d68d77a47d2e742cff69e69131987a2591cb301ee6509fea62268bb8f540ef5ea72f80a10c230b425bfcecd0281f53d8b3ae89e81075498a69ab47604469e20d4421d3e242dcb136e34a83e10532425e0ceadcef63c8bca0ff389920fa7ac7e489a2d144f5a42af14aae29f82fdbab058a82baeb96274f31cda78cc7e9465119b40ff55359559f21405e6831135009992f25a01f6455358ab76b8ec04101e04004131f4e8568c5c342f78a0f35a9c7a2faf93371ffd5e3511f3569dd1c29dd1b99978fc322495a12bcca204913780a414932e03892a6b232cf15a8778a0bd43d8541f3588d5bf204a2c13d2a678d9b945b34affdc850d944edc6fa31e8693daf9d993f9f5d2449b426cb722e98009276f7dbfe3dc6057dffde77fb44960d5ddcc28a614e65da9112bbc03d651b0859f9b0c62a2105c61b7104d23de2f3d86f680bbf968bad398f5577ccccec177cd3d77d90f5bb7ebe6fd8d518b0bab4ae58487d64e266f139141696dbdcb581ddfa6b346b57cbb815b6b2f0e65ba86c7d210951c3e386351a2fdd9d1913065d2c87474044367196d2d1262517dda9234e139861a9af2609807fae5ad231171d9d7300f46099647de1f97742791c00861f21c4fcb6c6585b3d8c116eeb13f8d98af14d4da14c6b96c107e1b87e783add6bfdc6bd1b10dc17feb4e7244358724f109e2aac5c1196697108ddd64f334f80a46885e25a0c03ee1f4ee77ff97382038d6427e2b0173de508efbe365cadc1b628aeac21b51058ba975fe1507442d340fd80980a0531fd5251d99a83786878d807463afcfd6a31c6d9a38590d1182f39927c93252710bcdb96ef7be504dbd3b423df99b8abbb5493ae660d219cd514622369dbd5a22c8e98c2282685f6875a6e868addef5611ebff20d0800f142fa2ffd468adfa8398972fb3cf5a54db8377217270c6852b16490de77c488d0efeab57814ab9f7884d960ea4bd1e3e86ebc1f00b8dc451c71bfb29f69cf4e4d70d0f8e5bfab6e62b11989f160418077f80198c2f0cf714ed3f36eceb21a500785a1967c6b0b8f0455b86bbcdce32b5e6cf7f9047a1ede7f8fa3a5622f96a272195c842187e0c5253926d4d3af5d377762fd933bad941f3fdc52f03486d0afa2c4160bb0ae75c44e20d1ee2ceeb8dadd045f4f42d713ea295942e7a5e461552d6bb69cbf8f7ee65181210cdb8f37336570371fb3f8ed8cecb608d3b0b1daad9ccdf24cc7a38aa42afc81856325887766c63afe130e8c6a5b06fb34177bc55e9be10f6a34cf969adbfff7b57b0e9647ec5485396854b7e4638949479868023280e0abfd0cdcfa43edbe191c0d5861377b6d6287ce1ab069ef0b89ce750f119041ec0faaad9806ab3ab850d423f9c40882951b2212a4d303917d5e03520064fc62d4f9c77884e5f03d95a324e057de1e4869395d77fdc8fc6da45968a554133989d787be23afeecd43b176ffc36648142cd427a8c45e43bd1e61ab8cdea2bea7873931e5957d493003712701c8b2c37db8d16acfd1ccc0298af940e19e7db5752f6b9616545f924ad14d3d35f938a39724768d910e65e08cc27ce9cb5551bf9bd78ca1510d9edae77d18c45c9528ce233aca83d5ea8be9c3ef69fa17081007b67f322427f8c617215a1bb6bb2ca78f6b68b98016b5831f656d3b002159a60c4fb85802e1996cfdfd7edcc75578d45d70feecfd28cc537fdd76086154ca9505cd3c6d4e0d51af34d7db87048fabbb0c5faef9e2beff3521c8d2000e57f04d10cb81751b3648790859da9d33a4bf7f27a6e649d7e3237ccaa2c94adf9fbfa25f75542a2b2e826c8ff6b0d3d9a61c0122de6cd22e4d4b0c344caeff07a3216ac85544d2c87bf095f8b27013a75857cce6234335341ad5586774618ffd624bcf08282cb7f9d14c639d84f41eb1e17a2c4b9781082b5b0fb6e0962cfe078575bc79cf2ee6cee88ae28b5a2fb46407ff643d779e0feda4de9b6fb78d265d3ebc8060941cb19e3708c5147f5b24887e07d7628afc1384214d3eea168eb9374bed3da08ece3a2910f42bc49abbf5a1a4dd6bdfd77e7ff8ae7365e9e4af0cabc497b9fc66f2309eb8bb36904c50b07420be8a2902a6261e614440dbba62a1a38b5b4ee4f80da6924fdd9221ac20a7971e935dbcfff20cbf81e988ab090776f37cd0edd1a81a109f981b1b552db6162b269e374ec06298f676df9ea637b04adcd41e61246aecea0675b040bb58adbdab6f28c930e6e5f3c59cb00a9953b4162b223b5863b6ba349d7e70b4beb297304b0a24b3891efad4f2ff9b94e43cc2c184d7fc0b9a8a3d45af8f253fe6cafd85080a2015270a1c537b916d41894843f279be994b16dc4bc137cd743c360597f51b2879b5c0a953a4a25f1bfeb2bd062a72b3b6740f023740e3d41a4c46af7c05a80a2a530a7525f8976435b9e2d41d69d23ff74080a11c8c809ea3eff4d3db418b4b9de2ac014d89bb20ac65aabe22b60f2cc3e26f0743a11de25540844863a69dd73e7a36eeb84accc0b7896b85893ba591ceba0e3681b8f3869c74915dfedcb660bf3b0eaa23d3298f45ecf9ba0cc3676c31ae8e9415e42d8b7af328dc12cad30e1c6e10c00a0074f68fa134a5b0eb7f68fd5030eba17f73e0230f1fb2925d7dd67e47fb30bd198b935a913824c1c15da52d7c23dd37f00b5c729a6dcf23da520aee2c2a793eb6bd58357674ad60af4499841ee940e6edd05238c6c62f48426c3855283c0efef36ca303e3af84b0e986ecc4fb412469569f6a6b5b613118bdcfbbda9baf8c4450d1f9e4ec9d1209e2054119e90477567d8b96d2523dc46b9f41c98669d09079b21844a7cb765ca9256ae7981a457ce0db7f9563f3648e51c4680e878e3875cc181731b51375138c0b9469cd673b3bd3b1ea038b8b62b61d8c26637a37c626e3ff5a73206937e0f61afc897c916198efdcb3ce40548140a8974036f4a07bd4f2d454a50bd3cffc176fc5edeb08cf36823a88e948cd6094bd9fb85290009a2e9942890581ae7147a71de8f75c170a9265e1dfffc8172e6cb0982113a08ce36c331922bd94afdef2569f1d6f725117db3e9dc2ea3cd90cee3a4759afe74ea61c39ce6dd566c23fd9eae5e8e7b9739e631d57eb12e9671c7d3cd15569fea2142ca1044bdbee1456bed4184ec7d0913ff025b02a9782849ef6277d50a37c35e8677f1f51b6bc00e8065d15db7f3911058e93b8bfc2958a4b100fcf7d27dde94e0fa8c90de6a2acbffc2b8367d9bd622fa06b44701ff57951cb473e77a1df097d2d98776511ed7944e3d54f626d25b837b02717abfec13c376556cd2e4a208ac23bc5a7d6d37df1203ca35ec45f0774012bef36d0087dfc1e7421b0d10a40d7d6d58205dedcb5030e09e36d074c35bd8899446a7eb1c4fdf388458410002699861b49361817c72e75712aea69e2177f966831c86141ecc8fc28d4807d7630d05e692b3bd630bd4c021bc840dc9c820cc20bed020ce3e30214603ea1ff8053716f404cd5d191ac814a21bc9e78fe5622e8d75d968b36ca6718a3acb9c206d2dbcedcc4b0c0565aacb24fb6d88cac3163e4ad544b95989d90031032752bfa500cd3c4a14145dd8fc7e7cbe1719ad90189638742d03565fd361bf6ddae92a87a0bd4ff5d580d9a372c9238ff74be5549a19648a3f2ef51fc7549eab6ad47d0decace76f3a6c24702f6019b898920ed81930b48d5db3241159f4aca418faaa39b156f491b72c7837679d5d2af75d62d04e2efbcc0bcf604d2fe2a3dfe5375038e656a7da65020f6f437e3b227a4d1ac062da9aee78cf9e0763477416da89cf8489f38912789e6ba965308829e52b4ead52f2b347b976a0e86c15bd858b76d9db28d1e77e57c020c53efbec6f91a488d5aef7263833cfd3690565f18c0d5aeba221f2f3af955ce3ac27739333aa1e68b173082892358dfe666f6031fcdb9935366a9f20fadb272cb3b3e934a5304cd0823a450f287ebaa018eabfbc2b0f11b85fd18fd4b296a45998e9f7283dd3425b1b8706bc70724f16c539ec12bdce2fedee4e8d071106d8cec1fb1f96eb1ad2405255e608e38db4fb38653576b882880eb1c7778b4071e509c140cb7cb863ac22979e392df227a07537708fb32ad81122f3790aa9c15f78c32406090ff840214a7da93f3487920095e256b307ab9feea651ec35459f6ba7f76e256eed0cf0cc271be6aadfe8855a846f7ca71ada62d349e48b431a0c3253d78b1cf41922b2101a9a7fb01bb9e786a9583329c8ebf476a6bad93355b7157b14c739e32771d8b4f1a538addd66c5077092cef2a583059a28793b19778288b800f5b2e376a444cd204716bbd0f7eb117d108e0b633207230000ac6b9f12ff9151688fea8377efacacf77e9ba6e89d898ebf24bc26cc8d4d13ee469eb2c28943235023e0b971e7c09f7f621f925d09ec8f0f52b5fd55bfa23d03faaffe3e2eec445592aed4611ff928b0df70c4be757eebafef113aa590d7cb689b218f6dd0963ad482b44d0923dd940ec22e5c175f90600d1c76112ea28af90b78dc938c8f68aec3f94808650536463</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -2777,289 +2777,6 @@
       </categories>
       <tags>
         <tag>私人文件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL基础</title>
-    <url>/mysql_basic/</url>
-    <content><![CDATA[<h2 id="SQL名词"><a href="#SQL名词" class="headerlink" title="SQL名词"></a>SQL名词</h2><ul>
-<li>DQL（Data Query Language）：数据查询语言，指Select语句，通常会归类到DML中</li>
-<li>DDL（Data Definition Language）：数据定义语言，通常指Create、Drop、Alter等对表操作的语句</li>
-<li>DML（Data Manipulation Language）：数据操作语言，通常指Insert、Delete、Update等对数据操作的语句</li>
-<li>DCL（Data Control Language）：数据控制语言，通常指Grant、Revoke等对数据库权限控制的语句</li>
-</ul>
-<h3 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h3><ol>
-<li>原子性：数据不可再分</li>
-<li>唯一性：所有数据都要和数据表中的键有完全依赖关系</li>
-<li>冗余性：非键属性之间是完全无关的</li>
-</ol>
-<h3 id="数据完整性"><a href="#数据完整性" class="headerlink" title="数据完整性"></a>数据完整性</h3><ol>
-<li><p>实体完整性：每个实体都是独一无二的</p>
-<ul>
-<li>主键（primary key）</li>
-<li>唯一约束</li>
-<li>唯一索引（unique）</li>
-</ul>
-</li>
-<li><p>引用完整性（参照完整性）：关系中不允许引用不存在的实体</p>
-<ul>
-<li>外键（foreign key）</li>
-</ul>
-</li>
-<li><p>域完整性：数据是有效的</p>
-<ul>
-<li>数据类型及长度</li>
-<li>非空约束（not null）</li>
-<li>默认值约束（default）</li>
-<li>检查约束（check）<ul>
-<li>说明：在MySQL数据库中，检查约束并不起作用。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<h3 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a>数据一致性</h3><p>实现原理：事务</p>
-<h2 id="数据库相关的命令"><a href="#数据库相关的命令" class="headerlink" title="数据库相关的命令"></a>数据库相关的命令</h2><h3 id="普通命令"><a href="#普通命令" class="headerlink" title="普通命令"></a>普通命令</h3><ul>
-<li><code>SHOW ENGINES;</code> - 查看数据库支持的数据引擎</li>
-<li><code>begin/start transaction</code> - 开启事务</li>
-<li><code>commit/rollback</code> - 提交&#x2F;回滚</li>
-<li><code>explain sql语句</code> - 查看执行计划</li>
-<li><code>savepoint 保存点名称</code> - 在事务中添加保存点</li>
-<li><code>rollback [work] to [savepoint] 保存点名称</code> - 事务中回滚到保存点</li>
-<li><code>release savepoint 保存点名称</code> - 删除保存点</li>
-</ul>
-<h3 id="变量命令"><a href="#变量命令" class="headerlink" title="变量命令"></a>变量命令</h3><p>注意：变量的查看可以通过<code>show variables like &#39;%变量名%&#39;</code>，也可以通过<code>select @@变量名</code>，非特殊情况不做说明</p>
-<ul>
-<li><code>show global variables;</code> - 查看所有全局变量</li>
-<li><code>show variables;</code> - 查看局部变量</li>
-<li><code>show variables like &#39;%storage_engine%&#39;;</code> - 查看数据库的默认引擎，此处storage_engine不是完整的变量名</li>
-<li><code>show variables like &#39;%datadir%&#39;;</code> - 查看当前数据保存位置</li>
-<li><code>show variables like &quot;innodb_page_size&quot;;</code> - 查看innodb一个数据页的大小</li>
-<li><code>set session autocommit = on/off</code> - 设定事务是否自动开启</li>
-<li><code>select @@tx_isolation;</code> - 查看数据库的事务隔离级别（8.0.3之前版本）</li>
-<li><code>select @@transaction_isolation;</code> - 查看数据库的事务隔离级别（8.0.3之后版本）</li>
-<li><code>set session transaction isolation level 事务隔离名称</code> - 设置事务隔离级别</li>
-</ul>
-<h2 id="MySQL数据引擎"><a href="#MySQL数据引擎" class="headerlink" title="MySQL数据引擎"></a>MySQL数据引擎</h2><p><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">数据结构可视化查看</a></p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>InnoDB</th>
-<th>MRG_MYISAM</th>
-<th>MEMORY</th>
-<th>MyISAM</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>存储限制</td>
-<td>有</td>
-<td>没有</td>
-<td>有</td>
-<td>有</td>
-</tr>
-<tr>
-<td>事务、集群索引、外键</td>
-<td>支持</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>锁机制</td>
-<td>行锁</td>
-<td>表锁</td>
-<td>表锁</td>
-<td>表锁</td>
-</tr>
-<tr>
-<td>B树索引、索引缓存</td>
-<td>支持</td>
-<td>支持</td>
-<td>支持</td>
-<td>支持</td>
-</tr>
-<tr>
-<td>哈希索引</td>
-<td></td>
-<td></td>
-<td>支持</td>
-<td></td>
-</tr>
-<tr>
-<td>全文检索</td>
-<td>支持（5.6+）</td>
-<td></td>
-<td></td>
-<td>支持</td>
-</tr>
-<tr>
-<td>数据缓存</td>
-<td>支持</td>
-<td></td>
-<td>支持</td>
-<td></td>
-</tr>
-<tr>
-<td>数据可压缩</td>
-<td></td>
-<td></td>
-<td></td>
-<td>支持</td>
-</tr>
-<tr>
-<td>内存使用</td>
-<td>高</td>
-<td>低</td>
-<td>中</td>
-<td>低</td>
-</tr>
-<tr>
-<td>存储空间使用</td>
-<td>高</td>
-<td>低</td>
-<td></td>
-<td>低</td>
-</tr>
-<tr>
-<td>批量插入性能</td>
-<td>低</td>
-<td>高</td>
-<td>高</td>
-<td>高</td>
-</tr>
-</tbody></table>
-<p>MySQL从5.5开始默认使用InnoDB，InnoDB也是唯一一个支持<strong>外键、事务、行锁</strong>的数据引擎。</p>
-<h3 id="InnoDB-简介"><a href="#InnoDB-简介" class="headerlink" title="InnoDB 简介"></a>InnoDB 简介</h3><p>支持事务安全表（ACID）</p>
-<ul>
-<li>A（Atomicity）：原子性；事务，要么全成功，要么全失败</li>
-<li>C（Consistency）：一致性；事务前后数据的完整性必须保持一致。</li>
-<li>I（Isolation）：隔离性；多个事务之间相互隔离</li>
-<li>D（Durability）：持久性；持久性是指一个事务一旦被提交，它对数据库中数据的改变就是永久性的</li>
-</ul>
-<p>事务特性的实现</p>
-<ul>
-<li>隔离性：读写锁 + MVCC</li>
-</ul>
-<p>事务隔离级别：</p>
-<ul>
-<li>无事务隔离级别：会出现第一类丢失更新、脏读、不可重复读、第二类丢失更新和幻读</li>
-<li>Read uncommitter（未提交读）：会出现脏读、不可重复读、第二类丢失更新、幻读，解决了第一类丢失更新</li>
-<li>Read Committer（提交读）：会出现不可重复读、第二类丢失更新、幻读，解决了脏读和第一类丢失更新</li>
-<li>Repeatable Read（可重复读）：会出现幻读，解决了脏读、不可重复读和第二类丢失更新，MySQL默认的级别，InnoDB引擎下该级别也解决了幻读</li>
-<li>Serializable（串行化）：最安全，速度最慢，所有问题都解决了</li>
-</ul>
-<p>备注：</p>
-<ul>
-<li>第一类丢失更新：撤销一个事务的时候，把其他事务已提交的更新覆盖了</li>
-<li>脏读：一个事务修改了数据未提交，另一个事务读到了修改后的数据</li>
-<li>不可重复读：第一个事务读取了数据后，第二个事务修改了该数据，第一个事务再次读该数据就会读到和第一次不同是数据</li>
-<li>第二类丢失更新：一个事务提交更新的时候，将其他事务已提交的事务覆盖了，是不可重复读的特例</li>
-<li>幻读：事务一操作了数据库的多条记录，事务二向数据库中插入一条满足事务一操作的数据。事务一中就会发现这条满足条件的数据。像是出现幻觉一样</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center">第一类丢失更新</th>
-<th align="center">脏读</th>
-<th align="center">第二类丢失更新</th>
-<th align="center">不可重复读</th>
-<th align="center">幻读</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Read uncommitted</td>
-<td align="center">✅</td>
-<td align="center">❌</td>
-<td align="center">❌</td>
-<td align="center">❌</td>
-<td align="center">❌</td>
-</tr>
-<tr>
-<td align="center">Read Committed</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">❌</td>
-<td align="center">❌</td>
-<td align="center">❌</td>
-</tr>
-<tr>
-<td align="center">Repeatable Read</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">❌</td>
-</tr>
-<tr>
-<td align="center">Serializable</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-</tr>
-</tbody></table>
-<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>MySQL中，所有数据类型的列都可以被索引，常用的存储引擎InnoDB和MyISAM能支持每个表创建16个索引。InnoDB和MyISAM使用的索引其底层算法是B-tree（B树），B-tree是一种自平衡的树，类似于平衡二叉排序树，能够保持数据有序。这种数据结构能够让查找数据、顺序访问、插入数据及删除的操作都在对数时间内完成。</p>
-<p>B-tree：是一颗多路平衡查找树；</p>
-<ul>
-<li>每个节点最多有m-1个关键字。</li>
-<li>根节点最少可以只有1个关键字。</li>
-<li>非根节点至少有m&#x2F;2个关键字。</li>
-<li>每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于它，而右子树中的所有关键字都大于它。</li>
-<li>所有叶子节点都位于同一层，或者说根节点到每个叶子节点的长度都相同。</li>
-<li>每个节点都存有索引和数据，也就是对应的key和value。</li>
-</ul>
-<p>B+tree：</p>
-<ul>
-<li>根节点至少一个元素。</li>
-<li>非根节点元素范围：m&#x2F;2 &lt;&#x3D; k &lt;&#x3D; m-1。</li>
-<li>B+树有两种类型的节点：内部结点（也称索引结点）和叶子结点。内部节点就是非叶子节点，内部节点不存储数据，只存储索引，数据都存储在叶子节点。</li>
-<li>内部结点中的key都按照从小到大的顺序排列，对于内部结点中的一个key，左树中的所有key都小于它，右子树中的key都大于等于它。叶子结点中的记录也按照key的大小排列。</li>
-<li>每个叶子结点都存有相邻叶子结点的指针，叶子结点本身依关键字的大小自小而大顺序链接。</li>
-<li>父节点存有右孩子的第一个元素的索引。</li>
-</ul>
-<p>参考链接：<a href="https://segmentfault.com/a/1190000020416577">面试官问你B树和B+树，就把这篇文章丢给他</a></p>
-<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MVCC:Multi Version Concurrency Control（多版本并发控制）</p>
-<p><a href="https://github.com/mysql/mysql-server/blob/ee4455a33b10f1b1886044322e4893f587b319ed/storage/innobase/include/read0read.h#L43">MVCC的定义源码</a></p>
-<p>MVCC只在 Read Committed 和 Repeatable Read两个隔离级别下工作。Read Uncommitted总是读取最新的记录行，Serializable 会对所有读取的记录行都加锁。</p>
-<p>MCVV 的实现：隐藏字段、Read View、Undo log</p>
-<p>隐藏字段</p>
-<ol>
-<li>DB_TRX_ID(6字节)：表示最近一次对本记录行作修改（insert|update）的事务ID。至于delete操作，InnoDB认为是一个update操作，不过会更新一个另外的删除位，将行表示为deleted。并非真正删除。</li>
-<li>DB_ROLL_PTR(7字节)：回滚指针，指向当前记录行的undo log信息</li>
-<li>DB_ROW_ID(6字节)：随着新行插入而单调递增的行ID。理解：当表没有主键或唯一非空索引时，innodb就会使用这个行ID自动产生聚簇索引。如果表有主键或唯一非空索引，聚簇索引就不会包含这个行ID了。这个DB_ROW_ID跟MVCC关系不大。</li>
-</ol>
-<p>官方文档：<a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html">15.3 InnoDB Multi-Versioning</a></p>
-<p>Read View（读视图）结构</p>
-<p>和快照、snapshot是类似的概念。主要是用来做可见性判断的, 里面保存了“对本事务不可见的其他活跃事务”。</p>
-<p><a href="https://github.com/mysql/mysql-server/blob/ee4455a33b10f1b1886044322e4893f587b319ed/storage/innobase/include/read0types.h#L47">Read View的定义源码</a>，其中包括主要的几个变量</p>
-<ol>
-<li>low_limit_id：目前出现过的最大的事务ID+1，即下一个将被分配的事务ID。</li>
-<li>up_limit_id：活跃事务列表trx_ids中最小的事务ID，如果trx_ids为空，则up_limit_id 为 low_limit_id。</li>
-<li>trx_ids：Read View创建时其他未提交的活跃事务ID列表。意思就是创建Read View时，将当前未提交事务ID记录下来，后续即使它们修改了记录行的值，对于当前事务也是不可见的。Read View中trx_ids的活跃事务，不包括当前事务自己和已提交的事务（正在内存中）</li>
-<li>creator_trx_id：当前创建事务的ID，是一个递增的编号。（这个编号并不是DB_ROW_ID）</li>
-</ol>
-<p>Undo log</p>
-<p>Undo log中存储的是老版本数据，当一个事务需要读取记录行时，如果当前记录行不可见，可以顺着undo log链找到满足其可见性条件的记录行版本。</p>
-<p>大多数对数据的变更操作包括 insert&#x2F;update&#x2F;delete，在InnoDB里，undo log分为如下两类：</p>
-<ol>
-<li>insert undo log : 事务对insert新记录时产生的undo log, 只在事务回滚时需要, 并且在事务提交后就可以立即丢弃。</li>
-<li>update undo log : 事务对记录进行delete和update操作时产生的undo log，不仅在事务回滚时需要，快照读也需要，只有当数据库所使用的快照中不涉及该日志记录，对应的回滚日志才会被purge线程删除。</li>
-</ol>
-<p>Purge线程：为了实现InnoDB的MVCC机制，更新或者删除操作都只是设置一下旧记录的deleted_bit，并不真正将旧记录删除。<br>为了节省磁盘空间，InnoDB有专门的purge线程来清理deleted_bit为true的记录。purge线程自己也维护了一个read view，如果某个记录的deleted_bit为true，并且DB_TRX_ID相对于purge线程的read view可见，那么这条记录一定是可以被安全清除的。</p>
-<p>参考文档：<a href="https://blog.csdn.net/Waves___/article/details/105295060">MySQL中MVCC的正确打开方式（源码佐证）</a></p>
-<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>普通select<br>1.读未提交，读提交，可重复读 不加锁，快照读<br>2.串行化，普通select会升级为select … in share mode</p>
-<p>加锁select<br>select … for update<br>select … in share mode<br>1.唯一索引，唯一条件 记录锁(Record Locks)<br>2.其他的查询条件和索引条件 间隙锁(Gap Locks)与临键锁(Next-Key Locks)</p>
-<p>update与delete<br>1.唯一索引，唯一条件 记录锁(Record Locks)<br>2.其他， 排他临键锁(Next-Key Locks)</p>
-<p>insert<br>排它锁、同时，会在插入区间加插入意向锁(insert intention lock)。</p>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>技术原理</tag>
       </tags>
   </entry>
   <entry>
@@ -3233,7 +2950,7 @@
 <li><code>routine</code> - 存储过程权限 (<code>mysql.procs_priv</code>)</li>
 </ul>
 <p>这些权限的关系如下：</p>
-<div id="excalidraw-fqjsiq8zw" class="excalidraw-container" data-excalidraw='{&quot;type&quot;:&quot;excalidraw&quot;,&quot;version&quot;:2,&quot;source&quot;:&quot;https://excalidraw.com&quot;,&quot;elements&quot;:[{&quot;id&quot;:&quot;amRv_e2i1okBw_KY22hIS&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:649.1087596187082,&quot;y&quot;:775.2741398743418,&quot;width&quot;:544.9693008191313,&quot;height&quot;:459.1679851781793,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1c&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1684293888,&quot;version&quot;:405,&quot;versionNonce&quot;:607397632,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528645575,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;kJhIgAiu0h2wN-l66kLMG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:789.603520116687,&quot;y&quot;:806.7393102493832,&quot;width&quot;:54.719970703125,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1d&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:1010239744,&quot;version&quot;:111,&quot;versionNonce&quot;:1134536960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528635609,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;global&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;global&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;4RajpVno1KSVLV4m-vZCw&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:674.8115238221424,&quot;y&quot;:843.3967278740383,&quot;width&quot;:494.8371273380469,&quot;height&quot;:333.1590623582967,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1e&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1403127552,&quot;version&quot;:280,&quot;versionNonce&quot;:1463207680,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528630692,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;Nwhtr1HWsYhE_biAm4v7y&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:797.6731693926247,&quot;y&quot;:876.6559983236166,&quot;width&quot;:90.419921875,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1f&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:2070456576,&quot;version&quot;:105,&quot;versionNonce&quot;:388303104,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528633359,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;database&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;database&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;R9J6PfS714qraDE0GNqIP&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:747.5029853167408,&quot;y&quot;:921.9950358004819,&quot;width&quot;:254.59116290769248,&quot;height&quot;:226.99927214272225,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1g&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:277989120,&quot;version&quot;:232,&quot;versionNonce&quot;:1064584960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528547769,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;2MxTqWn2Ckey9V0J83UT0&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:833.4677465153309,&quot;y&quot;:947.789025431435,&quot;width&quot;:48.91996765136719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1h&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:285305088,&quot;version&quot;:26,&quot;versionNonce&quot;:1881344256,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528553710,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;table&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;table&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:805.8416462150412,&quot;y&quot;:998.2480900277951,&quot;width&quot;:155.96507258138274,&quot;height&quot;:125.07766324729437,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1i&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:832063232,&quot;version&quot;:69,&quot;versionNonce&quot;:842000128,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;}],&quot;updated&quot;:1762528565559,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:853.0222215065329,&quot;y&quot;:1048.0652897228777,&quot;width&quot;:61.31996154785156,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1j&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:78850304,&quot;version&quot;:9,&quot;versionNonce&quot;:1494026496,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528569072,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;column&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;originalText&quot;:&quot;column&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:1010.1942059762106,&quot;y&quot;:940.0652725681728,&quot;width&quot;:139.97021428974574,&quot;height&quot;:150.13424733913666,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1k&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1633528064,&quot;version&quot;:52,&quot;versionNonce&quot;:1044178688,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;}],&quot;updated&quot;:1762528584772,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:1045.992395216818,&quot;y&quot;:1002.5519240468201,&quot;width&quot;:68.39994812011719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1l&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:945170688,&quot;version&quot;:10,&quot;versionNonce&quot;:946268416,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528588942,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;routine&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;originalText&quot;:&quot;routine&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25}],&quot;appState&quot;:{&quot;gridSize&quot;:20,&quot;gridStep&quot;:5,&quot;gridModeEnabled&quot;:false,&quot;viewBackgroundColor&quot;:&quot;#ffffff&quot;,&quot;lockedMultiSelections&quot;:{}},&quot;files&quot;:{}}'><div class="loading">加载中...</div></div>
+<div id="excalidraw-dhe7hqhyo" class="excalidraw-container" data-excalidraw='{&quot;type&quot;:&quot;excalidraw&quot;,&quot;version&quot;:2,&quot;source&quot;:&quot;https://excalidraw.com&quot;,&quot;elements&quot;:[{&quot;id&quot;:&quot;amRv_e2i1okBw_KY22hIS&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:649.1087596187082,&quot;y&quot;:775.2741398743418,&quot;width&quot;:544.9693008191313,&quot;height&quot;:459.1679851781793,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1c&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1684293888,&quot;version&quot;:405,&quot;versionNonce&quot;:607397632,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528645575,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;kJhIgAiu0h2wN-l66kLMG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:789.603520116687,&quot;y&quot;:806.7393102493832,&quot;width&quot;:54.719970703125,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1d&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:1010239744,&quot;version&quot;:111,&quot;versionNonce&quot;:1134536960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528635609,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;global&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;global&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;4RajpVno1KSVLV4m-vZCw&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:674.8115238221424,&quot;y&quot;:843.3967278740383,&quot;width&quot;:494.8371273380469,&quot;height&quot;:333.1590623582967,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1e&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1403127552,&quot;version&quot;:280,&quot;versionNonce&quot;:1463207680,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528630692,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;Nwhtr1HWsYhE_biAm4v7y&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:797.6731693926247,&quot;y&quot;:876.6559983236166,&quot;width&quot;:90.419921875,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1f&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:2070456576,&quot;version&quot;:105,&quot;versionNonce&quot;:388303104,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528633359,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;database&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;database&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;R9J6PfS714qraDE0GNqIP&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:747.5029853167408,&quot;y&quot;:921.9950358004819,&quot;width&quot;:254.59116290769248,&quot;height&quot;:226.99927214272225,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1g&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:277989120,&quot;version&quot;:232,&quot;versionNonce&quot;:1064584960,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528547769,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;2MxTqWn2Ckey9V0J83UT0&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:833.4677465153309,&quot;y&quot;:947.789025431435,&quot;width&quot;:48.91996765136719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1h&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:285305088,&quot;version&quot;:26,&quot;versionNonce&quot;:1881344256,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528553710,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;table&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;left&quot;,&quot;verticalAlign&quot;:&quot;top&quot;,&quot;containerId&quot;:null,&quot;originalText&quot;:&quot;table&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:805.8416462150412,&quot;y&quot;:998.2480900277951,&quot;width&quot;:155.96507258138274,&quot;height&quot;:125.07766324729437,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1i&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:832063232,&quot;version&quot;:69,&quot;versionNonce&quot;:842000128,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;}],&quot;updated&quot;:1762528565559,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;GlFlY3N9Bx3vtTuDDblEX&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:853.0222215065329,&quot;y&quot;:1048.0652897228777,&quot;width&quot;:61.31996154785156,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1j&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:78850304,&quot;version&quot;:9,&quot;versionNonce&quot;:1494026496,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528569072,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;column&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;_aoFrK3kJykzi4hbhqOY7&quot;,&quot;originalText&quot;:&quot;column&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25},{&quot;id&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;type&quot;:&quot;ellipse&quot;,&quot;x&quot;:1010.1942059762106,&quot;y&quot;:940.0652725681728,&quot;width&quot;:139.97021428974574,&quot;height&quot;:150.13424733913666,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1k&quot;,&quot;roundness&quot;:{&quot;type&quot;:2},&quot;seed&quot;:1633528064,&quot;version&quot;:52,&quot;versionNonce&quot;:1044178688,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;}],&quot;updated&quot;:1762528584772,&quot;link&quot;:null,&quot;locked&quot;:false},{&quot;id&quot;:&quot;-klhmneWr-JqiZh1ZaAaG&quot;,&quot;type&quot;:&quot;text&quot;,&quot;x&quot;:1045.992395216818,&quot;y&quot;:1002.5519240468201,&quot;width&quot;:68.39994812011719,&quot;height&quot;:25,&quot;angle&quot;:0,&quot;strokeColor&quot;:&quot;#1e1e1e&quot;,&quot;backgroundColor&quot;:&quot;transparent&quot;,&quot;fillStyle&quot;:&quot;solid&quot;,&quot;strokeWidth&quot;:2,&quot;strokeStyle&quot;:&quot;solid&quot;,&quot;roughness&quot;:1,&quot;opacity&quot;:100,&quot;groupIds&quot;:[],&quot;frameId&quot;:null,&quot;index&quot;:&quot;b1l&quot;,&quot;roundness&quot;:null,&quot;seed&quot;:945170688,&quot;version&quot;:10,&quot;versionNonce&quot;:946268416,&quot;isDeleted&quot;:false,&quot;boundElements&quot;:null,&quot;updated&quot;:1762528588942,&quot;link&quot;:null,&quot;locked&quot;:false,&quot;text&quot;:&quot;routine&quot;,&quot;fontSize&quot;:20,&quot;fontFamily&quot;:5,&quot;textAlign&quot;:&quot;center&quot;,&quot;verticalAlign&quot;:&quot;middle&quot;,&quot;containerId&quot;:&quot;GLu8--IY3dcD6f3GzcEv2&quot;,&quot;originalText&quot;:&quot;routine&quot;,&quot;autoResize&quot;:true,&quot;lineHeight&quot;:1.25}],&quot;appState&quot;:{&quot;gridSize&quot;:20,&quot;gridStep&quot;:5,&quot;gridModeEnabled&quot;:false,&quot;viewBackgroundColor&quot;:&quot;#ffffff&quot;,&quot;lockedMultiSelections&quot;:{}},&quot;files&quot;:{}}'><div class="loading">加载中...</div></div>
 
 <p>这些权限有不同的规则</p>
 <ul>
@@ -3775,6 +3492,289 @@
   }
 })()
 </script>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>技术原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL基础</title>
+    <url>/mysql_basic/</url>
+    <content><![CDATA[<h2 id="SQL名词"><a href="#SQL名词" class="headerlink" title="SQL名词"></a>SQL名词</h2><ul>
+<li>DQL（Data Query Language）：数据查询语言，指Select语句，通常会归类到DML中</li>
+<li>DDL（Data Definition Language）：数据定义语言，通常指Create、Drop、Alter等对表操作的语句</li>
+<li>DML（Data Manipulation Language）：数据操作语言，通常指Insert、Delete、Update等对数据操作的语句</li>
+<li>DCL（Data Control Language）：数据控制语言，通常指Grant、Revoke等对数据库权限控制的语句</li>
+</ul>
+<h3 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h3><ol>
+<li>原子性：数据不可再分</li>
+<li>唯一性：所有数据都要和数据表中的键有完全依赖关系</li>
+<li>冗余性：非键属性之间是完全无关的</li>
+</ol>
+<h3 id="数据完整性"><a href="#数据完整性" class="headerlink" title="数据完整性"></a>数据完整性</h3><ol>
+<li><p>实体完整性：每个实体都是独一无二的</p>
+<ul>
+<li>主键（primary key）</li>
+<li>唯一约束</li>
+<li>唯一索引（unique）</li>
+</ul>
+</li>
+<li><p>引用完整性（参照完整性）：关系中不允许引用不存在的实体</p>
+<ul>
+<li>外键（foreign key）</li>
+</ul>
+</li>
+<li><p>域完整性：数据是有效的</p>
+<ul>
+<li>数据类型及长度</li>
+<li>非空约束（not null）</li>
+<li>默认值约束（default）</li>
+<li>检查约束（check）<ul>
+<li>说明：在MySQL数据库中，检查约束并不起作用。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a>数据一致性</h3><p>实现原理：事务</p>
+<h2 id="数据库相关的命令"><a href="#数据库相关的命令" class="headerlink" title="数据库相关的命令"></a>数据库相关的命令</h2><h3 id="普通命令"><a href="#普通命令" class="headerlink" title="普通命令"></a>普通命令</h3><ul>
+<li><code>SHOW ENGINES;</code> - 查看数据库支持的数据引擎</li>
+<li><code>begin/start transaction</code> - 开启事务</li>
+<li><code>commit/rollback</code> - 提交&#x2F;回滚</li>
+<li><code>explain sql语句</code> - 查看执行计划</li>
+<li><code>savepoint 保存点名称</code> - 在事务中添加保存点</li>
+<li><code>rollback [work] to [savepoint] 保存点名称</code> - 事务中回滚到保存点</li>
+<li><code>release savepoint 保存点名称</code> - 删除保存点</li>
+</ul>
+<h3 id="变量命令"><a href="#变量命令" class="headerlink" title="变量命令"></a>变量命令</h3><p>注意：变量的查看可以通过<code>show variables like &#39;%变量名%&#39;</code>，也可以通过<code>select @@变量名</code>，非特殊情况不做说明</p>
+<ul>
+<li><code>show global variables;</code> - 查看所有全局变量</li>
+<li><code>show variables;</code> - 查看局部变量</li>
+<li><code>show variables like &#39;%storage_engine%&#39;;</code> - 查看数据库的默认引擎，此处storage_engine不是完整的变量名</li>
+<li><code>show variables like &#39;%datadir%&#39;;</code> - 查看当前数据保存位置</li>
+<li><code>show variables like &quot;innodb_page_size&quot;;</code> - 查看innodb一个数据页的大小</li>
+<li><code>set session autocommit = on/off</code> - 设定事务是否自动开启</li>
+<li><code>select @@tx_isolation;</code> - 查看数据库的事务隔离级别（8.0.3之前版本）</li>
+<li><code>select @@transaction_isolation;</code> - 查看数据库的事务隔离级别（8.0.3之后版本）</li>
+<li><code>set session transaction isolation level 事务隔离名称</code> - 设置事务隔离级别</li>
+</ul>
+<h2 id="MySQL数据引擎"><a href="#MySQL数据引擎" class="headerlink" title="MySQL数据引擎"></a>MySQL数据引擎</h2><p><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">数据结构可视化查看</a></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>InnoDB</th>
+<th>MRG_MYISAM</th>
+<th>MEMORY</th>
+<th>MyISAM</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储限制</td>
+<td>有</td>
+<td>没有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>事务、集群索引、外键</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td>行锁</td>
+<td>表锁</td>
+<td>表锁</td>
+<td>表锁</td>
+</tr>
+<tr>
+<td>B树索引、索引缓存</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>哈希索引</td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>全文检索</td>
+<td>支持（5.6+）</td>
+<td></td>
+<td></td>
+<td>支持</td>
+</tr>
+<tr>
+<td>数据缓存</td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>数据可压缩</td>
+<td></td>
+<td></td>
+<td></td>
+<td>支持</td>
+</tr>
+<tr>
+<td>内存使用</td>
+<td>高</td>
+<td>低</td>
+<td>中</td>
+<td>低</td>
+</tr>
+<tr>
+<td>存储空间使用</td>
+<td>高</td>
+<td>低</td>
+<td></td>
+<td>低</td>
+</tr>
+<tr>
+<td>批量插入性能</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+</tbody></table>
+<p>MySQL从5.5开始默认使用InnoDB，InnoDB也是唯一一个支持<strong>外键、事务、行锁</strong>的数据引擎。</p>
+<h3 id="InnoDB-简介"><a href="#InnoDB-简介" class="headerlink" title="InnoDB 简介"></a>InnoDB 简介</h3><p>支持事务安全表（ACID）</p>
+<ul>
+<li>A（Atomicity）：原子性；事务，要么全成功，要么全失败</li>
+<li>C（Consistency）：一致性；事务前后数据的完整性必须保持一致。</li>
+<li>I（Isolation）：隔离性；多个事务之间相互隔离</li>
+<li>D（Durability）：持久性；持久性是指一个事务一旦被提交，它对数据库中数据的改变就是永久性的</li>
+</ul>
+<p>事务特性的实现</p>
+<ul>
+<li>隔离性：读写锁 + MVCC</li>
+</ul>
+<p>事务隔离级别：</p>
+<ul>
+<li>无事务隔离级别：会出现第一类丢失更新、脏读、不可重复读、第二类丢失更新和幻读</li>
+<li>Read uncommitter（未提交读）：会出现脏读、不可重复读、第二类丢失更新、幻读，解决了第一类丢失更新</li>
+<li>Read Committer（提交读）：会出现不可重复读、第二类丢失更新、幻读，解决了脏读和第一类丢失更新</li>
+<li>Repeatable Read（可重复读）：会出现幻读，解决了脏读、不可重复读和第二类丢失更新，MySQL默认的级别，InnoDB引擎下该级别也解决了幻读</li>
+<li>Serializable（串行化）：最安全，速度最慢，所有问题都解决了</li>
+</ul>
+<p>备注：</p>
+<ul>
+<li>第一类丢失更新：撤销一个事务的时候，把其他事务已提交的更新覆盖了</li>
+<li>脏读：一个事务修改了数据未提交，另一个事务读到了修改后的数据</li>
+<li>不可重复读：第一个事务读取了数据后，第二个事务修改了该数据，第一个事务再次读该数据就会读到和第一次不同是数据</li>
+<li>第二类丢失更新：一个事务提交更新的时候，将其他事务已提交的事务覆盖了，是不可重复读的特例</li>
+<li>幻读：事务一操作了数据库的多条记录，事务二向数据库中插入一条满足事务一操作的数据。事务一中就会发现这条满足条件的数据。像是出现幻觉一样</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">第一类丢失更新</th>
+<th align="center">脏读</th>
+<th align="center">第二类丢失更新</th>
+<th align="center">不可重复读</th>
+<th align="center">幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Read uncommitted</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">Read Committed</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">Repeatable Read</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">Serializable</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+</tr>
+</tbody></table>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>MySQL中，所有数据类型的列都可以被索引，常用的存储引擎InnoDB和MyISAM能支持每个表创建16个索引。InnoDB和MyISAM使用的索引其底层算法是B-tree（B树），B-tree是一种自平衡的树，类似于平衡二叉排序树，能够保持数据有序。这种数据结构能够让查找数据、顺序访问、插入数据及删除的操作都在对数时间内完成。</p>
+<p>B-tree：是一颗多路平衡查找树；</p>
+<ul>
+<li>每个节点最多有m-1个关键字。</li>
+<li>根节点最少可以只有1个关键字。</li>
+<li>非根节点至少有m&#x2F;2个关键字。</li>
+<li>每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于它，而右子树中的所有关键字都大于它。</li>
+<li>所有叶子节点都位于同一层，或者说根节点到每个叶子节点的长度都相同。</li>
+<li>每个节点都存有索引和数据，也就是对应的key和value。</li>
+</ul>
+<p>B+tree：</p>
+<ul>
+<li>根节点至少一个元素。</li>
+<li>非根节点元素范围：m&#x2F;2 &lt;&#x3D; k &lt;&#x3D; m-1。</li>
+<li>B+树有两种类型的节点：内部结点（也称索引结点）和叶子结点。内部节点就是非叶子节点，内部节点不存储数据，只存储索引，数据都存储在叶子节点。</li>
+<li>内部结点中的key都按照从小到大的顺序排列，对于内部结点中的一个key，左树中的所有key都小于它，右子树中的key都大于等于它。叶子结点中的记录也按照key的大小排列。</li>
+<li>每个叶子结点都存有相邻叶子结点的指针，叶子结点本身依关键字的大小自小而大顺序链接。</li>
+<li>父节点存有右孩子的第一个元素的索引。</li>
+</ul>
+<p>参考链接：<a href="https://segmentfault.com/a/1190000020416577">面试官问你B树和B+树，就把这篇文章丢给他</a></p>
+<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MVCC:Multi Version Concurrency Control（多版本并发控制）</p>
+<p><a href="https://github.com/mysql/mysql-server/blob/ee4455a33b10f1b1886044322e4893f587b319ed/storage/innobase/include/read0read.h#L43">MVCC的定义源码</a></p>
+<p>MVCC只在 Read Committed 和 Repeatable Read两个隔离级别下工作。Read Uncommitted总是读取最新的记录行，Serializable 会对所有读取的记录行都加锁。</p>
+<p>MCVV 的实现：隐藏字段、Read View、Undo log</p>
+<p>隐藏字段</p>
+<ol>
+<li>DB_TRX_ID(6字节)：表示最近一次对本记录行作修改（insert|update）的事务ID。至于delete操作，InnoDB认为是一个update操作，不过会更新一个另外的删除位，将行表示为deleted。并非真正删除。</li>
+<li>DB_ROLL_PTR(7字节)：回滚指针，指向当前记录行的undo log信息</li>
+<li>DB_ROW_ID(6字节)：随着新行插入而单调递增的行ID。理解：当表没有主键或唯一非空索引时，innodb就会使用这个行ID自动产生聚簇索引。如果表有主键或唯一非空索引，聚簇索引就不会包含这个行ID了。这个DB_ROW_ID跟MVCC关系不大。</li>
+</ol>
+<p>官方文档：<a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html">15.3 InnoDB Multi-Versioning</a></p>
+<p>Read View（读视图）结构</p>
+<p>和快照、snapshot是类似的概念。主要是用来做可见性判断的, 里面保存了“对本事务不可见的其他活跃事务”。</p>
+<p><a href="https://github.com/mysql/mysql-server/blob/ee4455a33b10f1b1886044322e4893f587b319ed/storage/innobase/include/read0types.h#L47">Read View的定义源码</a>，其中包括主要的几个变量</p>
+<ol>
+<li>low_limit_id：目前出现过的最大的事务ID+1，即下一个将被分配的事务ID。</li>
+<li>up_limit_id：活跃事务列表trx_ids中最小的事务ID，如果trx_ids为空，则up_limit_id 为 low_limit_id。</li>
+<li>trx_ids：Read View创建时其他未提交的活跃事务ID列表。意思就是创建Read View时，将当前未提交事务ID记录下来，后续即使它们修改了记录行的值，对于当前事务也是不可见的。Read View中trx_ids的活跃事务，不包括当前事务自己和已提交的事务（正在内存中）</li>
+<li>creator_trx_id：当前创建事务的ID，是一个递增的编号。（这个编号并不是DB_ROW_ID）</li>
+</ol>
+<p>Undo log</p>
+<p>Undo log中存储的是老版本数据，当一个事务需要读取记录行时，如果当前记录行不可见，可以顺着undo log链找到满足其可见性条件的记录行版本。</p>
+<p>大多数对数据的变更操作包括 insert&#x2F;update&#x2F;delete，在InnoDB里，undo log分为如下两类：</p>
+<ol>
+<li>insert undo log : 事务对insert新记录时产生的undo log, 只在事务回滚时需要, 并且在事务提交后就可以立即丢弃。</li>
+<li>update undo log : 事务对记录进行delete和update操作时产生的undo log，不仅在事务回滚时需要，快照读也需要，只有当数据库所使用的快照中不涉及该日志记录，对应的回滚日志才会被purge线程删除。</li>
+</ol>
+<p>Purge线程：为了实现InnoDB的MVCC机制，更新或者删除操作都只是设置一下旧记录的deleted_bit，并不真正将旧记录删除。<br>为了节省磁盘空间，InnoDB有专门的purge线程来清理deleted_bit为true的记录。purge线程自己也维护了一个read view，如果某个记录的deleted_bit为true，并且DB_TRX_ID相对于purge线程的read view可见，那么这条记录一定是可以被安全清除的。</p>
+<p>参考文档：<a href="https://blog.csdn.net/Waves___/article/details/105295060">MySQL中MVCC的正确打开方式（源码佐证）</a></p>
+<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>普通select<br>1.读未提交，读提交，可重复读 不加锁，快照读<br>2.串行化，普通select会升级为select … in share mode</p>
+<p>加锁select<br>select … for update<br>select … in share mode<br>1.唯一索引，唯一条件 记录锁(Record Locks)<br>2.其他的查询条件和索引条件 间隙锁(Gap Locks)与临键锁(Next-Key Locks)</p>
+<p>update与delete<br>1.唯一索引，唯一条件 记录锁(Record Locks)<br>2.其他， 排他临键锁(Next-Key Locks)</p>
+<p>insert<br>排它锁、同时，会在插入区间加插入意向锁(insert intention lock)。</p>
 ]]></content>
       <categories>
         <category>MySQL</category>
@@ -4574,137 +4574,6 @@
       </tags>
   </entry>
   <entry>
-    <title>OAuth2.0认证</title>
-    <url>/oauth2/</url>
-    <content><![CDATA[<h2 id="OAuth介绍"><a href="#OAuth介绍" class="headerlink" title="OAuth介绍"></a>OAuth介绍</h2><p><a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth2.0官方文档</a></p>
-<ul>
-<li>Open Standard Authorization (OAuth)</li>
-<li>OAuth是一个网络开放协议。为保证用户资源的安全授权提供了简易的标准</li>
-</ul>
-<p>特点：</p>
-<ul>
-<li>简单：不管是OAUTH服务提供者还是应用开发者，都很易于理解与使用</li>
-<li>安全：没有涉及到用户密钥等信息，更安全更灵活</li>
-<li>开放：任何服务提供商都可以实现OAUTH，任何软件开发商都可以使用OAuth</li>
-</ul>
-<h2 id="OAuth2-0"><a href="#OAuth2-0" class="headerlink" title="OAuth2.0"></a>OAuth2.0</h2><ul>
-<li>2012年10月，OAuth 2.0协议正式发布为RFC 6749</li>
-<li>OAuth协议的下一版本，但不向后兼容OAuth 1.0</li>
-<li>OAuth 2.0关注客户端开发者的简易性，同时为Web应用，桌面应用和手机，和起居室设备提供专门的认证流程</li>
-</ul>
-<h2 id="OAuth2-0角色"><a href="#OAuth2-0角色" class="headerlink" title="OAuth2.0角色"></a>OAuth2.0角色</h2><p>resource owner: 资源所有者，指的是用户</p>
-<p>resource server: 资源服务器，指的是应用服务器</p>
-<p>client: 客户端，指的是应用</p>
-<p>authorization server: 授权服务器，指的是应用服务器</p>
-<h2 id="OAuth2-0流程"><a href="#OAuth2-0流程" class="headerlink" title="OAuth2.0流程"></a>OAuth2.0流程</h2><pre><code> +--------+                               +---------------+
- |        |--(A)- Authorization Request -&gt;|   Resource    |
- |        |                               |     Owner     |
- |        |&lt;-(B)-- Authorization Grant ---|               |
- |        |                               +---------------+
- |        |
- |        |                               +---------------+
- |        |--(C)-- Authorization Grant --&gt;| Authorization |
- | Client |                               |     Server    |
- |        |&lt;-(D)----- Access Token -------|               |
- |        |                               +---------------+
- |        |
- |        |                               +---------------+
- |        |--(E)----- Access Token ------&gt;|    Resource   |
- |        |                               |     Server    |
- |        |&lt;-(F)--- Protected Resource ---|               |
- +--------+                               +---------------+
-</code></pre>
-<p>A: 客户端向资源所有者请求授权。这授权请求可以直接向资源所有者提出，或者最好通过授权间接服务器作为中介</p>
-<p>B: 客户端收到授权授权，这是一个代表资源所有者授权的凭证</p>
-<p>C: 客户端通过身份验证请求访问令牌 授权服务器并提供授权许可</p>
-<p>D: 授权服务器对客户端进行身份验证并验证授权，如果有效，则颁发访问令牌</p>
-<p>E: 客户端向资源请求受保护的资源 服务器并通过提供访问令牌进行身份验证</p>
-<p>F: 资源服务器验证访问令牌，如果有效，则提供资源</p>
-<h2 id="OAuth2-0授权类型"><a href="#OAuth2-0授权类型" class="headerlink" title="OAuth2.0授权类型"></a>OAuth2.0授权类型</h2><ul>
-<li>授权码（Authorization Code）</li>
-<li>隐藏式（implicit）</li>
-<li>密码式（password）</li>
-<li>客户端凭证（client credentials）</li>
-</ul>
-<h3 id="授权码授权类型（Authorization-Code）"><a href="#授权码授权类型（Authorization-Code）" class="headerlink" title="授权码授权类型（Authorization Code）"></a>授权码授权类型（Authorization Code）</h3><p>第三方应用先申请一个授权码，再通过授权码获取访问令牌。适合有后端的应用，比如网站应用。</p>
-<p>scope参数</p>
-<p>步骤：</p>
-<ol>
-<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
-<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中携带一个授权码</li>
-<li>A网站拿到授权码，在后端携带授权码来请求A网站的接口（携带授权码、appkey、secretkey）</li>
-<li>B站收到请求，验证授权码，如果验证成功，则返回访问令牌，重刷令牌（access_token, refresh_token）</li>
-</ol>
-<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=code&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
-<ul>
-<li>response_type: 授权类型，必须为code</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>redirect_uri: 申请成功后网站的回跳地址</li>
-<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
-</ul>
-<p>响应格式: 在回跳地址中携带授权码，比如：<code>https://stolenzc.com/callback?code=1234567890</code></p>
-<p>后台再请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;appsecret=appsecret&amp;grant_type=authorization_code&amp;code=code&amp;redirect_uri=redirect_uri</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为authorization_code</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>appsecret: 网站的身份，为应用在网站申请的appsecret,appsecret为保密的，所以只能在后端请求</li>
-<li>code: 授权码</li>
-<li>redirect_uri: 验证成功后授权方带上token数据请求该uri地址传递token数据</li>
-</ul>
-<h3 id="隐藏式授权类型（implicit）"><a href="#隐藏式授权类型（implicit）" class="headerlink" title="隐藏式授权类型（implicit）"></a>隐藏式授权类型（implicit）</h3><p>第三方应用请求接口直接获取访问令牌。适合没有后端的应用，比如移动应用。</p>
-<p>步骤：</p>
-<ol>
-<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
-<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中以锚点的形式携带一个访问令牌</li>
-</ol>
-<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=token&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
-<ul>
-<li>response_type: 授权类型，必须为token</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>redirect_uri: 申请成功后网站的回跳地址</li>
-<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
-</ul>
-<h3 id="密码式授权类型（password）"><a href="#密码式授权类型（password）" class="headerlink" title="密码式授权类型（password）"></a>密码式授权类型（password）</h3><p>第三方应用拿到用户账号密码，直接用账号密码获取令牌</p>
-<ol>
-<li>A网站要求用户提供账号和密码，拿到后A网站直接向B网站请求令牌</li>
-<li>B网站验证密码后，直接返回令牌，不需要进行跳转</li>
-</ol>
-<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;grant_type=password&amp;username=username&amp;password=password</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为password</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>username: 用户名</li>
-<li>password: 密码</li>
-</ul>
-<h3 id="凭证式授权类型（client-credentials）"><a href="#凭证式授权类型（client-credentials）" class="headerlink" title="凭证式授权类型（client credentials）"></a>凭证式授权类型（client credentials）</h3><p>凭证式适用于没有前端的命令行应用，通常是多个用户享用一个令牌，通常针对第三方应用，不是针对用户的。</p>
-<ol>
-<li>A应用在命令行向B应用发出接口请求，只需要携带appkey和secretkey即可</li>
-<li>B应用验证通过后，直接返回令牌</li>
-</ol>
-<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=client_credentials&amp;appkey=appkey&amp;secretkey=secretkey</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为client_credentials</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
-</ul>
-<h2 id="使用令牌和令牌过期"><a href="#使用令牌和令牌过期" class="headerlink" title="使用令牌和令牌过期"></a>使用令牌和令牌过期</h2><p>后续请求资源的时候，需要将令牌放在请求头中携带</p>
-<p>通常在申请令牌的时候，会同时返回一个refresh_token，用来在token失效的时候，重新申请一个新的令牌。</p>
-<p>重刷令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=refresh_token&amp;appkey=appkey&amp;secretkey=secretkey&amp;refresh_token=refresh_token</code></p>
-<ul>
-<li>grant_type: 授权类型，必须为refresh_token</li>
-<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
-<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
-<li>refresh_token: 重刷令牌</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Backend</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PEP 526 -- 变量注解的语法</title>
     <url>/pep-0526/</url>
     <content><![CDATA[<h2 id="Meta"><a href="#Meta" class="headerlink" title="Meta"></a>Meta</h2><ul>
@@ -4911,6 +4780,137 @@
       <tags>
         <tag>翻译</tag>
         <tag>PEP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OAuth2.0认证</title>
+    <url>/oauth2/</url>
+    <content><![CDATA[<h2 id="OAuth介绍"><a href="#OAuth介绍" class="headerlink" title="OAuth介绍"></a>OAuth介绍</h2><p><a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth2.0官方文档</a></p>
+<ul>
+<li>Open Standard Authorization (OAuth)</li>
+<li>OAuth是一个网络开放协议。为保证用户资源的安全授权提供了简易的标准</li>
+</ul>
+<p>特点：</p>
+<ul>
+<li>简单：不管是OAUTH服务提供者还是应用开发者，都很易于理解与使用</li>
+<li>安全：没有涉及到用户密钥等信息，更安全更灵活</li>
+<li>开放：任何服务提供商都可以实现OAUTH，任何软件开发商都可以使用OAuth</li>
+</ul>
+<h2 id="OAuth2-0"><a href="#OAuth2-0" class="headerlink" title="OAuth2.0"></a>OAuth2.0</h2><ul>
+<li>2012年10月，OAuth 2.0协议正式发布为RFC 6749</li>
+<li>OAuth协议的下一版本，但不向后兼容OAuth 1.0</li>
+<li>OAuth 2.0关注客户端开发者的简易性，同时为Web应用，桌面应用和手机，和起居室设备提供专门的认证流程</li>
+</ul>
+<h2 id="OAuth2-0角色"><a href="#OAuth2-0角色" class="headerlink" title="OAuth2.0角色"></a>OAuth2.0角色</h2><p>resource owner: 资源所有者，指的是用户</p>
+<p>resource server: 资源服务器，指的是应用服务器</p>
+<p>client: 客户端，指的是应用</p>
+<p>authorization server: 授权服务器，指的是应用服务器</p>
+<h2 id="OAuth2-0流程"><a href="#OAuth2-0流程" class="headerlink" title="OAuth2.0流程"></a>OAuth2.0流程</h2><pre><code> +--------+                               +---------------+
+ |        |--(A)- Authorization Request -&gt;|   Resource    |
+ |        |                               |     Owner     |
+ |        |&lt;-(B)-- Authorization Grant ---|               |
+ |        |                               +---------------+
+ |        |
+ |        |                               +---------------+
+ |        |--(C)-- Authorization Grant --&gt;| Authorization |
+ | Client |                               |     Server    |
+ |        |&lt;-(D)----- Access Token -------|               |
+ |        |                               +---------------+
+ |        |
+ |        |                               +---------------+
+ |        |--(E)----- Access Token ------&gt;|    Resource   |
+ |        |                               |     Server    |
+ |        |&lt;-(F)--- Protected Resource ---|               |
+ +--------+                               +---------------+
+</code></pre>
+<p>A: 客户端向资源所有者请求授权。这授权请求可以直接向资源所有者提出，或者最好通过授权间接服务器作为中介</p>
+<p>B: 客户端收到授权授权，这是一个代表资源所有者授权的凭证</p>
+<p>C: 客户端通过身份验证请求访问令牌 授权服务器并提供授权许可</p>
+<p>D: 授权服务器对客户端进行身份验证并验证授权，如果有效，则颁发访问令牌</p>
+<p>E: 客户端向资源请求受保护的资源 服务器并通过提供访问令牌进行身份验证</p>
+<p>F: 资源服务器验证访问令牌，如果有效，则提供资源</p>
+<h2 id="OAuth2-0授权类型"><a href="#OAuth2-0授权类型" class="headerlink" title="OAuth2.0授权类型"></a>OAuth2.0授权类型</h2><ul>
+<li>授权码（Authorization Code）</li>
+<li>隐藏式（implicit）</li>
+<li>密码式（password）</li>
+<li>客户端凭证（client credentials）</li>
+</ul>
+<h3 id="授权码授权类型（Authorization-Code）"><a href="#授权码授权类型（Authorization-Code）" class="headerlink" title="授权码授权类型（Authorization Code）"></a>授权码授权类型（Authorization Code）</h3><p>第三方应用先申请一个授权码，再通过授权码获取访问令牌。适合有后端的应用，比如网站应用。</p>
+<p>scope参数</p>
+<p>步骤：</p>
+<ol>
+<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
+<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中携带一个授权码</li>
+<li>A网站拿到授权码，在后端携带授权码来请求A网站的接口（携带授权码、appkey、secretkey）</li>
+<li>B站收到请求，验证授权码，如果验证成功，则返回访问令牌，重刷令牌（access_token, refresh_token）</li>
+</ol>
+<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=code&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
+<ul>
+<li>response_type: 授权类型，必须为code</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>redirect_uri: 申请成功后网站的回跳地址</li>
+<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
+</ul>
+<p>响应格式: 在回跳地址中携带授权码，比如：<code>https://stolenzc.com/callback?code=1234567890</code></p>
+<p>后台再请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;appsecret=appsecret&amp;grant_type=authorization_code&amp;code=code&amp;redirect_uri=redirect_uri</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为authorization_code</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>appsecret: 网站的身份，为应用在网站申请的appsecret,appsecret为保密的，所以只能在后端请求</li>
+<li>code: 授权码</li>
+<li>redirect_uri: 验证成功后授权方带上token数据请求该uri地址传递token数据</li>
+</ul>
+<h3 id="隐藏式授权类型（implicit）"><a href="#隐藏式授权类型（implicit）" class="headerlink" title="隐藏式授权类型（implicit）"></a>隐藏式授权类型（implicit）</h3><p>第三方应用请求接口直接获取访问令牌。适合没有后端的应用，比如移动应用。</p>
+<p>步骤：</p>
+<ol>
+<li>A网站提供一个链接，链接中包含本网站的跳转地址、网站的身份（client_id或app_key），点击后跳转到B网站</li>
+<li>B网站进行登陆，登陆成功后，跳转到A网站，并且在URL中以锚点的形式携带一个访问令牌</li>
+</ol>
+<p>通常请求格式为: <code>https://stolenzc.com/oauth/authorize?response_type=token&amp;appkey=appkey&amp;redirect_uri=redirect_uri&amp;scope=scope</code></p>
+<ul>
+<li>response_type: 授权类型，必须为token</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>redirect_uri: 申请成功后网站的回跳地址</li>
+<li>scope: 网站的范围，可以为空，为空则表示全部范围，可以为多个范围，用逗号分隔</li>
+</ul>
+<h3 id="密码式授权类型（password）"><a href="#密码式授权类型（password）" class="headerlink" title="密码式授权类型（password）"></a>密码式授权类型（password）</h3><p>第三方应用拿到用户账号密码，直接用账号密码获取令牌</p>
+<ol>
+<li>A网站要求用户提供账号和密码，拿到后A网站直接向B网站请求令牌</li>
+<li>B网站验证密码后，直接返回令牌，不需要进行跳转</li>
+</ol>
+<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?appkey=appkey&amp;grant_type=password&amp;username=username&amp;password=password</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为password</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>username: 用户名</li>
+<li>password: 密码</li>
+</ul>
+<h3 id="凭证式授权类型（client-credentials）"><a href="#凭证式授权类型（client-credentials）" class="headerlink" title="凭证式授权类型（client credentials）"></a>凭证式授权类型（client credentials）</h3><p>凭证式适用于没有前端的命令行应用，通常是多个用户享用一个令牌，通常针对第三方应用，不是针对用户的。</p>
+<ol>
+<li>A应用在命令行向B应用发出接口请求，只需要携带appkey和secretkey即可</li>
+<li>B应用验证通过后，直接返回令牌</li>
+</ol>
+<p>请求令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=client_credentials&amp;appkey=appkey&amp;secretkey=secretkey</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为client_credentials</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
+</ul>
+<h2 id="使用令牌和令牌过期"><a href="#使用令牌和令牌过期" class="headerlink" title="使用令牌和令牌过期"></a>使用令牌和令牌过期</h2><p>后续请求资源的时候，需要将令牌放在请求头中携带</p>
+<p>通常在申请令牌的时候，会同时返回一个refresh_token，用来在token失效的时候，重新申请一个新的令牌。</p>
+<p>重刷令牌的格式: <code>https://stolenzc.com/oauth/token?grant_type=refresh_token&amp;appkey=appkey&amp;secretkey=secretkey&amp;refresh_token=refresh_token</code></p>
+<ul>
+<li>grant_type: 授权类型，必须为refresh_token</li>
+<li>appkey: 网站的身份，为应用在网站申请的appkey</li>
+<li>secretkey: 网站的身份，为应用在网站申请的appsecret</li>
+<li>refresh_token: 重刷令牌</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Backend</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
       </tags>
   </entry>
   <entry>
@@ -5406,65 +5406,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python3.7 新特性</title>
-    <url>/python_3_7_feature/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.7 发布于2018年6月27日，这儿总结一下改版本引入的一些新功能</p>
-<p>官方新特性链接 <a href="https://docs.python.org/zh-cn/3.7/whatsnew/3.7.html">Python3.7 新特性</a></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处主要介绍在Ubuntu下安装 Python3.7</p>
-<ol>
-<li>添加deadsnakes源<ul>
-<li><code>sudo add-apt-repository ppa:deadsnakes/ppa</code></li>
-<li><code>sudo apt-get update</code></li>
-</ul>
-</li>
-<li>安装 Python3.7<ul>
-<li><code>sudo apt install python3.7-full</code></li>
-</ul>
-</li>
-<li>安装 Python3.7 的pip<ul>
-<li><code>python3.7 -m ensurepip --upgrade</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="breakpoint-函数"><a href="#breakpoint-函数" class="headerlink" title="breakpoint 函数"></a>breakpoint 函数</h2><p>内置了新的 <code>breakpoint()</code> 函数，作为简单进入Python调试的方式，使用 <code>breakpoint()</code> 函数，相当于设置了断点，遇到 <code>breakpoint()</code> 会自动进入 pdb 调试模式</p>
-<p>内置 breakpoint() 会调用 sys.breakpointhook()。 在默认情况下后者会导入 pdb 然后再调用 pdb.set_trace()，但是通过将 sys.breakpointhook() 绑定到你选定的函数，breakpoint() 可以进入任何调试器。 此外，环境变量 PYTHONBREAKPOINT 可被设置为你选定的调试器的可调用对象。 设置 PYTHONBREAKPOINT&#x3D;0 会完全禁用内置 breakpoint()。</p>
-<h2 id="具有纳秒级精度的新时间函数"><a href="#具有纳秒级精度的新时间函数" class="headerlink" title="具有纳秒级精度的新时间函数"></a>具有纳秒级精度的新时间函数</h2><p>现代系统的时钟精度可以超过由 time.time() 函数及其变化形式所返回的浮点数的有限精度。 为了避免精度损失，Python3.7 在 time 模块中增加了原有计时器函数的六个新“纳秒版”变化形式</p>
-<ul>
-<li>time.clock_gettime_ns()</li>
-<li>time.clock_settime_ns()</li>
-<li>time.monotonic_ns()</li>
-<li>time.perf_counter_ns()</li>
-<li>time.process_time_ns()</li>
-<li>time.time_ns()</li>
-</ul>
-<p>这些新函数会以整数值的形式返回纳秒数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"><span class="built_in">print</span>(time.time_ns())</span><br><span class="line"><span class="comment"># 1663496284.7790382</span></span><br><span class="line"><span class="comment"># 1663496284779068663</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="新增-dataclasses"><a href="#新增-dataclasses" class="headerlink" title="新增 dataclasses"></a>新增 dataclasses</h2><p>新的 dataclass() 装饰器提供了一种声明数据类的方式。 数据类使用变量标注来描述其属性。 它的构造器和其他魔术方法例如 <strong>repr</strong>(), <strong>eq</strong>() 以及 <strong>hash</strong>() 会自动地生成。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass</span><br><span class="line"></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>:</span><br><span class="line">    x: <span class="built_in">float</span></span><br><span class="line">    y: <span class="built_in">float</span></span><br><span class="line">    z: <span class="built_in">float</span> = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">同一下代码</span></span><br><span class="line"><span class="string">class Point:</span></span><br><span class="line"><span class="string">    def __init__(self, x: float, y: float, z: float=0.0):</span></span><br><span class="line"><span class="string">        self.x = x</span></span><br><span class="line"><span class="string">        self.y = y</span></span><br><span class="line"><span class="string">        self.z = z</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">p = Point(<span class="number">1.5</span>, <span class="number">2.5</span>)</span><br><span class="line"><span class="built_in">print</span>(p)   <span class="comment"># produces &quot;Point(x=1.5, y=2.5, z=0.0)&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="dict-对象正式保持插入时顺序"><a href="#dict-对象正式保持插入时顺序" class="headerlink" title="dict 对象正式保持插入时顺序"></a>dict 对象正式保持插入时顺序</h2><p>dict 对象会保持插入时的顺序这个特性其实在 Python 3.6 中已经非正式的出场了，现在 Python 3.7 中正式宣布成为 Python 语言官方规范的一部分。</p>
-<p>dict 对象有了顺序，对于一些方法自然就有了影响，比如 popitem 之前是随机删除，而现在 就是删除最后加入的键值对了，有了确定性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a=&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(a.popitem())</span><br><span class="line"><span class="comment"># (&#x27;c&#x27;, 3)</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># &#123;&#x27;a&#x27;: 1, &#x27;b&#x27;: 2&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>但是，按照 dict 的特性，我们在写代码的过程中依然不应该依赖 dict 有序，实际开发中还是应该按照无序处理</p>
-<h2 id="新增-getattr-定制对模块属性的访问"><a href="#新增-getattr-定制对模块属性的访问" class="headerlink" title="新增 getattr() 定制对模块属性的访问"></a>新增 <strong>getattr</strong>() 定制对模块属性的访问</h2><p>Python 3.7 允许在模块上定义 <code>__getattr__()</code> 并且当以其他方式找不到某个模块属性时将会调用它。 在模块上定义 <code>__dir__()</code> 现在也是允许的。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line">    sex: <span class="built_in">int</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, item</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Can&#x27;t find <span class="subst">&#123;item&#125;</span> attribute&quot;</span></span><br><span class="line"></span><br><span class="line">user = User(<span class="string">&#x27;stolen&#x27;</span>, <span class="number">18</span>, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(user.name)</span><br><span class="line"><span class="built_in">print</span>(user.age)</span><br><span class="line"><span class="built_in">print</span>(user.sex)</span><br><span class="line"><span class="built_in">print</span>(user.info)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">stolen</span></span><br><span class="line"><span class="string">18</span></span><br><span class="line"><span class="string">2</span></span><br><span class="line"><span class="string">Can&#x27;t find info attribute</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
-<li>async 和 await 变为了保留关键字</li>
-<li>typing 不会向核心 CPython 解释器引入的限制取消了</li>
-<li>允许将超过 255 个参数传递给一个函数，而现在一个函数也可以拥有超过 255 个形参</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>更新日志</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python3.6 新特性</title>
     <url>/python_3_6_feature/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.6 发布于2016年12月23日，这儿总结一下改版本引入的一些新功能</p>
@@ -5525,6 +5466,65 @@
 <h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
 <li>将 Windows 文件系统编码和控制台编码都更改为 UTF-8</li>
 <li>重新实现了字典 dict，使其内存使用减少了 20%-25%</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>更新日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3.7 新特性</title>
+    <url>/python_3_7_feature/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Python3.7 发布于2018年6月27日，这儿总结一下改版本引入的一些新功能</p>
+<p>官方新特性链接 <a href="https://docs.python.org/zh-cn/3.7/whatsnew/3.7.html">Python3.7 新特性</a></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处主要介绍在Ubuntu下安装 Python3.7</p>
+<ol>
+<li>添加deadsnakes源<ul>
+<li><code>sudo add-apt-repository ppa:deadsnakes/ppa</code></li>
+<li><code>sudo apt-get update</code></li>
+</ul>
+</li>
+<li>安装 Python3.7<ul>
+<li><code>sudo apt install python3.7-full</code></li>
+</ul>
+</li>
+<li>安装 Python3.7 的pip<ul>
+<li><code>python3.7 -m ensurepip --upgrade</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="breakpoint-函数"><a href="#breakpoint-函数" class="headerlink" title="breakpoint 函数"></a>breakpoint 函数</h2><p>内置了新的 <code>breakpoint()</code> 函数，作为简单进入Python调试的方式，使用 <code>breakpoint()</code> 函数，相当于设置了断点，遇到 <code>breakpoint()</code> 会自动进入 pdb 调试模式</p>
+<p>内置 breakpoint() 会调用 sys.breakpointhook()。 在默认情况下后者会导入 pdb 然后再调用 pdb.set_trace()，但是通过将 sys.breakpointhook() 绑定到你选定的函数，breakpoint() 可以进入任何调试器。 此外，环境变量 PYTHONBREAKPOINT 可被设置为你选定的调试器的可调用对象。 设置 PYTHONBREAKPOINT&#x3D;0 会完全禁用内置 breakpoint()。</p>
+<h2 id="具有纳秒级精度的新时间函数"><a href="#具有纳秒级精度的新时间函数" class="headerlink" title="具有纳秒级精度的新时间函数"></a>具有纳秒级精度的新时间函数</h2><p>现代系统的时钟精度可以超过由 time.time() 函数及其变化形式所返回的浮点数的有限精度。 为了避免精度损失，Python3.7 在 time 模块中增加了原有计时器函数的六个新“纳秒版”变化形式</p>
+<ul>
+<li>time.clock_gettime_ns()</li>
+<li>time.clock_settime_ns()</li>
+<li>time.monotonic_ns()</li>
+<li>time.perf_counter_ns()</li>
+<li>time.process_time_ns()</li>
+<li>time.time_ns()</li>
+</ul>
+<p>这些新函数会以整数值的形式返回纳秒数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"><span class="built_in">print</span>(time.time_ns())</span><br><span class="line"><span class="comment"># 1663496284.7790382</span></span><br><span class="line"><span class="comment"># 1663496284779068663</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="新增-dataclasses"><a href="#新增-dataclasses" class="headerlink" title="新增 dataclasses"></a>新增 dataclasses</h2><p>新的 dataclass() 装饰器提供了一种声明数据类的方式。 数据类使用变量标注来描述其属性。 它的构造器和其他魔术方法例如 <strong>repr</strong>(), <strong>eq</strong>() 以及 <strong>hash</strong>() 会自动地生成。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass</span><br><span class="line"></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>:</span><br><span class="line">    x: <span class="built_in">float</span></span><br><span class="line">    y: <span class="built_in">float</span></span><br><span class="line">    z: <span class="built_in">float</span> = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">同一下代码</span></span><br><span class="line"><span class="string">class Point:</span></span><br><span class="line"><span class="string">    def __init__(self, x: float, y: float, z: float=0.0):</span></span><br><span class="line"><span class="string">        self.x = x</span></span><br><span class="line"><span class="string">        self.y = y</span></span><br><span class="line"><span class="string">        self.z = z</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">p = Point(<span class="number">1.5</span>, <span class="number">2.5</span>)</span><br><span class="line"><span class="built_in">print</span>(p)   <span class="comment"># produces &quot;Point(x=1.5, y=2.5, z=0.0)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="dict-对象正式保持插入时顺序"><a href="#dict-对象正式保持插入时顺序" class="headerlink" title="dict 对象正式保持插入时顺序"></a>dict 对象正式保持插入时顺序</h2><p>dict 对象会保持插入时的顺序这个特性其实在 Python 3.6 中已经非正式的出场了，现在 Python 3.7 中正式宣布成为 Python 语言官方规范的一部分。</p>
+<p>dict 对象有了顺序，对于一些方法自然就有了影响，比如 popitem 之前是随机删除，而现在 就是删除最后加入的键值对了，有了确定性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a=&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(a.popitem())</span><br><span class="line"><span class="comment"># (&#x27;c&#x27;, 3)</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># &#123;&#x27;a&#x27;: 1, &#x27;b&#x27;: 2&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，按照 dict 的特性，我们在写代码的过程中依然不应该依赖 dict 有序，实际开发中还是应该按照无序处理</p>
+<h2 id="新增-getattr-定制对模块属性的访问"><a href="#新增-getattr-定制对模块属性的访问" class="headerlink" title="新增 getattr() 定制对模块属性的访问"></a>新增 <strong>getattr</strong>() 定制对模块属性的访问</h2><p>Python 3.7 允许在模块上定义 <code>__getattr__()</code> 并且当以其他方式找不到某个模块属性时将会调用它。 在模块上定义 <code>__dir__()</code> 现在也是允许的。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line">    sex: <span class="built_in">int</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, item</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Can&#x27;t find <span class="subst">&#123;item&#125;</span> attribute&quot;</span></span><br><span class="line"></span><br><span class="line">user = User(<span class="string">&#x27;stolen&#x27;</span>, <span class="number">18</span>, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(user.name)</span><br><span class="line"><span class="built_in">print</span>(user.age)</span><br><span class="line"><span class="built_in">print</span>(user.sex)</span><br><span class="line"><span class="built_in">print</span>(user.info)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">stolen</span></span><br><span class="line"><span class="string">18</span></span><br><span class="line"><span class="string">2</span></span><br><span class="line"><span class="string">Can&#x27;t find info attribute</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>async 和 await 变为了保留关键字</li>
+<li>typing 不会向核心 CPython 解释器引入的限制取消了</li>
+<li>允许将超过 255 个参数传递给一个函数，而现在一个函数也可以拥有超过 255 个形参</li>
 </ul>
 ]]></content>
       <categories>
@@ -6837,7 +6837,8 @@
     <title>Rust Option Result 的快捷使用技巧</title>
     <url>/rust_option_result/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 Rust 中，有两个非常常用的枚举类型：<code>Option</code> 和 <code>Result</code>。它们替代了其他语言中的 <code>null</code> 和异常机制，是 Rust 类型安全的基础。本文总结这两个类型在业务逻辑中的常用方法。</p>
-<h2 id="Option"><a href="#Option" class="headerlink" title="Option"></a>Option</h2><p>Option 的定义如下：</p>
+<h2 id="Option"><a href="#Option" class="headerlink" title="Option"></a>Option</h2><p>Option 官方文档地址: <a href="https://doc.rust-lang.org/std/option/enum.Option.html">enum.Option</a></p>
+<p>Option 的定义如下：</p>
 <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Option</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(T),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="Option-方法速查"><a href="#Option-方法速查" class="headerlink" title="Option 方法速查"></a>Option 方法速查</h3><table>
@@ -7101,7 +7102,8 @@
 <p><code>as_mut_slice()</code> - <code>Some</code> 返回可变切片，<code>None</code> 返回空切片（1.75+）</p>
 <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="title function_ invoke__">Some</span>(<span class="number">1234</span>);</span><br><span class="line">x.<span class="title function_ invoke__">as_mut_slice</span>()[<span class="number">0</span>] += <span class="number">1</span>;</span><br><span class="line"><span class="built_in">assert_eq!</span>(x, <span class="title function_ invoke__">Some</span>(<span class="number">1235</span>));</span><br></pre></td></tr></table></figure>
 
-<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><p>Result 的定义如下：</p>
+<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><p>Result 官方文档地址: <a href="https://doc.rust-lang.org/stable/std/result/enum.Result.html">enum.Result</a></p>
+<p>Result 的定义如下：</p>
 <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T, E&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(T),</span><br><span class="line">    <span class="title function_ invoke__">Err</span>(E),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="Result-方法速查"><a href="#Result-方法速查" class="headerlink" title="Result 方法速查"></a>Result 方法速查</h3><table>
@@ -7321,45 +7323,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Software Manual</title>
-    <url>/software_manual/</url>
-    <content><![CDATA[<h2 id="Hyper"><a href="#Hyper" class="headerlink" title="Hyper"></a>Hyper</h2><p>简介：一款界面美观的terminal命令行工具，基于Electorn开发，三大桌面平台均支持，而且支持插件安装，方便扩展功能。</p>
-<p>下载地址：<a href="https://hyper.is/">官网</a>，<a href="https://github.com/vercel/hyper">github</a></p>
-<p>常用命令：</p>
-<ul>
-<li><code>hyper i 插件名称</code> - 安装插件</li>
-<li><code>hyper u 插件名称</code> - 卸载插件</li>
-<li><code>hyper --help</code> - 查看更多命令</li>
-</ul>
-<p>常用插件：</p>
-<ul>
-<li><code>hypercwd</code> - 让你打开新的Tab页时自动保持上一个Tab页的路径。</li>
-<li><code>hyper-search</code> - 使用<code>command + f</code>对命令行窗口里的内容全文检索。</li>
-<li><code>hype-pane</code> - 同时显示多个命令行面板</li>
-</ul>
-<p><a href="https://github.com/bnb/awesome-hyper">更多插件和主题</a></p>
-<p>配置文件地址：</p>
-<ul>
-<li>Mac: <code>~/Library/Application Support/Hyper/.hyper.js</code></li>
-<li>Windows: <code>$Env:AppData/Hyper/.hyper.js</code></li>
-<li>Linux: <code>~/.config/Hyper/.hyper.js</code></li>
-</ul>
-<p>快捷使用：</p>
-<ul>
-<li><code>command + ⬅️\➡️</code> - 快速到行首\尾</li>
-</ul>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
-        <tag>操作使用</tag>
-        <tag>Linux</tag>
-        <tag>MacOS</tag>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Swagger编写API文档的YMAL文件语法</title>
     <url>/swagger/</url>
     <content><![CDATA[<p>使用Swagger编写接口文档语法示例<span id="more"></span></p>
@@ -7417,6 +7380,45 @@
       </categories>
       <tags>
         <tag>操作使用</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Software Manual</title>
+    <url>/software_manual/</url>
+    <content><![CDATA[<h2 id="Hyper"><a href="#Hyper" class="headerlink" title="Hyper"></a>Hyper</h2><p>简介：一款界面美观的terminal命令行工具，基于Electorn开发，三大桌面平台均支持，而且支持插件安装，方便扩展功能。</p>
+<p>下载地址：<a href="https://hyper.is/">官网</a>，<a href="https://github.com/vercel/hyper">github</a></p>
+<p>常用命令：</p>
+<ul>
+<li><code>hyper i 插件名称</code> - 安装插件</li>
+<li><code>hyper u 插件名称</code> - 卸载插件</li>
+<li><code>hyper --help</code> - 查看更多命令</li>
+</ul>
+<p>常用插件：</p>
+<ul>
+<li><code>hypercwd</code> - 让你打开新的Tab页时自动保持上一个Tab页的路径。</li>
+<li><code>hyper-search</code> - 使用<code>command + f</code>对命令行窗口里的内容全文检索。</li>
+<li><code>hype-pane</code> - 同时显示多个命令行面板</li>
+</ul>
+<p><a href="https://github.com/bnb/awesome-hyper">更多插件和主题</a></p>
+<p>配置文件地址：</p>
+<ul>
+<li>Mac: <code>~/Library/Application Support/Hyper/.hyper.js</code></li>
+<li>Windows: <code>$Env:AppData/Hyper/.hyper.js</code></li>
+<li>Linux: <code>~/.config/Hyper/.hyper.js</code></li>
+</ul>
+<p>快捷使用：</p>
+<ul>
+<li><code>command + ⬅️\➡️</code> - 快速到行首\尾</li>
+</ul>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>操作使用</tag>
+        <tag>MacOS</tag>
+        <tag>Linux</tag>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -8359,8 +8361,8 @@
       </categories>
       <tags>
         <tag>操作使用</tag>
-        <tag>Linux</tag>
         <tag>MacOS</tag>
+        <tag>Linux</tag>
         <tag>Windows</tag>
       </tags>
   </entry>
@@ -8420,6 +8422,42 @@
       </categories>
       <tags>
         <tag>三方库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VirtualBox Headless后台运行Linux</title>
+    <url>/virtualbox_headless/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>如何在Windows上优雅的使用Linux，一直是一个困惑我的问题。WSL虽好，但是没法在Linux上安装docker；WSL2虽然可以安装docker了，但是这个系统和主机通信又是一个大麻烦，就连最基本的安装软件都要每次开机修改hostname（虽然有能修改后不复原的办法，但我没实验成功）；使用虚拟机软件，又会占用太多的硬件资源，影响主机性能。前段时间偶然看到B站一个Up主提到使用virtualbox的headless无界面启动。遂研究了一下，但是网络上的资料大都太散太少，没有完整的介绍该方法。本文详细介绍在Windows上安装使用一个最优雅的Linux系统。</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>虚拟机软件：<a href="https://www.virtualbox.org/">Oracle VM VirtualBox</a></p>
+<p>Linux镜像：本文使用 <a href="https://ubuntu.com/">Ubuntu20.04</a></p>
+<p>一个远程连接软件：可以使用Windows自带的powershell或者其他软件，本文使用<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#Termius">Termius</a></p>
+<h2 id="前提步骤"><a href="#前提步骤" class="headerlink" title="前提步骤"></a>前提步骤</h2><p>首先需要使用VirtualBox安装好虚拟机；创建虚拟机的时候，推荐使用一个较为简单的名字作为虚拟机的名字，后面命令要使用；安装前的设置注意一点，设置密码的时候需要选择不使用密码登陆。如果该处没设置，安装好后进入设置用户中关闭该项，原因是如果打开该项，后台无法完全启动系统，最终系统会停留在用户登陆界面。</p>
+<h2 id="后台启动方法"><a href="#后台启动方法" class="headerlink" title="后台启动方法"></a>后台启动方法</h2><ol>
+<li>首先进入图形化的Linux虚拟机中，更新源，使用<code>sudo apt install openssh-server</code>安装ssh的服务端。</li>
+<li>检查开机是否需要密码。需要取消掉开机的密码。</li>
+<li>关闭虚拟机，主机使用命令行进入VirutalBox的安装位置，默认情况在<code>C:\Program Files\Oracle\VirtualBox\</code>下，此处推荐使用cmd进入该位置，cmd可以直接调用文件名字作为命令，Powershell需要使用路径加文件名才能执行命令</li>
+<li>执行<code>vboxheadless --startvm|-s 虚拟机名称|uuid vrde=off</code>即可以桥接网络的模式无界面打开</li>
+<li>执行<code>vboxmanage controlvm 虚拟机名称 acpipowerbutton</code>即可关闭虚拟机</li>
+</ol>
+<h2 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h2><p><code>VBoxManage list vms</code> - 查看有哪些虚拟机</p>
+<p><code>VBoxManage list vms --long</code> - 查看虚拟机的详细内容</p>
+<p><code>VBoxManage list runningvms</code> - 查看运行中的虚拟机</p>
+<p><code>VBoxManage startvm &lt;vm_name&gt; -type headless</code> - 无界面运行虚拟机，与vboxheadless的区别就是这个命令是完全后台运行。<strong>注意</strong>：使用该命令需要将虚拟机手动设置为桥接网络。</p>
+<p><code>vboxheadless --startvm|-s 虚拟机名称|uuid vrde=off</code> - 无界面运行虚拟机，在命令行卡住，停止命令行就停止了虚拟机</p>
+<p><code>VBoxManage controlvm &lt;vm_name&gt; acpipowerbutton</code> - 正常关闭虚拟机</p>
+<p><code>VBoxManage controlvm &lt;vm_name&gt; poweroff</code> - 强制关闭虚拟机</p>
+<p><code>VBoxManage guestproperty enumerate &lt;vm_name&gt;</code> - 查看虚拟机配置信息，可以通过<code>| findstr IP</code> 查询到虚拟机的ip</p>
+<h2 id="参考批处理脚本"><a href="#参考批处理脚本" class="headerlink" title="参考批处理脚本"></a>参考批处理脚本</h2><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">cd</span> /d C:\Program Files\Oracle\VirtualBox\</span><br><span class="line">@<span class="built_in">chcp</span> <span class="number">65001</span></span><br><span class="line">:<span class="number">1</span></span><br><span class="line"><span class="built_in">echo</span> <span class="number">1</span>：开机</span><br><span class="line"><span class="built_in">echo</span> <span class="number">2</span>：关机</span><br><span class="line"><span class="built_in">echo</span> <span class="number">3</span>：查看ip</span><br><span class="line"><span class="built_in">echo</span> <span class="number">4</span>：查看状态</span><br><span class="line"><span class="built_in">echo</span> <span class="number">5</span>: 退出</span><br><span class="line"><span class="built_in">set</span> /P a=输入：</span><br><span class="line"><span class="built_in">cls</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">%a%</span></span><br><span class="line"><span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">1</span> (</span><br><span class="line">    vboxmanage startvm Ubuntu -<span class="built_in">type</span> headless</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">2</span> (</span><br><span class="line">    vboxmanage controlvm Ubuntu acpipowerbutton</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">3</span> (</span><br><span class="line">    vboxmanage guestproperty enumerate Ubuntu | <span class="built_in">findstr</span> IP</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">4</span> (</span><br><span class="line">    vboxmanage list runningvms</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">5</span> (</span><br><span class="line">    <span class="keyword">exit</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">goto</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://blog.csdn.net/ACBC12345/article/details/103115433">Virtualbox后台启动及获取虚拟机ip方法及windows远程登录方法</a></p>
+]]></content>
+      <categories>
+        <category>日常软件</category>
+      </categories>
+      <tags>
+        <tag>MacOS</tag>
+        <tag>Linux</tag>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -8524,44 +8562,8 @@
         <category>日常软件</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>MacOS</tag>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VirtualBox Headless后台运行Linux</title>
-    <url>/virtualbox_headless/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>如何在Windows上优雅的使用Linux，一直是一个困惑我的问题。WSL虽好，但是没法在Linux上安装docker；WSL2虽然可以安装docker了，但是这个系统和主机通信又是一个大麻烦，就连最基本的安装软件都要每次开机修改hostname（虽然有能修改后不复原的办法，但我没实验成功）；使用虚拟机软件，又会占用太多的硬件资源，影响主机性能。前段时间偶然看到B站一个Up主提到使用virtualbox的headless无界面启动。遂研究了一下，但是网络上的资料大都太散太少，没有完整的介绍该方法。本文详细介绍在Windows上安装使用一个最优雅的Linux系统。</p>
-<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>虚拟机软件：<a href="https://www.virtualbox.org/">Oracle VM VirtualBox</a></p>
-<p>Linux镜像：本文使用 <a href="https://ubuntu.com/">Ubuntu20.04</a></p>
-<p>一个远程连接软件：可以使用Windows自带的powershell或者其他软件，本文使用<a href="/2020/04/21/Windows%E8%BD%AF%E4%BB%B6%E6%89%8B%E5%86%8C/#Termius">Termius</a></p>
-<h2 id="前提步骤"><a href="#前提步骤" class="headerlink" title="前提步骤"></a>前提步骤</h2><p>首先需要使用VirtualBox安装好虚拟机；创建虚拟机的时候，推荐使用一个较为简单的名字作为虚拟机的名字，后面命令要使用；安装前的设置注意一点，设置密码的时候需要选择不使用密码登陆。如果该处没设置，安装好后进入设置用户中关闭该项，原因是如果打开该项，后台无法完全启动系统，最终系统会停留在用户登陆界面。</p>
-<h2 id="后台启动方法"><a href="#后台启动方法" class="headerlink" title="后台启动方法"></a>后台启动方法</h2><ol>
-<li>首先进入图形化的Linux虚拟机中，更新源，使用<code>sudo apt install openssh-server</code>安装ssh的服务端。</li>
-<li>检查开机是否需要密码。需要取消掉开机的密码。</li>
-<li>关闭虚拟机，主机使用命令行进入VirutalBox的安装位置，默认情况在<code>C:\Program Files\Oracle\VirtualBox\</code>下，此处推荐使用cmd进入该位置，cmd可以直接调用文件名字作为命令，Powershell需要使用路径加文件名才能执行命令</li>
-<li>执行<code>vboxheadless --startvm|-s 虚拟机名称|uuid vrde=off</code>即可以桥接网络的模式无界面打开</li>
-<li>执行<code>vboxmanage controlvm 虚拟机名称 acpipowerbutton</code>即可关闭虚拟机</li>
-</ol>
-<h2 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h2><p><code>VBoxManage list vms</code> - 查看有哪些虚拟机</p>
-<p><code>VBoxManage list vms --long</code> - 查看虚拟机的详细内容</p>
-<p><code>VBoxManage list runningvms</code> - 查看运行中的虚拟机</p>
-<p><code>VBoxManage startvm &lt;vm_name&gt; -type headless</code> - 无界面运行虚拟机，与vboxheadless的区别就是这个命令是完全后台运行。<strong>注意</strong>：使用该命令需要将虚拟机手动设置为桥接网络。</p>
-<p><code>vboxheadless --startvm|-s 虚拟机名称|uuid vrde=off</code> - 无界面运行虚拟机，在命令行卡住，停止命令行就停止了虚拟机</p>
-<p><code>VBoxManage controlvm &lt;vm_name&gt; acpipowerbutton</code> - 正常关闭虚拟机</p>
-<p><code>VBoxManage controlvm &lt;vm_name&gt; poweroff</code> - 强制关闭虚拟机</p>
-<p><code>VBoxManage guestproperty enumerate &lt;vm_name&gt;</code> - 查看虚拟机配置信息，可以通过<code>| findstr IP</code> 查询到虚拟机的ip</p>
-<h2 id="参考批处理脚本"><a href="#参考批处理脚本" class="headerlink" title="参考批处理脚本"></a>参考批处理脚本</h2><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">cd</span> /d C:\Program Files\Oracle\VirtualBox\</span><br><span class="line">@<span class="built_in">chcp</span> <span class="number">65001</span></span><br><span class="line">:<span class="number">1</span></span><br><span class="line"><span class="built_in">echo</span> <span class="number">1</span>：开机</span><br><span class="line"><span class="built_in">echo</span> <span class="number">2</span>：关机</span><br><span class="line"><span class="built_in">echo</span> <span class="number">3</span>：查看ip</span><br><span class="line"><span class="built_in">echo</span> <span class="number">4</span>：查看状态</span><br><span class="line"><span class="built_in">echo</span> <span class="number">5</span>: 退出</span><br><span class="line"><span class="built_in">set</span> /P a=输入：</span><br><span class="line"><span class="built_in">cls</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">%a%</span></span><br><span class="line"><span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">1</span> (</span><br><span class="line">    vboxmanage startvm Ubuntu -<span class="built_in">type</span> headless</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">2</span> (</span><br><span class="line">    vboxmanage controlvm Ubuntu acpipowerbutton</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">3</span> (</span><br><span class="line">    vboxmanage guestproperty enumerate Ubuntu | <span class="built_in">findstr</span> IP</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">4</span> (</span><br><span class="line">    vboxmanage list runningvms</span><br><span class="line">) <span class="keyword">else</span> <span class="keyword">if</span> <span class="variable">%a%</span> == <span class="number">5</span> (</span><br><span class="line">    <span class="keyword">exit</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">goto</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://blog.csdn.net/ACBC12345/article/details/103115433">Virtualbox后台启动及获取虚拟机ip方法及windows远程登录方法</a></p>
-]]></content>
-      <categories>
-        <category>日常软件</category>
-      </categories>
-      <tags>
         <tag>Linux</tag>
-        <tag>MacOS</tag>
         <tag>Windows</tag>
       </tags>
   </entry>
